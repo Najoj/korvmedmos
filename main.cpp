@@ -1,12 +1,11 @@
 #include <iostream>
+#include <boost/asio.hpp>
 
 //Custom includes
 #include "client.hpp"
 #include "node.hpp"
 
 using namespace std;
-
-
 
 /**
  * Variabels.
@@ -17,32 +16,26 @@ int board[200];
 
 
 //Returns null if no child is avaible.
-Node getChildState(Node *n);
+Node * getChildState(Node *n);
 
-void readBoard();
-Node getChildState(Node *n){
+void readBoard(std::string);
+
+Node * getChildState(Node *n){
 
 	//n->getBoxes();
 
 	return NULL;
 }
 
-void readBoard(){
-
-	char *k;
-	while(istream::get(k)){
+void readBoard(std::string& board){
+	for(unsigned int i=0; i < board.size(); i++){
 		cout << "HEJ" << endl;
 	}
-//	while( cin >> k ){
-	//	cout << "Read int: " << k << endl;
-//	}
-	//cout << " woot?";
 }
+
 int main(int argc, char ** argv)
 {
-
-	readBoard();
-	/*
+	// Command-line argument handling
 	std::string lHost,lPort,lBoard;
 	if(argc==4)
 	{
@@ -61,9 +54,20 @@ int main(int argc, char ** argv)
         std::cerr << "Usage: client (<host> <port>) <board2Solve>" << std::endl;
         return 1;
 	}
+	
+	// öppna socket som håller connection till server
+	boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
+	// välj board lBoard och läs in från server
+	std::string board = read(*socket, lBoard);
+	
+	cout << board;
+
+	//***** HERE IS ACTION *****
+	//readBoard(board);
+	
 	std::string solution=("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
-	//Skicka svar till survurn.
-	send(lHost, lPort, lBoard, solution);
-	*/
+	// skicka in lösning och skriv ut svar
+	send(*socket, solution);
+
 	return 0;
 }
