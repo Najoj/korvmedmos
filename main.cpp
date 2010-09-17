@@ -1,5 +1,9 @@
 #include <iostream>
+
+//Custom includes
 #include "client.hpp"
+#include "node.hpp"
+
 using namespace std;
 
 int main(int argc, char ** argv)
@@ -23,6 +27,7 @@ int main(int argc, char ** argv)
         return 1;
 	}
 	std::string solution=("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
+	//Skicka svar till survurn.
 	send(lHost, lPort, lBoard, solution);
 	return 0;
 }
