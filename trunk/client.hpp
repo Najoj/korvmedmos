@@ -2,11 +2,6 @@
 // client.hpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
 
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
@@ -14,56 +9,103 @@
 
 using boost::asio::ip::tcp;
 
-int send(std::string lHost, std::string lPort, std::string lBoard,
-        std::string solution)
+tcp::socket * open(std::string lHost, std::string lPort)
 {
     try
     {
+        // All programs that use asio need to have at least 1 io_service object
         boost::asio::io_service io_service;
-
+        // We need to turn the server name that was specified as a parameter to
+        // the appication, into a TCP endpoint using an ip::tcp::resolver object
         tcp::resolver resolver(io_service);
-
-		tcp::resolver::query query(lHost,lPort);
+        // A resolver takes a query object and turns it into a list of endpoints
+        // We construct a query using the name of the server, lHost, and the
+        // port number, lPort
+		tcp::resolver::query query(lHost, lPort);
+        // The list of endpoints is returned using an iterator
         tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+        // A defualt constructed iterator is used as the end iterator
         tcp::resolver::iterator end;
-
-        tcp::socket socket(io_service);
+        // Now we create and connect the socket
+        tcp::socket * socket = new tcp::socket(io_service);
+        
+        // We iterate through the set of endpoints until we find one that works
         boost::system::error_code error = boost::asio::error::host_not_found;
         while (error && endpoint_iterator != end)
         {
-            socket.close();
-            socket.connect(*endpoint_iterator++, error);
+            socket->close();
+            socket->connect(*endpoint_iterator++, error);
         }
         if (error)
             throw boost::system::system_error(error);
 
+        // The connection is now open
+        return socket;
+    }
+    // Finally, handle any exceptions that may have been thrown
+    catch (std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    return NULL;
+}
+
+std::string read(tcp::socket& socket, std::string lBoard)
+{
+    try
+    {
         boost::system::error_code ignored_error;
+        // Skicka att vi vill ha bräda lBoard
         boost::asio::write(socket, boost::asio::buffer(lBoard),
                 boost::asio::transfer_all(), ignored_error);
         for (;;)
         {
+            // We use a boost::array to hold the received data
             boost::array<char, 1024> buf;
             boost::system::error_code error;
-
+            // The buffer() function automatically determines the size of the
+            // array to help prevent buffer overruns
             size_t len = socket.read_some(boost::asio::buffer(buf), error);
-           	if(!strcmp(buf.data(),"Wrong ID\n"))
-			{
-				std::cout.write(buf.data(), len);
-				break;
-			}
+            // When the server closes the connection, the read_some() function
+            // will exit with the error::eof error which is how we exit the loop
             if (error == boost::asio::error::eof)
                 break; // Connection closed cleanly by peer.
             else if (error)
                 throw boost::system::system_error(error); // Some other error.
 
-            std::cout << "Solving " << std::endl;
-            std::cout.write(buf.data(), len);
-            std::string lBoardAsString(buf.data(),len);
+            std::string board(buf.data(), len);
+            return board;
+        }
+    }
+    // Finally, handle any exceptions that may have been thrown
+    catch (std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
 
-            boost::asio::write(socket,boost::asio::buffer(solution),boost::asio::transfer_all(),ignored_error);
+    return std::string();
+}
 
-            len = socket.read_some(boost::asio::buffer(buf),error);
+int send(tcp::socket& socket, std::string solution)
+{
+    try
+    {
+        boost::system::error_code ignored_error;
+        for (;;)
+        {
+            boost::asio::write(socket, boost::asio::buffer(solution),
+                    boost::asio::transfer_all(), ignored_error);
+                    
+            boost::array<char, 1024> buf;
+            boost::system::error_code error;
+            size_t len = socket.read_some(boost::asio::buffer(buf), error);
             std::cout.write(buf.data(), len);
+
+            if (error == boost::asio::error::eof)
+                break; // Connection closed cleanly by peer.
+            else if (error)
+                throw boost::system::system_error(error); // Some other error.            
         }
     }
     catch (std::exception& e)
