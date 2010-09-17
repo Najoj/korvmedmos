@@ -6,8 +6,43 @@
 
 using namespace std;
 
+
+
+/**
+ * Variabels.
+ */
+
+//Used for representing the entire board.
+int board[200];
+
+
+//Returns null if no child is avaible.
+Node getChildState(Node *n);
+
+void readBoard();
+Node getChildState(Node *n){
+
+	//n->getBoxes();
+
+	return NULL;
+}
+
+void readBoard(){
+
+	char *k;
+	while(istream::get(k)){
+		cout << "HEJ" << endl;
+	}
+//	while( cin >> k ){
+	//	cout << "Read int: " << k << endl;
+//	}
+	//cout << " woot?";
+}
 int main(int argc, char ** argv)
 {
+
+	readBoard();
+	/*
 	std::string lHost,lPort,lBoard;
 	if(argc==4)
 	{
@@ -29,5 +64,6 @@ int main(int argc, char ** argv)
 	std::string solution=("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
 	//Skicka svar till survurn.
 	send(lHost, lPort, lBoard, solution);
+	*/
 	return 0;
 }

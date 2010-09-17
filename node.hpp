@@ -9,7 +9,7 @@ private:
 
 	Position p_prev_position;
 
-	Position boxes_positions[];
+	Position * boxes_positions;
 
 public:
 	Node();
@@ -17,11 +17,17 @@ public:
 
 	~Node();
 
+	//Returns null if no child is available.
+	//Node getChild();
 
 
 	/**
 	 * Auto genereated getter and setter methods.
 	 */
+
+	Position * getBoxes(){
+		return boxes_positions;
+	}
     Position getCurrent_position() const
     {
         return p_current_position;
