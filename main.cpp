@@ -22,6 +22,7 @@ int main(int argc, char ** argv)
         std::cerr << "Usage: client (<host> <port>) <board2Solve>" << std::endl;
         return 1;
 	}
-	send(lHost, lPort, lBoard);
+	std::string solution=("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
+	send(lHost, lPort, lBoard, solution);
 	return 0;
 }
