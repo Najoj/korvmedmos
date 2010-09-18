@@ -5,16 +5,20 @@
 
 class Node{
 private:
+    // Position of player.
 	Position p_current_position;
-
+	
+    // Previous position of player.
 	Position p_prev_position;
-
+    
+    // Pointer to boxes positions.
 	Position * boxes_positions;
 
 public:
 	Node();
 	Node(int len);
-
+	
+    // Destructor
 	~Node();
 
 	//Returns null if no child is available.
@@ -24,7 +28,6 @@ public:
 	/**
 	 * Auto genereated getter and setter methods.
 	 */
-
 	Position * getBoxes(){
 		return boxes_positions;
 	}

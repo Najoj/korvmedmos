@@ -34,40 +34,43 @@ void readBoard(){
 
 }
 void printBoard(){
-	for(int i = 0; i<height;i++){
-		for(int j=0;j<width;j++){
+	for(int i = 0; i < height; i++){
+		for(int j=0;j < width; j++){
 			cout << (char) board[i][j] << "";
 		}
-		cout <<endl;
+		cout << endl;
 	}
 }
 /**
  * Reads the board into a int matrix called board (global var)
  * @param string The String representing the board.
  */
-//Varför ska denna ha & argument?
+//Varför ska denna ha &-argument?
+// Vad är ett &-argument? - Johan
 void readBoard(std::string boardIn){
 	string::iterator iterator;
 	iterator = boardIn.begin();
 
-	//Get the x - lenght of the board
+	//Get x - lenght of the board
 	width = boardIn.find("\n");
 	height = boardIn.length()/width;
 
-	//Allocate memory for ze board
+	//Allocate memory for the board
 	board = new int*[width];
 
 
 
-	int x=0, y=0;
-	//Allocate memory for first row or column, i dont really know any more.
+	int x = 0, y = 0;
+	
+	//Allocate memory for the first column.
 	board[x] = new int[height];
+	
 	while(iterator != boardIn.end()){
 
 		if(*iterator == '\n'){
 			x++;
 			y = 0;
-			//Matrix hack,
+			//New full column. Matrix hack.
 			board[x] = new int[height];
 		}else{
 			//Assign the value from the board.
@@ -85,7 +88,8 @@ int main(int argc, char ** argv)
 
 
 	// Command-line argument handling
-	/*std::string lHost,lPort,lBoard;
+/*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
+    std::string lHost,lPort,lBoard;
 	if(argc==4)
 	{
 		lHost = std::string(argv[1]);
@@ -100,9 +104,10 @@ int main(int argc, char ** argv)
 	}
 	else
 	{
-        std::cerr << "Usage: client (<host> <port>) <board2Solve>" << std::endl;
+        std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
         return 1;
-	}*/
+	}
+//  */
 	
 	// öppna socket som håller connection till server
 	//boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
@@ -111,7 +116,7 @@ int main(int argc, char ** argv)
 	 * W000T?
 	 */
 	// välj board lBoard och läs in från server
-//	std::string board = read(*socket, lBoard);
+	//std::string board = read(*socket, lBoard);
 	//read(NULL,NULL);
 	
 
@@ -124,7 +129,7 @@ int main(int argc, char ** argv)
 	readBoard(test);
 	printBoard();
 
-	std::string solution=("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
+	std::string solution = ("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
 	// skicka in lösning och skriv ut svar
 	//send(*socket, solution);
 
