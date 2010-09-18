@@ -1,5 +1,6 @@
 #include <iostream>
 #include <boost/asio.hpp>
+#include <boost/multi_array.hpp>
 
 //Custom includes
 #include "client.hpp"
@@ -12,8 +13,10 @@ using namespace std;
  */
 
 //Used for representing the entire board.
-int board[200];
+int **board;
 
+//Width and height of the board.
+int width, height;
 
 //Returns null if no child is avaible.
 Node * getChildState(Node *n);
@@ -27,16 +30,62 @@ Node * getChildState(Node *n){
 	return NULL;
 }
 
-void readBoard(std::string& board){
-	for(unsigned int i=0; i < board.size(); i++){
-		cout << "HEJ" << endl;
+void readBoard(){
+
+}
+void printBoard(){
+	for(int i = 0; i<height;i++){
+		for(int j=0;j<width;j++){
+			cout << (char) board[i][j] << "";
+		}
+		cout <<endl;
 	}
+}
+/**
+ * Reads the board into a int matrix called board (global var)
+ * @param string The String representing the board.
+ */
+//Varför ska denna ha & argument?
+void readBoard(std::string boardIn){
+	string::iterator iterator;
+	iterator = boardIn.begin();
+
+	//Get the x - lenght of the board
+	width = boardIn.find("\n");
+	height = boardIn.length()/width;
+
+	//Allocate memory for ze board
+	board = new int*[width];
+
+
+
+	int x=0, y=0;
+	//Allocate memory for first row or column, i dont really know any more.
+	board[x] = new int[height];
+	while(iterator != boardIn.end()){
+
+		if(*iterator == '\n'){
+			x++;
+			y = 0;
+			//Matrix hack,
+			board[x] = new int[height];
+		}else{
+			//Assign the value from the board.
+			board[x][y] =  *iterator;
+			y++;
+		}
+		iterator++;
+
+	}
+
 }
 
 int main(int argc, char ** argv)
 {
+
+
 	// Command-line argument handling
-	std::string lHost,lPort,lBoard;
+	/*std::string lHost,lPort,lBoard;
 	if(argc==4)
 	{
 		lHost = std::string(argv[1]);
@@ -53,21 +102,31 @@ int main(int argc, char ** argv)
 	{
         std::cerr << "Usage: client (<host> <port>) <board2Solve>" << std::endl;
         return 1;
-	}
+	}*/
 	
 	// öppna socket som håller connection till server
-	boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
+	//boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
+
+	/**
+	 * W000T?
+	 */
 	// välj board lBoard och läs in från server
-	std::string board = read(*socket, lBoard);
+//	std::string board = read(*socket, lBoard);
+	//read(NULL,NULL);
 	
-	cout << board;
+
 
 	//***** HERE IS ACTION *****
 	//readBoard(board);
-	
+	string test = "#############\n#####  ######\n#####     ###\n#####    ####\n###### #  ###\n###### #    #\n#     $**** #\n# $#$ $ ... #\n#       #@. #\n##########  #\n#############";
+
+
+	readBoard(test);
+	printBoard();
+
 	std::string solution=("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
 	// skicka in lösning och skriv ut svar
-	send(*socket, solution);
+	//send(*socket, solution);
 
 	return 0;
 }
