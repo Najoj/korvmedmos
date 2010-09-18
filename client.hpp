@@ -1,8 +1,6 @@
-//
-// client.hpp
-// ~~~~~~~~~~
-//
-
+/**
+ * 
+ */
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <unistd.h>
