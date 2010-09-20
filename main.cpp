@@ -46,7 +46,6 @@ void printBoard(){
  * @param string The String representing the board.
  */
 //Varför ska denna ha &-argument?
-// Vad är ett &-argument? - Johan
 void readBoard(std::string boardIn){
 	string::iterator iterator;
 	iterator = boardIn.begin();
@@ -58,15 +57,12 @@ void readBoard(std::string boardIn){
 	//Allocate memory for the board
 	board = new int*[width];
 
-
-
 	int x = 0, y = 0;
 	
 	//Allocate memory for the first column.
 	board[x] = new int[height];
 	
 	while(iterator != boardIn.end()){
-
 		if(*iterator == '\n'){
 			x++;
 			y = 0;
@@ -78,7 +74,6 @@ void readBoard(std::string boardIn){
 			y++;
 		}
 		iterator++;
-
 	}
 
 }
@@ -127,7 +122,16 @@ int main(int argc, char ** argv)
 
 
 	readBoard(test);
+    // Mostly for debugging purposes.
 	printBoard();
+	
+/*
+    Todo here:
+     * Parse board into a tree graph.
+     * Search in tree.
+     * Make the solution
+     - Johan
+*/
 
 	std::string solution = ("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
 	// skicka in lösning och skriv ut svar
