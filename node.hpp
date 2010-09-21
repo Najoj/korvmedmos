@@ -1,7 +1,10 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
+#include <vector>
+
 #include "common.hpp"
+using namespace std;
 
 class Node{
 private:
@@ -16,13 +19,13 @@ private:
 
 public:
 	Node();
-	Node(int len);
+	Node(int len, Position p_current, Position p_prev,  vector <Position> *boxes);
 	
     // Destructor
 	~Node();
 
 	//Returns null if no child is available.
-	//Node getChild();
+	Node getChild();
 
 
 	/**
@@ -50,6 +53,8 @@ public:
     {
         this->p_prev_position = p_prev_position;
     }
+
+
 
 };
 #endif
