@@ -18,9 +18,15 @@ int **board;
 //Width and height of the board.
 int width, height;
 
-//Returns null if no child is avaible.
-Node * getChildState(Node *n);
+// Root node. Goat r00t?
+//Node root;
 
+// Returns null if no child is avaible.
+Node * getChildState(Node *n);
+// Creates a root node. (Maybe should return it).
+//void parseBoard(); 
+
+// Reads the board into matrix.
 void readBoard(std::string);
 
 Node * getChildState(Node *n){
@@ -30,9 +36,11 @@ Node * getChildState(Node *n){
 	return NULL;
 }
 
+/* XXX: Removeable?
 void readBoard(){
 
 }
+*/
 void printBoard(){
 	for(int i = 0; i < height; i++){
 		for(int j=0;j < width; j++){
@@ -136,6 +144,8 @@ int main(int argc, char ** argv)
 	std::string solution = ("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
 	// skicka in lösning och skriv ut svar
 	//send(*socket, solution);
+	
+	printf("\n%c\n", JENS_ONGOAL);
 
 	return 0;
 }
