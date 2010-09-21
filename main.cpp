@@ -11,34 +11,33 @@ using namespace std;
 /**
  * Variabels.
  */
+int **board;        // Used for representing the entire board.
+int width, height;  // Width and height of the board.
 
-//Used for representing the entire board.
-int **board;
+Node * root;        // Root node.
+Node * getChildState(Node *n);  // Returns null if no child is avaible.
 
-//Width and height of the board.
-int width, height;
+/**
+ * Methods
+ */
+void readBoard(std::string);    // Reads the board into matrix.
 
-// Root node. Goat r00t?
-Node * root;
-
-// Returns null if no child is avaible.
-Node * getChildState(Node *n);
-
-// Reads the board into matrix.
-void readBoard(std::string);
-
+/**
+ * Fecthes child of root n.
+ */
 Node * getChildState(Node *n){
-
 	//n->getBoxes();
-
 	return NULL;
 }
 
-/* XXX: Removeable?
+/* XXX: Removeable? Does not seem to be doing anything at all.
 void readBoard(){
 
 }
 */
+/**
+ * Prints the board based on the board global variable.
+ */
 void printBoard()
 {
 	for(int i = 0; i < height; i++)
@@ -57,20 +56,23 @@ void printBoard()
 //Varför ska denna ha &-argument?
 void readBoard(std::string boardIn)
 {
+    // Creates an iterator.
 	string::iterator iterator;
 	iterator = boardIn.begin();
 
-	//Get x - lenght of the board
+	//Get the lenght of the board. Which is the position of first '\n'.
 	width = boardIn.find("\n");
-	height = boardIn.length()/width;
+	// Height is then the total length of the string, divide with the height.
+	height = boardIn.length() / width;
 
 	//Allocate memory for the board
 	board = new int*[width];
 
+    // Koskenkorva.
 	int x = 0, y = 0;
 	
 	int box = 0;    // Counting boxes.
-	Position jens;  // Jens is the man.
+	Position jens;  // Jens is the man, this is his position. Will be in root.
 	
 	//Allocate memory for the first column.
 	board[x] = new int[height];
@@ -92,7 +94,7 @@ void readBoard(std::string boardIn)
     		    // Got Jens?
     		    jens.x = x;
     		    jens.y = y;
-//	    	    root->jens = jens:  // Saving position in root node.
+//	    	    root->p_current_position = jens;  // Saving position in root node.
     		}
     		board[x][y] = * iterator;
 			y++;
@@ -136,6 +138,7 @@ void readBoard(std::string boardIn)
             }
         }
 	}
+//	root->boxes_positions = boxes;
 //*/
 }
 
