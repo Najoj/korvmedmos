@@ -14,8 +14,8 @@
 #ifndef DOWN
 #define DOWN -1
 #endif
-#ifndef RIGHT
-#define RIGHT -2
+#ifndef LEFT
+#define LEFT -2
 #endif
 
 // Board chars.
