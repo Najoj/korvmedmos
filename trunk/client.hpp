@@ -113,4 +113,3 @@ int send(tcp::socket& socket, std::string solution)
 
     return 0;
 }
-

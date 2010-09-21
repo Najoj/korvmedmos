@@ -3,10 +3,44 @@
  *
  */
 
+// Directions
+#ifndef UP
+#define UP 1
+#endif
+#ifndef RIGHT
+#define RIGHT 2
+#endif
+// Down is negative UP, RIGHT is negative LEFT.
+#ifndef DOWN
+#define DOWN -1
+#endif
+#ifndef RIGHT
+#define RIGHT -2
+#endif
+
+// Board chars.
+#ifndef WALL
+#define WALL '#'
+#endif
+#ifndef BOX
+#define BOX '$'
+#endif
+#ifndef GOAL
+#define GOAL '.'
+#endif
+#ifndef FLOOR
+#define FLOOR ' '
+#endif
+// Him name is Jens
+#ifndef JENS
+#define JENS '@'
+#endif
+
+// Chars on the board
+
+
 #ifndef COMMON_HPP
 #define COMMON_HPP
-
-
 /**
  * Common definitions
  */
