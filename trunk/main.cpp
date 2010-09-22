@@ -23,7 +23,7 @@ Node * getChildState(Node *n);  // Returns null if no child is avaible.
 /**
  * Methods
  */
-void readBoard(std::string);    // Reads the board into matrix.
+Node * readBoard(std::string);    // Reads the board into matrix.
 
 /**
  * Fecthes child of root n.
@@ -129,7 +129,7 @@ Node * readBoard(std::string boardIn)
 		iterator++;
 	}
 	
-	return Node(jens, jens, boxes);
+	return new Node(jens, jens, &boxes, board);
 }
 
 /**
@@ -155,7 +155,7 @@ bool solutionCheck(){
 string solve(Node * root)
 {
 	stack<Node> stacken;
-	stacken.push_back(root);
+//	stacken.push_back(&root);
 
 	while(stacken.empty() && !solutionCheck())
 	{

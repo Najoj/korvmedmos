@@ -21,16 +21,20 @@ private:
 
 	int ** board;
 
+	int len;
+
 public:
 	Node();
 	Node(Position p_current, Position p_prev,  vector <Position> *boxes,
 		int ** board);
-	
+	Node(Position p_current, Position p_prev, Position *boxes,int ** board, int len);
+	Node(Position p_current, Position p_prev, Position *boxes, int ** board, int len, int movedBoxx, int movedBoxy);
     // Destructor
 	~Node();
 
 	//Returns null if no child is available.
-	Node getChild();
+	Node * getChild();
+	Node * getChildDirection(int dir, int xdir, int ydir);
 
 
 	/**
