@@ -13,13 +13,10 @@ using namespace std;
 /**
  * Variables.
  */
-int **board;        // Used for representing the entire board.
+int ** board;        // Used for representing the entire board.
 int width, height;  // Width and height of the board.
-
-//Ze boxes
- vector<Position> boxes;
- vector<Position> goal_positions;
-
+vector<Position> boxes; //Ze boxes
+vector<Position> goal_positions;
 Node * root;        // Root node.
 Node * getChildState(Node *n);  // Returns null if no child is avaible.
 
@@ -36,32 +33,27 @@ Node * getChildState(Node *n){
 	return NULL;
 }
 
-/* XXX: Removeable? Does not seem to be doing anything at all.
-void readBoard(){
-
-}
-*/
 /**
  * Prints the board based on the board global variable.
  */
 void printBoard()
 {
-	//cout << "H: "<< height << " W:" << width<<endl;
-	for(int i = 0; i < height; i++)
+	cout << "H: "<< height << " W:" << width<<endl;
+	for(int j = 0; j < height; j++)
 	{
-		for(int j = 0; j < width; j++)
+		for(int i = 0; i < width; i++)
 		{
-			cout << (char) board[i][j] << "";
+			cout << (unsigned char) board[i][j] << "";
 		}
 		cout << endl;
 	}
 }
+
 /**
  * Reads the board into a int matrix called board (global var)
  * @param string The String representing the board.
  */
-//Varför ska denna ha &-argument?
-void readBoard(std::string boardIn)
+Node * readBoard(std::string boardIn)
 {
     // Creates an iterator.
 	string::iterator iterator;
@@ -69,15 +61,12 @@ void readBoard(std::string boardIn)
 
 	//Get the lenght of the board. Which is the position of first '\n'.
 	width = boardIn.find("\n");
-
-
 	// Height is then the total length of the string, divide with the height.
 	height = boardIn.length() / width;
 	cout << "H: "<< height << " W:" << width<<endl;
 
-
 	//Allocate memory for the board
-	board = new int*[height];
+	//board = new int*[width];
 
     // Koskenkorva.
 	int x = 0, y = 0;
@@ -86,101 +75,63 @@ void readBoard(std::string boardIn)
 	Position jens;  // Jens is the man, this is his position. Will be in root.
 	
 	//Allocate memory for the first column.
-	board[x] = new int[width];
+	board = new int*[width];
+	for (int i = 0; i < width; i++)
+		board[i] = new int[height];
 	
-
-
 	while(iterator != boardIn.end())
 	{
 		if(*iterator == '\n')
 		{
-
-			x++;
-			y = 0;
-			//New full column. Matrix hack.
-			board[x] = new int[width];
-
+			// if newline add y (column)
+			y++;
+			x = 0;
 		} else {
-			//Assign the value from the board.
-    	/*	if(*iterator == BOX || *iterator == BOX_ONGOAL ) {
-    		    // My name is Boxxy. Counts boxes so that we can allocate them later.
-		       box++;
-    		} else if(*iterator == JENS || *iterator == JENS_ONGOAL ) {
-    		    // Got Jens?
-    		    jens.x = x;
-    		    jens.y = y;
-//	    	    root->p_current_position = jens;  // Saving position in root node.
-    		}*/
-
-			if(*iterator == BOX  || *iterator == JENS ){
-				if(*iterator == BOX){
-
-					/**
-					 * Classic JAKEHAX
-					 */
-					Position p;
-					p.x = y;
-					p.y = x;
-					//cout << "X: e " << x << "Y: e " << y << endl;
+    		Position p;
+    		switch (*iterator) {
+				case BOX:
+					p.x = x;
+					p.y = y;
 					boxes.push_back(p);
-				}
-				if(*iterator == JENS ){
-					jens.x = y;
-					jens.y = x;
-				}
-				board[x][y] = FLOOR;
-			}else if(*iterator == BOX_ONGOAL|| *iterator == JENS_ONGOAL){
-				if(*iterator == BOX_ONGOAL){
-					Position p;
-					p.x = y;
-					p.y = x;
+					board[x][y] = 		FLOOR;
+					break;
+				case JENS:
+					jens.x = x;
+					jens.y = y;
+					board[x][y] = FLOOR;
+					break;
+				case BOX_ONGOAL:
+					p.x = x;
+					p.y = y;
 					boxes.push_back(p);
 					goal_positions.push_back(p);
-				}
-				if(*iterator == JENS_ONGOAL){
-					jens.x = y;
-					jens.y = x;
-					/**
-					 * Classic JAKEHAX
-					 */
-					Position p;
-					p.x = y;
-					p.y = x;
+					board[x][y] = GOAL;
+					break;
+				case JENS_ONGOAL:
+					jens.x = x;
+					jens.y = y;
+					p.x = x;
+					p.y = y;
 					goal_positions.push_back(p);
-				}
-				board[x][y] = GOAL;
-			}else if(*iterator == GOAL){
-				/**
-				* Classic JAKEHAX
-				*/
-				Position p;
-				p.x = y;
-				p.y = x;
-				goal_positions.push_back(p);
+					board[x][y] = GOAL;
+					break;
+				case GOAL:
+					p.x = x;
+					p.y = y;
+					goal_positions.push_back(p);
+					board[x][y] = GOAL;
+					break;
+				default:
+					board[x][y] = * iterator;
 			}
-
-			else{
-				board[x][y] = * iterator;
-			}
-    		y++;
-
-
-		}		
+			x++;
+		}
 		iterator++;
 	}
 	
-	//MAke root node.
-	Node *root = new Node(boxes.size(),jens,jens, &boxes);
-
-/*
-
-	for(unsigned int i = 0; i<boxes.size();i++){
-		cout <<"X aer: " << boxes[i].x << " Y e " << boxes[i].y << endl;
-	}
-
-	cout << "JENS : " << jens.x << " " << jens.y << endl;
-	*/
+	return Node(jens, jens, boxes);
 }
+
 /**
  * Return true if all boxes are on goal positions else false.
  */
@@ -191,18 +142,34 @@ bool solutionCheck(){
 				return false;
 			}
 			if(boxes[i].y != goal_positions[j].y){
-							return false;
+				return false;
 			}
 		}
 	}
 	return true;
 }
+
+/**
+ * Solver
+ */
+string solve(Node * root)
+{
+	stack<Node> stacken;
+	stacken.push_back(root);
+
+	while(stacken.empty() && !solutionCheck())
+	{
+		
+	}
+}
+
+/**
+ * Main
+ */
 int main(int argc, char ** argv)
 {
-
-
 	// Command-line argument handling
-/*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
+//*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
     std::string lHost,lPort,lBoard;
 	if(argc==4)
 	{
@@ -224,26 +191,21 @@ int main(int argc, char ** argv)
 //  */
 	
 	// öppna socket som håller connection till server
-	//boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
-
+	boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
 
 	// välj board lBoard och läs in från server
-//	string boardStr ( read(*socket, lBoard));
-//	boardStr.
-	//read(NULL,NULL);
-	
-//	cout << "Utskrit fra serv" << endl << boardStr;
-
+	string boardStr(read(*socket, lBoard));
+	cout << "Utskrit fra serv" << endl << boardStr;
 
 	//***** HERE IS ACTION *****
-	//readBoard(boardStr);
+	readBoard(boardStr);
 	// XXX: Is this board solvable?
-	string test = "#############\n#############\n#####  ######\n#####     ###\n#####    ####\n###### #  ###\n###### #    #\n#     $**** #\n# $#$ $ ... #\n#       #@. #\n##########  #\n#############";
+	//string test = "#############\n#############\n#####  ######\n#####     ###\n#####    ####\n###### #  ###\n###### #    #\n#     $**** #\n# $#$ $ ... #\n#       #@. #\n##########  #\n#############";
 
-	cout << test<<endl;
-	readBoard(test);
+	//cout << test<<endl;
+	//readBoard(test);
     // Mostly for debugging purposes.
-	//printBoard();
+	printBoard();
 	
 /*
     Todo here:
@@ -253,9 +215,6 @@ int main(int argc, char ** argv)
      - Johan
 */
 
-	while(!solutionCheck()){
-
-	}
 
 
 	std::string solution = ("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");

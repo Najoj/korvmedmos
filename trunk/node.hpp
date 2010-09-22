@@ -17,9 +17,14 @@ private:
     // Pointer to boxes positions.
 	Position * boxes_positions;
 
+	short used_directions[4];
+
+	int ** board;
+
 public:
 	Node();
-	Node(int len, Position p_current, Position p_prev,  vector <Position> *boxes);
+	Node(Position p_current, Position p_prev,  vector <Position> *boxes,
+		int ** board);
 	
     // Destructor
 	~Node();
