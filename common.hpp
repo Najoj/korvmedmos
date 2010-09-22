@@ -2,51 +2,27 @@
  * Stores all kinds of common and utility functions and structures.
  *
  */
-
+#ifndef COMMON_HPP
+#define COMMON_HPP
 // Directions
-#ifndef UP
-#define UP 1
-#endif
-#ifndef RIGHT
-#define RIGHT 2
-#endif
-// Down is negative UP, RIGHT is negative LEFT.
-#ifndef DOWN
-#define DOWN -1
-#endif
-#ifndef LEFT
-#define LEFT -2
-#endif
+
+#define UP 0
+#define RIGHT 1
+#define DOWN 2
+#define LEFT 3
 
 // Board chars.
-#ifndef WALL
 #define WALL '#'
-#endif
-#ifndef BOX
 #define BOX '$'
-#endif
-#ifndef BOX_ONGOAL
 #define BOX_ONGOAL '*'
-#endif
-#ifndef GOAL
 #define GOAL '.'
-#endif
-#ifndef FLOOR
 #define FLOOR ' '
-#endif
 // Him name is Jens
-#ifndef JENS
 #define JENS '@'
-#endif
-#ifndef JENS_ONGOAL
 #define JENS_ONGOAL '+'
-#endif
 
 // Chars on the board
 
-
-#ifndef COMMON_HPP
-#define COMMON_HPP
 /**
  * Common definitions
  */
