@@ -3,6 +3,8 @@
 #include <boost/multi_array.hpp>
 #include <vector>
 #include <stack>
+#include <boost/detail/default_hash.hpp>
+#include <boost/bloom_filter.hpp>
 
 //Custom includes
 #include "client.hpp"
