@@ -23,7 +23,7 @@ Node * getChildState(Node *n);  // Returns null if no child is avaible.
 /**
  * Methods
  */
-Node * readBoard(std::string);    // Reads the board into matrix.
+Node readBoard(std::string);    // Reads the board into matrix.
 
 /**
  * Fecthes child of root n.
@@ -53,7 +53,7 @@ void printBoard()
  * Reads the board into a int matrix called board (global var)
  * @param string The String representing the board.
  */
-Node * readBoard(std::string boardIn)
+Node readBoard(std::string boardIn)
 {
     // Creates an iterator.
 	string::iterator iterator;
@@ -129,7 +129,7 @@ Node * readBoard(std::string boardIn)
 		iterator++;
 	}
 	
-	return new Node(jens, jens, &boxes, board);
+	return Node(jens, jens, &boxes, board);
 }
 
 /**
@@ -154,13 +154,8 @@ bool solutionCheck(){
  */
 string solve(Node * root)
 {
-	stack<Node> stacken;
-//	stacken.push_back(&root);
 
-	while(stacken.empty() && !solutionCheck())
-	{
-		
-	}
+	return NULL;
 }
 
 /**
@@ -198,10 +193,34 @@ int main(int argc, char ** argv)
 	cout << "Utskrit fra serv" << endl << boardStr;
 
 	//***** HERE IS ACTION *****
-	readBoard(boardStr);
+	Node rootNode = readBoard(boardStr);
 	// XXX: Is this board solvable?
 	//string test = "#############\n#############\n#####  ######\n#####     ###\n#####    ####\n###### #  ###\n###### #    #\n#     $**** #\n# $#$ $ ... #\n#       #@. #\n##########  #\n#############";
 
+
+	stack<Node> stack;
+	//stacken.push_back(&root);
+
+	//Push root node onto stack
+	stack.push(rootNode);
+
+	while(!stack.empty() /*&& !solutionCheck()*/)
+	{
+		cout << "loopish?" << endl;
+
+		Node *child;
+
+		if((child = stack.top().getChild())  == NULL){
+			stack.pop();
+			cout << "Nu poppar vi :D! " << endl;
+			//exit(1337);
+		}else{
+			child->print();
+			stack.push(*child);
+
+		}
+	}
+	cout << "Löst probbet?" << endl;
 	//cout << test<<endl;
 	//readBoard(test);
     // Mostly for debugging purposes.
