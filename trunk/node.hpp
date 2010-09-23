@@ -2,7 +2,9 @@
 #define NODE_HPP
 
 #include <vector>
-
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 #include "common.hpp"
 using namespace std;
 
@@ -23,6 +25,9 @@ private:
 
 	int len;
 
+
+	Node  * getChildDirection(int dir, int xdir, int ydir);
+
 public:
 	Node();
 	Node(Position p_current, Position p_prev,  vector <Position> *boxes,
@@ -33,8 +38,8 @@ public:
 	~Node();
 
 	//Returns null if no child is available.
-	Node * getChild();
-	Node * getChildDirection(int dir, int xdir, int ydir);
+	Node  * getChild();
+
 
 
 	/**
@@ -64,6 +69,14 @@ public:
     }
 
 
+    void print(){
+    	cout << "EN MAMMA BRÄDA" << endl;
+    	for(unsigned int i=0; i<len; i++){
+    		cout << "BOXES" << boxes_positions[i].x << " " << boxes_positions[i].x  << endl;
+    	}
+
+    	cout << "================="<<endl;
+    }
 
 };
 #endif

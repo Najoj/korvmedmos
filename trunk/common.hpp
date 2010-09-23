@@ -10,7 +10,7 @@
 #define RIGHT 1
 #define DOWN 2
 #define LEFT 3
-
+#define USED  1337
 // Board chars.
 #define WALL '#'
 #define BOX '$'
@@ -41,4 +41,6 @@ struct Position{
 	int x;
 	int y;
 };
+
+
 #endif
