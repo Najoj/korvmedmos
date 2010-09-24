@@ -87,23 +87,12 @@ Node::~Node(){
 
 Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 {
-	//std::string moves_real[4] = {"UP","RIGHT","DOWN","LEFT"};
+
 	//
 	if (board[p_current_position.x+xdir][p_current_position.y+ydir] == WALL || used_directions[dir] == USED
 			|| (p_prev_position.x == (p_current_position.x+xdir) && p_prev_position.y == (p_current_position.y+ydir))) {
 		//Avoids repeating this action
-		//CLASSIC JOHAN H4xx
-	/*	if(board[p_current_position.x+xdir][p_current_position.y+ydir] == WALL){
-			cout << "WALL PWNED" << endl;
-		}
-		if((p_prev_position.x == (p_current_position.x+xdir) && p_prev_position.y == (p_current_position.y+ydir))){
-				cout << "PREV PWNED" << p_prev_position.x  << " ny " << (p_current_position.x+xdir) << endl;
-			}
-		if(used_directions[dir] == USED){
-			cout << "DIR PWNED" << endl;
-		}
-		cout << "Fann ina alternativ " << moves_real[dir] << endl;
-		*/
+
 		used_directions[dir] = USED;
 		return NULL;
 	} else {
@@ -112,18 +101,17 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 		{
 			// kolla om de e låda
 			if (boxes_positions[i].x == p_current_position.x+xdir && boxes_positions[i].y == p_current_position.y+ydir) {
-				//Skap barn och uppdatera lådor i barnet
-				//return new Node;
-				//boxes_positions[i]
+
 				// If there is a wall to the right of the box to jensus right
 				if (board[p_current_position.x+xdir+xdir][p_current_position.y+ydir+ydir] == WALL){
 					return NULL;
 				}
 				//Makes sure we never go this way again from this node.
 				used_directions[dir] = USED;
-			//	cout << "Vi gick at crap " << moves_real[dir] << endl;
-				//Våldatigt en e låda
-				exit(1);
+
+				//Saves the last
+				LAST_DIR = dir;
+
 				return new Node(boxes_positions[i], p_current_position, boxes_positions, board, len, p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir);
 			}
 		}
@@ -132,8 +120,10 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 		newp.y = p_current_position.y+ydir;
 		//Makes sure we never go this way again from this node.
 		used_directions[dir] = USED;
-	//	cout << "Vi gick at " << moves_real[dir] << endl;
-		//cout << "\t SKapade barn med samma men med ny position" << endl;
+
+		//Saves the last
+		LAST_DIR = dir;
+
 		return new Node(newp, p_current_position, boxes_positions, board, len);
 
 	//	Node child = Node(newPos, p_current_position,

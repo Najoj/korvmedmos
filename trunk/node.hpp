@@ -19,8 +19,7 @@ private:
     // Previous position of player.
 	Position p_prev_position;
     
-    // Pointer to boxes positions.
-	Position * boxes_positions;
+
 
 	short used_directions[4];
 
@@ -43,7 +42,11 @@ public:
 	//Returns null if no child is available.
 	Node  * getChild();
 
+	//Saves the latest direction
+	short LAST_DIR;
 
+	// Pointer to boxes positions.
+	Position * boxes_positions;
 
 	/**
 	 * Auto genereated getter and setter methods.
@@ -76,7 +79,11 @@ public:
     	cout << "================="<<endl;
     	cout << "JENS POS: " << p_current_position.x << " " << p_current_position.y << endl;
     	for(int i=0; i<len; i++){
-    		cout << "BOXES" << boxes_positions[i].x << " " << boxes_positions[i].x  << endl;
+    		cout << "BOXES" << boxes_positions[i].x << " " << boxes_positions[i].y  << endl;
+    		/*if(boxes_positions[i].x == 6 && boxes_positions[i].y == 3){
+    			cout << "LÖSTE DE!" << endl;
+    			exit(0);
+    		}*/
     	}
 
     	cout << "================="<<endl;
