@@ -7,13 +7,18 @@
 #include <boost/bloom_filter.hpp>
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/fusion/tuple.hpp>
 
 //Custom includes
 #include "client.hpp"
 #include "node.hpp"
-
+#include "hash_functions.hpp"
 using namespace std;
-using boost::bloom_filter;
+
+using boost::function;
+using boost::static_bloom_filter;
+using boost::fusion::tuple;
+using boost::fusion::make_tuple;
 
 using boost::array;
 using boost::function;
@@ -195,18 +200,8 @@ string solve(Node * root)
 
 	return NULL;
 }
-#define FILTER_SIZE 1337
-struct hash1 {
-    size_t operator()(uint32_t id) const {
-        return ((id << 4) | (id >> 4)) % FILTER_SIZE;
-    }
-};
 
-struct hash2 {
-    size_t operator()(uint32_t id) const {
-        return (id * id) % FILTER_SIZE;
-    }
-};
+
 /**
  * Main
  */
@@ -243,8 +238,13 @@ int main(int argc, char ** argv)
 	//***** HERE IS ACTION *****
 	Node rootNode = readBoard(boardStr);
 
-	bloom_filter<Node> visited_boxes(1000000);
 
+   // array<function<size_t(Node)>, 2> hash_array;
+  //  hash_array[0] = hash1;
+
+	//static_bloom_filter<Node, 200, boost::tuple < hash1, hash2> > visited_boxes;
+    typedef static_bloom_filter<Node, FILTER_SIZE, tuple<hash1, hash2, hash3, hash4, hash5, hash6, hash7, hash8 > > filter_type;
+    filter_type visited_boxes(make_tuple(hash1(), hash2(), hash3(), hash4(), hash5(), hash6(), hash7(), hash8()));
 
 	visited_boxes.insert(rootNode);
 //	visited_jens.insert(rootNode.getCurrent_position().x * rootNode.getCurrent_position().y );
