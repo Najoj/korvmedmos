@@ -106,6 +106,11 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 				if (board[p_current_position.x+xdir+xdir][p_current_position.y+ydir+ydir] == WALL){
 					return NULL;
 				}
+				for (int j=0; j<len; j++) {
+					if (boxes_positions[j].x == p_current_position.x+xdir+xdir && boxes_positions[j].y == p_current_position.y+ydir+ydir) {
+						return NULL;
+					}
+				}
 				//Makes sure we never go this way again from this node.
 				used_directions[dir] = USED;
 

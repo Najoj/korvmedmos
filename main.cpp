@@ -181,6 +181,7 @@ bool solutionCheck(Node * node){
 			}
 		}
 	}
+	cout <<  "FOUND SOLTUIN!!!!!!!!!!!!" << endl;
 	return true;
 }
 
@@ -225,21 +226,17 @@ int main(int argc, char ** argv)
 
 	// välj board lBoard och läs in från server
 	string boardStr(read(*socket, lBoard));
-	cout << "Utskrit fra serv" << endl << boardStr;
 
 	//***** HERE IS ACTION *****
 	Node rootNode = readBoard(boardStr);
-	// XXX: Is this board solvable?
-	//string test = "#############\n#############\n#####  ######\n#####     ###\n#####    ####\n###### #  ###\n###### #    #\n#     $**** #\n# $#$ $ ... #\n#       #@. #\n##########  #\n#############";
 
-
-	bloom_filter<Node> visited_boxes(2048);
-//	bloom_filter<int> visited_jens(2048);
-
+	bloom_filter<Node> visited_boxes(90000048);
 
 	visited_boxes.insert(rootNode);
 //	visited_jens.insert(rootNode.getCurrent_position().x * rootNode.getCurrent_position().y );
 
+
+	int iterations = 0;
 
 	deque<Node> stack;
 	//stacken.push_back(&root);
@@ -250,12 +247,13 @@ int main(int argc, char ** argv)
 	while(!stack.empty() && !solutionCheck(&stack.front()))
 	{
 
-
+		iterations++;
 		Node *child;
-
+	//	cout << "Position e just nu : " << stack.front().getCurrent_position().x << " "<< stack.front().getCurrent_position().x<<endl;
 		if((child = stack.front().getChild())  == NULL){
+
+			cout << "Nu poppar vi :D! " << stack.front().getCurrent_position().x << " " << stack.front().getCurrent_position().y << endl;
 			stack.pop_front();
-			cout << "Nu poppar vi :D! " << endl;
 			//exit(1337);
 		}else{
 
@@ -279,37 +277,28 @@ int main(int argc, char ** argv)
 				cout <<"Redan besökt" << child->getCurrent_position().x<< " " << child->getCurrent_position().y <<  endl;
 				//child->print();
 			}
-
-
 		}
 	}
 
 	//Goal node hackzz
 	//stack.pop_back();
+	string solution;
 	while(!stack.empty()){
 			//cout << moves_real[stack.top().LAST_DIR] << endl;
 		printBoard(&stack.back());
-			stack.pop_back();
-			cin.get();
+		solution += moves_real[stack.back().LAST_DIR] + " ";
+		stack.pop_back();
+		//cin.get();
 	}
+	cout << solution << endl;
+	cout << iterations << endl;
 	cout << "Löst probbet?" << endl;
 	//cout << test<<endl;
 	//readBoard(test);
     // Mostly for debugging purposes.
 	printBoard();
-	
-/*
-    Todo here:
-     * Parse board into a tree graph.
-     * Search in tree.
-     * Make the solution
-     - Johan
-*/
 
-
-
-	std::string solution = ("U R R D U U L D L L U L L D R R R R L D D R U R U D L L U R");
 	// skicka in lösning och skriv ut svar
-	//send(*socket, solution);
+	send(*socket, solution);
 	return 0;
 }
