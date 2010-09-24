@@ -42,5 +42,5 @@ struct Position{
 	int y;
 };
 
-
+const std::string moves_real[4] = {"UP","RIGHT","DOWN","LEFT"};
 #endif

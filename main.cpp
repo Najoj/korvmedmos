@@ -2,7 +2,7 @@
 #include <boost/asio.hpp>
 #include <boost/multi_array.hpp>
 #include <vector>
-#include <stack>
+#include <deque>
 //#include <boost/detail/default_hash.hpp>
 #include <boost/bloom_filter.hpp>
 #include <boost/detail/lightweight_test.hpp>
@@ -49,6 +49,35 @@ void printBoard()
 		for(int i = 0; i < width; i++)
 		{
 			cout << (unsigned char) board[i][j] << "";
+		}
+		cout << endl;
+	}
+}
+/**
+ * Prints the board based on the board global variable.
+ */
+void printBoard(Node *node)
+{
+bool found = false;
+	for(int j = 0; j < height; j++)
+	{
+		for(int i = 0; i < width; i++)
+		{
+			if(node->getCurrent_position().x == i && node->getCurrent_position().y == j){
+				cout << JENS;
+				continue;
+			}
+			found = false;
+			for(unsigned int k = 0; k < boxes.size(); k++){
+				if(node->boxes_positions[k].x == i && node->boxes_positions[k].y == j){
+					cout << BOX;
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				cout << (unsigned char) board[i][j] << "";
+			}
 		}
 		cout << endl;
 	}
@@ -140,13 +169,14 @@ Node readBoard(std::string boardIn)
 /**
  * Return true if all boxes are on goal positions else false.
  */
-bool solutionCheck(){
+bool solutionCheck(Node * node){
 	for(unsigned int i =0; i<boxes.size(); i++){
-		for(unsigned int j=0; j<goal_positions.size(); j++){
-			if(boxes[i].x != goal_positions[j].x){
-				return false;
+		for(unsigned int j=0; j<boxes.size(); j++){
+			if(node->boxes_positions[i].x == goal_positions[j].x && node->boxes_positions[i].y == goal_positions[j].y){
+				break;
 			}
-			if(boxes[i].y != goal_positions[j].y){
+			//Found one box that is not on goal position.
+			if(j == goal_positions.size() -1 ){
 				return false;
 			}
 		}
@@ -211,20 +241,20 @@ int main(int argc, char ** argv)
 //	visited_jens.insert(rootNode.getCurrent_position().x * rootNode.getCurrent_position().y );
 
 
-	stack<Node> stack;
+	deque<Node> stack;
 	//stacken.push_back(&root);
 
 	//Push root node onto stack
-	stack.push(rootNode);
+	stack.push_front(rootNode);
 
-	while(!stack.empty() /*&& !solutionCheck()*/)
+	while(!stack.empty() && !solutionCheck(&stack.front()))
 	{
 
 
 		Node *child;
 
-		if((child = stack.top().getChild())  == NULL){
-			stack.pop();
+		if((child = stack.front().getChild())  == NULL){
+			stack.pop_front();
 			cout << "Nu poppar vi :D! " << endl;
 			//exit(1337);
 		}else{
@@ -244,7 +274,7 @@ int main(int argc, char ** argv)
 				visited_boxes.insert(*child);
 			//	visited_jens.insert(child->getCurrent_position().x*child->getCurrent_position().y);
 				child->print();
-				stack.push(*child);
+				stack.push_front(*child);
 			}else{
 				cout <<"Redan besökt" << child->getCurrent_position().x<< " " << child->getCurrent_position().y <<  endl;
 				//child->print();
@@ -252,6 +282,15 @@ int main(int argc, char ** argv)
 
 
 		}
+	}
+
+	//Goal node hackzz
+	//stack.pop_back();
+	while(!stack.empty()){
+			//cout << moves_real[stack.top().LAST_DIR] << endl;
+		printBoard(&stack.back());
+			stack.pop_back();
+			cin.get();
 	}
 	cout << "Löst probbet?" << endl;
 	//cout << test<<endl;
