@@ -72,7 +72,7 @@ bool found = false;
 			found = false;
 			for(unsigned int k = 0; k < boxes.size(); k++){
 				if(node->boxes_positions[k].x == i && node->boxes_positions[k].y == j){
-					cout << BOX;
+    				cout << BOX;
 					found = true;
 					break;
 				}
@@ -99,7 +99,7 @@ Node readBoard(std::string boardIn)
 	width = boardIn.find("\n");
 	// Height is then the total length of the string, divide with the height.
 	height = boardIn.length() / width;
-	cout << "H: "<< height << " W:" << width<<endl;
+//	cout << "H: "<< height << " W:" << width<<endl;
 
 	//Allocate memory for the board
 	//board = new int*[width];
@@ -183,7 +183,7 @@ bool solutionCheck(Node * node){
 			}
 		}
 	}
-	cout <<  "FOUND SOLTUIN!!!!!!!!!!!!" << endl;
+//	cout <<  "FOUND SOLTUIN!!!!!!!!!!!!" << endl;
 	return true;
 }
 
@@ -286,11 +286,11 @@ int main(int argc, char ** argv)
 
 				visited_boxes.insert(*child);
 			//	visited_jens.insert(child->getCurrent_position().x*child->getCurrent_position().y);
-				child->print();
+//				child->print();
 				stack.push_front(*child);
 			}else{
-				cout <<"Redan besökt" << child->getCurrent_position().x<< " " << child->getCurrent_position().y <<  endl;
-				child->print();
+//				cout <<"Redan besökt" << child->getCurrent_position().x<< " " << child->getCurrent_position().y <<  endl;
+//				child->print();
 			}
 		}
 	}
@@ -304,18 +304,18 @@ int main(int argc, char ** argv)
 	string solution;
 	while(!stack.empty()){
 			//cout << moves_real[stack.top().LAST_DIR] << endl;
-		printBoard(&stack.back());
+//		printBoard(&stack.back());
 		solution += moves_real[stack.back().LAST_DIR] + " ";
 		stack.pop_back();
 		//cin.get();
 	}
-	cout << solution << endl;
-	cout << iterations << endl;
-	cout << "Löst probbet?" << endl;
+//	cout << solution << endl;
+//	cout << iterations << endl;
+//	cout << "Löst probbet?" << endl;
 	//cout << test<<endl;
 	//readBoard(test);
     // Mostly for debugging purposes.
-	printBoard();
+//	printBoard();
 
 	// skicka in lösning och skriv ut svar
 	send(*socket, solution);
