@@ -102,10 +102,27 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 			// kolla om de e låda
 			if (boxes_positions[i].x == p_current_position.x+xdir && boxes_positions[i].y == p_current_position.y+ydir) {
 
-				// If there is a wall to the right of the box to jensus right
+				// If there is a wall on the side of the box
 				if (board[p_current_position.x+xdir+xdir][p_current_position.y+ydir+ydir] == WALL){
 					return NULL;
 				}
+
+				// If box would go to corner that is not goal
+				if (board[p_current_position.x+xdir+xdir][p_current_position.y+ydir+ydir] != GOAL) {
+					// UP-DOWN
+					if (board[p_current_position.x][p_current_position.y+ydir*3] == WALL &&
+							(board[p_current_position.x+1][p_current_position.y+ydir*2] == WALL || board[p_current_position.x-1][p_current_position.y+ydir*2] == WALL)) {
+						cout << "kiss\n";
+						return NULL;
+					}
+					// LEFT-RIGHT
+					if (board[p_current_position.x+xdir*3][p_current_position.y] == WALL &&
+							(board[p_current_position.x+xdir*2][p_current_position.y+1] || board[p_current_position.x+xdir*2][p_current_position.y-1])) {
+						cout << "bajs\n";
+						return NULL;
+					}
+				}
+				// Check if there is box on other side of box
 				for (int j=0; j<len; j++) {
 					if (boxes_positions[j].x == p_current_position.x+xdir+xdir && boxes_positions[j].y == p_current_position.y+ydir+ydir) {
 						return NULL;
