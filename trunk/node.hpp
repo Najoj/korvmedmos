@@ -110,5 +110,9 @@ public:
             return seed;
         }
 
+    int getLen(){
+    	return len;
+    }
+
 };
 #endif

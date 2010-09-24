@@ -26,7 +26,7 @@
 /**
  * Common definitions
  */
-
+#define FILTER_SIZE 1000000
 //Defines board elements, see, http://www.sokobano.de/wiki/index.php?title=Level_format
 /*
 #define B_ELEM_WALL 35              //#     0x23
