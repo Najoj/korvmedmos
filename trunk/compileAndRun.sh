@@ -11,6 +11,6 @@
 make
 
 # ... and let the fun begin. :-)
-for i in $(seq 1 180); do
+for i in $(seq 1 136); do
     ./main $i
 done
