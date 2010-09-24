@@ -60,7 +60,7 @@ std::string read(tcp::socket& socket, std::string lBoard)
         for (;;)
         {
             // We use a boost::array to hold the received data
-            boost::array<char, 1024> buf;
+            boost::array<char, 10000> buf;
             boost::system::error_code error;
             // The buffer() function automatically determines the size of the
             // array to help prevent buffer overruns
