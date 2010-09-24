@@ -43,7 +43,7 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, int ** board, i
 	//Saves positions.
 	p_current_position = p_current;
 
-	cout << "Positionen e: " << p_current_position.x << " " << p_current_position.y << endl;
+	//cout << "Positionen e: " << p_current_position.x << " " << p_current_position.y << endl;
 	p_prev_position = p_prev;
 	this->board = board;
 }
@@ -87,7 +87,7 @@ Node::~Node(){
 
 Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 {
-	std::string moves_real[4] = {"UP","RIGHT","DOWN","LEFT"};
+	//std::string moves_real[4] = {"UP","RIGHT","DOWN","LEFT"};
 	//
 	if (board[p_current_position.x+xdir][p_current_position.y+ydir] == WALL || used_directions[dir] == USED
 			|| (p_prev_position.x == (p_current_position.x+xdir) && p_prev_position.y == (p_current_position.y+ydir))) {
@@ -121,7 +121,7 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 				}
 				//Makes sure we never go this way again from this node.
 				used_directions[dir] = USED;
-				cout << "Vi gick at crap " << moves_real[dir] << endl;
+			//	cout << "Vi gick at crap " << moves_real[dir] << endl;
 				//Våldatigt en e låda
 				exit(1);
 				return new Node(boxes_positions[i], p_current_position, boxes_positions, board, len, p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir);
@@ -132,8 +132,8 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 		newp.y = p_current_position.y+ydir;
 		//Makes sure we never go this way again from this node.
 		used_directions[dir] = USED;
-		cout << "Vi gick at " << moves_real[dir] << endl;
-		cout << "\t SKapade barn med samma men med ny position" << endl;
+	//	cout << "Vi gick at " << moves_real[dir] << endl;
+		//cout << "\t SKapade barn med samma men med ny position" << endl;
 		return new Node(newp, p_current_position, boxes_positions, board, len);
 
 	//	Node child = Node(newPos, p_current_position,

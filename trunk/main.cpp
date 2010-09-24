@@ -3,14 +3,17 @@
 #include <boost/multi_array.hpp>
 #include <vector>
 #include <stack>
-#include <boost/detail/default_hash.hpp>
+//#include <boost/detail/default_hash.hpp>
 #include <boost/bloom_filter.hpp>
+#include <boost/detail/lightweight_test.hpp>
+#include <boost/functional/hash.hpp>
 
 //Custom includes
 #include "client.hpp"
 #include "node.hpp"
 
 using namespace std;
+using boost::bloom_filter;
 
 /**
  * Variables.
@@ -200,6 +203,14 @@ int main(int argc, char ** argv)
 	//string test = "#############\n#############\n#####  ######\n#####     ###\n#####    ####\n###### #  ###\n###### #    #\n#     $**** #\n# $#$ $ ... #\n#       #@. #\n##########  #\n#############";
 
 
+	bloom_filter<Node> visited_boxes(2048);
+//	bloom_filter<int> visited_jens(2048);
+
+
+	visited_boxes.insert(rootNode);
+//	visited_jens.insert(rootNode.getCurrent_position().x * rootNode.getCurrent_position().y );
+
+
 	stack<Node> stack;
 	//stacken.push_back(&root);
 
@@ -208,7 +219,7 @@ int main(int argc, char ** argv)
 
 	while(!stack.empty() /*&& !solutionCheck()*/)
 	{
-		cout << "loopish?" << endl;
+
 
 		Node *child;
 
@@ -217,8 +228,28 @@ int main(int argc, char ** argv)
 			cout << "Nu poppar vi :D! " << endl;
 			//exit(1337);
 		}else{
-			child->print();
-			stack.push(*child);
+
+			//if(visited_jens.contains(child->getCurrent_position().x*child->getCurrent_position().y)){
+				//				cout << "JEns samma";
+					//		}
+			//check if we already visited child.
+			if( !visited_boxes.contains(*child)){
+					/*&& visited_jens.contains(child->getCurrent_position().x*child->getCurrent_position().y)))*/
+/*
+				if(!visited_boxes.contains(child->sumBoxes())){
+					cout << "Boxes inte sammas!";
+				}
+				*/
+
+				visited_boxes.insert(*child);
+			//	visited_jens.insert(child->getCurrent_position().x*child->getCurrent_position().y);
+				child->print();
+				stack.push(*child);
+			}else{
+				cout <<"Redan besökt" << child->getCurrent_position().x<< " " << child->getCurrent_position().y <<  endl;
+				//child->print();
+			}
+
 
 		}
 	}

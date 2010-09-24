@@ -5,6 +5,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <boost/functional/hash.hpp>
+
 #include "common.hpp"
 using namespace std;
 
@@ -70,13 +73,35 @@ public:
 
 
     void print(){
-    	cout << "EN MAMMA BRÄDA" << endl;
-    	for(unsigned int i=0; i<len; i++){
+    	cout << "================="<<endl;
+    	cout << "JENS POS: " << p_current_position.x << " " << p_current_position.y << endl;
+    	for(int i=0; i<len; i++){
     		cout << "BOXES" << boxes_positions[i].x << " " << boxes_positions[i].x  << endl;
     	}
 
     	cout << "================="<<endl;
     }
+
+    int sumBoxes(){
+    	int ret = 0;
+    	for(int i=0;i<len;i++){
+    		ret += (boxes_positions[i].x)*17 * (boxes_positions[i].y)*29;
+    	}
+
+    	return ret;
+    }
+    friend std::size_t hash_value(Node const& p)
+        {
+            std::size_t seed = 0;
+            boost::hash_combine(seed, p.p_current_position.x);
+            boost::hash_combine(seed, p.p_current_position.y);
+            for(int i=0;i<p.len;i++){
+            boost::hash_combine(seed, p.boxes_positions[i].x);
+            boost::hash_combine(seed, p.boxes_positions[i].y);
+
+            }
+            return seed;
+        }
 
 };
 #endif
