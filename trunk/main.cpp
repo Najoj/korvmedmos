@@ -15,6 +15,8 @@
 using namespace std;
 using boost::bloom_filter;
 
+using boost::array;
+using boost::function;
 /**
  * Variables.
  */
@@ -105,7 +107,7 @@ Node readBoard(std::string boardIn)
     // Koskenkorva.
 	int x = 0, y = 0;
 	
-	int box = 0;    // Counting boxes.
+
 	Position jens;  // Jens is the man, this is his position. Will be in root.
 	
 	//Allocate memory for the first column.
@@ -193,7 +195,18 @@ string solve(Node * root)
 
 	return NULL;
 }
+#define FILTER_SIZE 1337
+struct hash1 {
+    size_t operator()(uint32_t id) const {
+        return ((id << 4) | (id >> 4)) % FILTER_SIZE;
+    }
+};
 
+struct hash2 {
+    size_t operator()(uint32_t id) const {
+        return (id * id) % FILTER_SIZE;
+    }
+};
 /**
  * Main
  */
@@ -230,7 +243,8 @@ int main(int argc, char ** argv)
 	//***** HERE IS ACTION *****
 	Node rootNode = readBoard(boardStr);
 
-	bloom_filter<Node> visited_boxes(90000048);
+	bloom_filter<Node> visited_boxes(1000000);
+
 
 	visited_boxes.insert(rootNode);
 //	visited_jens.insert(rootNode.getCurrent_position().x * rootNode.getCurrent_position().y );
@@ -252,7 +266,8 @@ int main(int argc, char ** argv)
 	//	cout << "Position e just nu : " << stack.front().getCurrent_position().x << " "<< stack.front().getCurrent_position().x<<endl;
 		if((child = stack.front().getChild())  == NULL){
 
-			cout << "Nu poppar vi :D! " << stack.front().getCurrent_position().x << " " << stack.front().getCurrent_position().y << endl;
+		//	printBoard(&stack.front());
+			//cout << "Nu poppar vi :D! " << stack.front().getCurrent_position().x << " " << stack.front().getCurrent_position().y << endl;
 			stack.pop_front();
 			//exit(1337);
 		}else{
@@ -275,13 +290,17 @@ int main(int argc, char ** argv)
 				stack.push_front(*child);
 			}else{
 				cout <<"Redan besökt" << child->getCurrent_position().x<< " " << child->getCurrent_position().y <<  endl;
-				//child->print();
+				child->print();
 			}
 		}
 	}
 
 	//Goal node hackzz
 	//stack.pop_back();
+	if(stack.empty()){
+		cout << "NU går skamm på torra land!"<< endl;
+		exit(1);
+	}
 	string solution;
 	while(!stack.empty()){
 			//cout << moves_real[stack.top().LAST_DIR] << endl;
