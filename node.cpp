@@ -87,8 +87,7 @@ Node::~Node(){
 
 Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 {
-
-	//
+	// Check if Jens goes in to wall, if already tested direction, if previous position
 	if (board[p_current_position.x+xdir][p_current_position.y+ydir] == WALL || used_directions[dir] == USED
 			|| (p_prev_position.x == (p_current_position.x+xdir) && p_prev_position.y == (p_current_position.y+ydir))) {
 		//Avoids repeating this action
@@ -110,14 +109,14 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 				// If box would go to corner that is not goal
 				if (board[p_current_position.x+xdir+xdir][p_current_position.y+ydir+ydir] != GOAL) {
 					// UP-DOWN
-					if (board[p_current_position.x][p_current_position.y+ydir*3] == WALL &&
+					if (board[p_current_position.x+xdir*3][p_current_position.y+ydir*3] == WALL &&
 							(board[p_current_position.x+1][p_current_position.y+ydir*2] == WALL || board[p_current_position.x-1][p_current_position.y+ydir*2] == WALL)) {
 						cout << "kiss\n";
 						return NULL;
 					}
 					// LEFT-RIGHT
-					if (board[p_current_position.x+xdir*3][p_current_position.y] == WALL &&
-							(board[p_current_position.x+xdir*2][p_current_position.y+1] || board[p_current_position.x+xdir*2][p_current_position.y-1])) {
+					if (board[p_current_position.x+xdir*3][p_current_position.y+ydir*3] == WALL &&
+							(board[p_current_position.x+xdir*2][p_current_position.y+1] == WALL || board[p_current_position.x+xdir*2][p_current_position.y-1] == WALL)) {
 						cout << "bajs\n";
 						return NULL;
 					}
