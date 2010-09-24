@@ -111,13 +111,13 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 					// UP-DOWN
 					if (board[p_current_position.x+xdir*3][p_current_position.y+ydir*3] == WALL &&
 							(board[p_current_position.x+1][p_current_position.y+ydir*2] == WALL || board[p_current_position.x-1][p_current_position.y+ydir*2] == WALL)) {
-						cout << "kiss\n";
+//						cout << "kiss\n";
 						return NULL;
 					}
 					// LEFT-RIGHT
 					if (board[p_current_position.x+xdir*3][p_current_position.y+ydir*3] == WALL &&
 							(board[p_current_position.x+xdir*2][p_current_position.y+1] == WALL || board[p_current_position.x+xdir*2][p_current_position.y-1] == WALL)) {
-						cout << "bajs\n";
+//						cout << "bajs\n";
 						return NULL;
 					}
 				}
