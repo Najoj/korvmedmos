@@ -13,6 +13,14 @@
 #include "client.hpp"
 #include "node.hpp"
 #include "hash_functions.hpp"
+
+
+/**
+ * Special include ONLY FOR TESTING!
+ */
+
+#include "test.hpp"
+
 using namespace std;
 
 using boost::function;
@@ -207,6 +215,9 @@ string solve(Node * root)
  */
 int main(int argc, char ** argv)
 {
+
+	/*test();
+	exit(0);*/
 	// Command-line argument handling
 //*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
     std::string lHost,lPort,lBoard;
@@ -321,3 +332,5 @@ int main(int argc, char ** argv)
 	send(*socket, solution);
 	return 0;
 }
+
+
