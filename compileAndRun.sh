@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # You need boost bloom filter to run this program.
 # Get code:
@@ -12,6 +12,9 @@
 make
 
 # ... and let the fun begin. :-)
-for i in $(seq 1 136); do
-    ./main $i
-done
+#for i in $(seq 1 136); do
+
+# FOR THE MIDTERM MILESTONE, ONLY BOARD TWO WILL NEED TO BE SOLVED
+./main 2
+
+#done
