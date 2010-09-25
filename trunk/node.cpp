@@ -71,7 +71,7 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, int ** board, i
 
 	//Saves positions.
 	p_current_position = p_current;
-	p_prev_position = p_prev;
+	p_prev_position = p_current;
 	this->board = board;
 }
 
