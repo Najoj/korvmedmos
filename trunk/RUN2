@@ -1,0 +1,953 @@
+g++ -lboost_system main.cpp node.cpp -o main
+1:	Good solution
+
+real	0m0.057s
+user	0m0.000s
+sys	0m0.000s
+
+
+2:	Good solution
+
+real	0m0.055s
+user	0m0.010s
+sys	0m0.000s
+
+
+3:	Good solution
+
+real	0m3.064s
+user	0m0.000s
+sys	0m0.000s
+
+
+4:	NU går skamm på torra land!
+
+real	0m3.372s
+user	0m3.230s
+sys	0m0.110s
+
+
+5:	NU går skamm på torra land!
+
+real	0m1.208s
+user	0m1.160s
+sys	0m0.010s
+
+
+6:	NU går skamm på torra land!
+
+real	0m1.882s
+user	0m1.800s
+sys	0m0.050s
+
+
+7:	NU går skamm på torra land!
+
+real	0m0.242s
+user	0m0.200s
+sys	0m0.000s
+
+
+8:	NU går skamm på torra land!
+
+real	0m4.171s
+user	0m4.040s
+sys	0m0.090s
+
+
+9:	NU går skamm på torra land!
+
+real	0m2.931s
+user	0m2.830s
+sys	0m0.050s
+
+
+10:	NU går skamm på torra land!
+
+real	0m2.159s
+user	0m2.110s
+sys	0m0.010s
+
+
+11:	NU går skamm på torra land!
+
+real	0m2.374s
+user	0m2.320s
+sys	0m0.010s
+
+
+12:	NU går skamm på torra land!
+
+real	0m0.048s
+user	0m0.010s
+sys	0m0.000s
+
+
+13:	NU går skamm på torra land!
+
+real	0m1.885s
+user	0m1.800s
+sys	0m0.040s
+
+
+14:	NU går skamm på torra land!
+
+real	0m2.089s
+user	0m2.020s
+sys	0m0.030s
+
+
+15:	NU går skamm på torra land!
+
+real	0m3.803s
+user	0m3.690s
+sys	0m0.070s
+
+
+16:	Good solution
+
+real	0m1.974s
+user	0m1.890s
+sys	0m0.010s
+
+
+17:	NU går skamm på torra land!
+
+real	0m3.576s
+user	0m3.490s
+sys	0m0.060s
+
+
+18:	NU går skamm på torra land!
+
+real	0m0.328s
+user	0m0.280s
+sys	0m0.000s
+
+
+19:	NU går skamm på torra land!
+
+real	0m1.723s
+user	0m1.680s
+sys	0m0.000s
+
+
+20:	NU går skamm på torra land!
+
+real	0m3.332s
+user	0m3.240s
+sys	0m0.030s
+
+
+21:	NU går skamm på torra land!
+
+real	0m2.520s
+user	0m2.440s
+sys	0m0.050s
+
+
+22:	NU går skamm på torra land!
+
+real	0m2.402s
+user	0m2.340s
+sys	0m0.020s
+
+
+23:	NU går skamm på torra land!
+
+real	0m3.292s
+user	0m3.180s
+sys	0m0.070s
+
+
+24:	NU går skamm på torra land!
+
+real	0m3.738s
+user	0m3.630s
+sys	0m0.060s
+
+
+25:	NU går skamm på torra land!
+
+real	0m0.259s
+user	0m0.190s
+sys	0m0.000s
+
+
+26:	Good solution
+
+real	0m0.687s
+user	0m0.600s
+sys	0m0.010s
+
+
+27:	NU går skamm på torra land!
+
+real	0m2.214s
+user	0m2.130s
+sys	0m0.050s
+
+
+28:	NU går skamm på torra land!
+
+real	0m3.539s
+user	0m3.480s
+sys	0m0.020s
+
+
+29:	NU går skamm på torra land!
+
+real	0m2.448s
+user	0m2.360s
+sys	0m0.040s
+
+
+30:	NU går skamm på torra land!
+
+real	0m2.436s
+user	0m2.360s
+sys	0m0.040s
+
+
+31:	NU går skamm på torra land!
+
+real	0m2.777s
+user	0m2.680s
+sys	0m0.060s
+
+
+32:	NU går skamm på torra land!
+
+real	0m0.090s
+user	0m0.060s
+sys	0m0.000s
+
+
+33:	NU går skamm på torra land!
+
+real	0m2.817s
+user	0m2.730s
+sys	0m0.060s
+
+
+34:	NU går skamm på torra land!
+
+real	0m1.880s
+user	0m1.390s
+sys	0m0.030s
+
+
+35:	NU går skamm på torra land!
+
+real	0m5.675s
+user	0m5.370s
+sys	0m0.090s
+
+
+36:	NU går skamm på torra land!
+
+real	0m2.631s
+user	0m2.560s
+sys	0m0.030s
+
+
+37:	NU går skamm på torra land!
+
+real	0m2.700s
+user	0m2.470s
+sys	0m0.070s
+
+
+38:	NU går skamm på torra land!
+
+real	0m2.757s
+user	0m2.250s
+sys	0m0.040s
+
+
+39:	NU går skamm på torra land!
+
+real	0m2.383s
+user	0m1.860s
+sys	0m0.060s
+
+
+40:	NU går skamm på torra land!
+
+real	0m2.894s
+user	0m2.750s
+sys	0m0.060s
+
+
+41:	NU går skamm på torra land!
+
+real	0m0.787s
+user	0m0.650s
+sys	0m0.010s
+
+
+42:	NU går skamm på torra land!
+
+real	0m4.439s
+user	0m4.310s
+sys	0m0.030s
+
+
+43:	NU går skamm på torra land!
+
+real	0m0.302s
+user	0m0.270s
+sys	0m0.000s
+
+
+44:	NU går skamm på torra land!
+
+real	0m2.113s
+user	0m2.030s
+sys	0m0.050s
+
+
+45:	NU går skamm på torra land!
+
+real	0m2.837s
+user	0m2.700s
+sys	0m0.080s
+
+
+46:	NU går skamm på torra land!
+
+real	0m2.850s
+user	0m2.740s
+sys	0m0.050s
+
+
+47:	NU går skamm på torra land!
+
+real	0m0.246s
+user	0m0.210s
+sys	0m0.000s
+
+
+48:	NU går skamm på torra land!
+
+real	0m6.515s
+user	0m6.060s
+sys	0m0.210s
+
+
+49:	NU går skamm på torra land!
+
+real	0m2.722s
+user	0m2.530s
+sys	0m0.060s
+
+
+50:	NU går skamm på torra land!
+
+real	0m1.571s
+user	0m1.510s
+sys	0m0.020s
+
+
+51:	NU går skamm på torra land!
+
+real	0m0.320s
+user	0m0.270s
+sys	0m0.010s
+
+
+52:	NU går skamm på torra land!
+
+real	0m2.473s
+user	0m2.380s
+sys	0m0.040s
+
+
+53:	NU går skamm på torra land!
+
+real	0m3.967s
+user	0m3.900s
+sys	0m0.010s
+
+
+54:	NU går skamm på torra land!
+
+real	0m4.082s
+user	0m3.360s
+sys	0m0.250s
+
+
+55:	NU går skamm på torra land!
+
+real	0m3.102s
+user	0m2.690s
+sys	0m0.160s
+
+
+56:	NU går skamm på torra land!
+
+real	0m3.221s
+user	0m3.110s
+sys	0m0.070s
+
+
+57:	NU går skamm på torra land!
+
+real	0m2.557s
+user	0m2.260s
+sys	0m0.090s
+
+
+58:	NU går skamm på torra land!
+
+real	0m3.357s
+user	0m3.190s
+sys	0m0.080s
+
+
+59:	NU går skamm på torra land!
+
+real	0m1.038s
+user	0m0.980s
+sys	0m0.010s
+
+
+60:	NU går skamm på torra land!
+
+real	0m2.765s
+user	0m2.550s
+sys	0m0.120s
+
+
+61:	NU går skamm på torra land!
+
+real	0m3.475s
+user	0m2.800s
+sys	0m0.330s
+
+
+62:	NU går skamm på torra land!
+
+real	0m0.302s
+user	0m0.250s
+sys	0m0.030s
+
+
+63:	NU går skamm på torra land!
+
+real	0m3.167s
+user	0m2.950s
+sys	0m0.110s
+
+
+64:	NU går skamm på torra land!
+
+real	0m5.987s
+user	0m5.830s
+sys	0m0.080s
+
+
+65:	NU går skamm på torra land!
+
+real	0m2.422s
+user	0m2.290s
+sys	0m0.070s
+
+
+66:	NU går skamm på torra land!
+
+real	0m2.933s
+user	0m2.770s
+sys	0m0.110s
+
+
+67:	NU går skamm på torra land!
+
+real	0m6.166s
+user	0m5.970s
+sys	0m0.120s
+
+
+68:	NU går skamm på torra land!
+
+real	0m4.400s
+user	0m4.240s
+sys	0m0.100s
+
+
+69:	NU går skamm på torra land!
+
+real	0m4.260s
+user	0m4.130s
+sys	0m0.080s
+
+
+70:	NU går skamm på torra land!
+
+real	0m2.584s
+user	0m2.480s
+sys	0m0.040s
+
+
+71:	NU går skamm på torra land!
+
+real	0m4.372s
+user	0m4.250s
+sys	0m0.080s
+
+
+72:	NU går skamm på torra land!
+
+real	0m1.489s
+user	0m1.420s
+sys	0m0.030s
+
+
+73:	NU går skamm på torra land!
+
+real	0m2.412s
+user	0m2.330s
+sys	0m0.020s
+
+
+74:	NU går skamm på torra land!
+
+real	0m3.445s
+user	0m3.330s
+sys	0m0.070s
+
+
+75:	NU går skamm på torra land!
+
+real	0m2.935s
+user	0m2.820s
+sys	0m0.050s
+
+
+76:	NU går skamm på torra land!
+
+real	0m3.236s
+user	0m3.030s
+sys	0m0.020s
+
+
+77:	NU går skamm på torra land!
+
+real	0m7.523s
+user	0m7.270s
+sys	0m0.170s
+
+
+78:	NU går skamm på torra land!
+
+real	0m2.643s
+user	0m2.550s
+sys	0m0.020s
+
+
+79:	NU går skamm på torra land!
+
+real	0m1.899s
+user	0m1.810s
+sys	0m0.030s
+
+
+80:	NU går skamm på torra land!
+
+real	0m5.762s
+user	0m5.480s
+sys	0m0.150s
+
+
+81:	NU går skamm på torra land!
+
+real	0m3.068s
+user	0m2.990s
+sys	0m0.030s
+
+
+82:	NU går skamm på torra land!
+
+real	0m2.376s
+user	0m2.300s
+sys	0m0.040s
+
+
+83:	NU går skamm på torra land!
+
+real	0m3.681s
+user	0m3.590s
+sys	0m0.050s
+
+
+84:	NU går skamm på torra land!
+
+real	0m4.398s
+user	0m4.250s
+sys	0m0.080s
+
+
+85:	NU går skamm på torra land!
+
+real	0m2.466s
+user	0m2.370s
+sys	0m0.050s
+
+
+86:	NU går skamm på torra land!
+
+real	0m3.272s
+user	0m3.170s
+sys	0m0.060s
+
+
+87:	NU går skamm på torra land!
+
+real	0m5.055s
+user	0m4.890s
+sys	0m0.060s
+
+
+88:	NU går skamm på torra land!
+
+real	0m3.165s
+user	0m3.060s
+sys	0m0.030s
+
+
+89:	NU går skamm på torra land!
+
+real	0m2.916s
+user	0m2.850s
+sys	0m0.030s
+
+
+90:	NU går skamm på torra land!
+
+real	0m2.588s
+user	0m2.380s
+sys	0m0.150s
+
+
+91:	NU går skamm på torra land!
+
+real	0m2.268s
+user	0m2.200s
+sys	0m0.010s
+
+
+92:	NU går skamm på torra land!
+
+real	0m3.038s
+user	0m2.920s
+sys	0m0.060s
+
+
+93:	NU går skamm på torra land!
+
+real	0m3.663s
+user	0m3.570s
+sys	0m0.040s
+
+
+94:	Wrong solution
+
+real	0m1.876s
+user	0m1.520s
+sys	0m0.050s
+
+
+95:	NU går skamm på torra land!
+
+real	0m4.837s
+user	0m4.610s
+sys	0m0.070s
+
+
+96:	NU går skamm på torra land!
+
+real	0m4.235s
+user	0m4.040s
+sys	0m0.090s
+
+
+97:	NU går skamm på torra land!
+
+real	0m1.262s
+user	0m1.200s
+sys	0m0.020s
+
+
+98:	NU går skamm på torra land!
+
+real	0m4.737s
+user	0m4.590s
+sys	0m0.050s
+
+
+99:	NU går skamm på torra land!
+
+real	0m2.460s
+user	0m1.980s
+sys	0m0.380s
+
+
+100:	NU går skamm på torra land!
+
+real	0m2.198s
+user	0m1.610s
+sys	0m0.540s
+
+
+101:	NU går skamm på torra land!
+
+real	0m3.294s
+user	0m2.440s
+sys	0m0.770s
+
+
+102:	NU går skamm på torra land!
+
+real	0m4.391s
+user	0m3.280s
+sys	0m1.070s
+
+
+103:	NU går skamm på torra land!
+
+real	0m3.829s
+user	0m3.670s
+sys	0m0.060s
+
+
+104:	NU går skamm på torra land!
+
+real	0m5.517s
+user	0m4.620s
+sys	0m0.810s
+
+
+105:	NU går skamm på torra land!
+
+real	0m4.652s
+user	0m4.430s
+sys	0m0.140s
+
+
+106:	NU går skamm på torra land!
+
+real	0m6.619s
+user	0m6.390s
+sys	0m0.110s
+
+
+107:	NU går skamm på torra land!
+
+real	0m4.390s
+user	0m3.830s
+sys	0m0.470s
+
+
+108:	NU går skamm på torra land!
+
+real	0m2.937s
+user	0m2.510s
+sys	0m0.350s
+
+
+109:	NU går skamm på torra land!
+
+real	0m2.025s
+user	0m1.940s
+sys	0m0.030s
+
+
+110:	NU går skamm på torra land!
+
+real	0m4.796s
+user	0m4.010s
+sys	0m0.730s
+
+
+111:	NU går skamm på torra land!
+
+real	0m0.223s
+user	0m0.170s
+sys	0m0.000s
+
+
+112:	NU går skamm på torra land!
+
+real	0m4.491s
+user	0m3.870s
+sys	0m0.560s
+
+
+113:	NU går skamm på torra land!
+
+real	0m3.418s
+user	0m2.920s
+sys	0m0.450s
+
+
+114:	NU går skamm på torra land!
+
+real	0m6.261s
+user	0m4.790s
+sys	0m1.360s
+
+
+115:	NU går skamm på torra land!
+
+real	0m4.783s
+user	0m4.580s
+sys	0m0.140s
+
+
+116:	NU går skamm på torra land!
+
+real	0m2.981s
+user	0m2.900s
+sys	0m0.030s
+
+
+117:	NU går skamm på torra land!
+
+real	0m6.663s
+user	0m6.550s
+sys	0m0.060s
+
+
+118:	NU går skamm på torra land!
+
+real	0m5.412s
+user	0m5.220s
+sys	0m0.100s
+
+
+119:	NU går skamm på torra land!
+
+real	0m4.618s
+user	0m3.620s
+sys	0m0.960s
+
+
+120:	NU går skamm på torra land!
+
+real	0m4.191s
+user	0m3.020s
+sys	0m1.120s
+
+
+121:	NU går skamm på torra land!
+
+real	0m4.819s
+user	0m4.530s
+sys	0m0.230s
+
+
+122:	NU går skamm på torra land!
+
+real	0m4.957s
+user	0m3.840s
+sys	0m1.060s
+
+
+123:	NU går skamm på torra land!
+
+real	0m3.059s
+user	0m2.940s
+sys	0m0.080s
+
+
+124:	NU går skamm på torra land!
+
+real	0m3.530s
+user	0m3.450s
+sys	0m0.040s
+
+
+125:	NU går skamm på torra land!
+
+real	0m4.868s
+user	0m3.530s
+sys	0m1.280s
+
+
+126:	NU går skamm på torra land!
+
+real	0m4.473s
+user	0m4.290s
+sys	0m0.060s
+
+
+127:	NU går skamm på torra land!
+
+real	0m6.063s
+user	0m5.850s
+sys	0m0.100s
+
+
+128:	NU går skamm på torra land!
+
+real	0m4.354s
+user	0m3.930s
+sys	0m0.380s
+
+
+129:	NU går skamm på torra land!
+
+real	0m4.830s
+user	0m4.670s
+sys	0m0.090s
+
+
+130:	NU går skamm på torra land!
+
+real	0m3.616s
+user	0m3.520s
+sys	0m0.060s
+
+
+131:	./testScript.bash: rad 10: 15204 Segmenteringsfel        ./main $i
+
+real	0m0.045s
+user	0m0.010s
+sys	0m0.010s
+
+
+132:	NU går skamm på torra land!
+
+real	0m4.299s
+user	0m3.290s
+sys	0m0.960s
+
+
+133:	NU går skamm på torra land!
+
+real	0m6.485s
+user	0m6.350s
+sys	0m0.070s
+
+
+134:	NU går skamm på torra land!
+
+real	0m6.204s
+user	0m5.970s
+sys	0m0.140s
+
+
+135:	NU går skamm på torra land!
+
+real	0m6.896s
+user	0m6.580s
+sys	0m0.250s
+
+
+136:	NU går skamm på torra land!
+
+real	0m4.614s
+user	0m3.970s
+sys	0m0.580s
+
+
