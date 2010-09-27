@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# You need boost bloom filter to run this program.
+# You need the boost library for this program to compile, due to the client.
+# 
+# You also need boost bloom filter to run this program, which is not in the
+# boost library.
 # Get code:
 #  svn co https://svn.boost.org/svn/boost/sandbox/bloom_filter/trunk/
 # Install:
