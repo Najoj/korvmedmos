@@ -6,45 +6,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <boost/functional/hash.hpp>
-
 #include "common.hpp"
 using namespace std;
+
+class Board;
 
 class Node{
 private:
     // Position of player.
 	Position p_current_position;
-	
     // Previous position of player.
 	Position p_prev_position;
-    
-
-
 	short used_directions[4];
-
-	int ** board;
-
-	int len;
-
+	Board * board;
 
 	Node  * getChildDirection(int dir, int xdir, int ydir);
 
 public:
 	Node();
 	Node(Position p_current, Position p_prev,  vector <Position> *boxes,
-		int ** board);
-	Node(Position p_current, Position p_prev, Position *boxes,int ** board, int len);
-	Node(Position p_current, Position p_prev, Position *boxes, int ** board, int len, int movedBoxx, int movedBoxy);
-    // Destructor
-	~Node();
+		Board * board);
+	Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len);
+	Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len, int movedBoxx, int movedBoxy);
 
 	//Returns null if no child is available.
 	Node  * getChild();
 
 	//Saves the latest direction
 	short LAST_DIR;
-
+	int len;
 	// Pointer to boxes positions.
 	Position * boxes_positions;
 
@@ -97,17 +87,27 @@ public:
 
     	return ret;
     }
+
+    bool operator==(const Node & other) const
+    {
+	if (this->p_current_position != other.p_current_position)
+	    return false;
+	for (int i = 0; i < len; i++)
+	{
+	    if (this->boxes_positions[i] != other.boxes_positions[i])
+		return false;
+	}
+	return true;
+    }
+    
     friend std::size_t hash_value(Node const& p)
         {
-            std::size_t seed = 0;
-            boost::hash_combine(seed, p.p_current_position.x);
-            boost::hash_combine(seed, p.p_current_position.y);
+            std::size_t hash = 0;
+            hash += p.p_current_position.x + p.p_current_position.y;
             for(int i=0;i<p.len;i++){
-            boost::hash_combine(seed, p.boxes_positions[i].x);
-            boost::hash_combine(seed, p.boxes_positions[i].y);
-
+		hash += p.boxes_positions[i].x + p.boxes_positions[i].y;
             }
-            return seed;
+            return hash;
         }
 
     int getLen(){
