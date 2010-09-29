@@ -4,7 +4,7 @@
 # Count number of good solutions with  grep -c Good RUN
 
 # Compile...
-#make
+make
 
 # ... and let the fun begin. :-)
 for i in $(seq 1 136); do
