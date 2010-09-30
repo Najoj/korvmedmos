@@ -11,8 +11,8 @@
 using namespace std;
 
 /**
- * Prints the board based on given board and node.
- */
+* Prints the board based on given board and node.
+*/
 void printBoard(Board & board, Node * node)
 {
 	bool found = false;
@@ -20,22 +20,27 @@ void printBoard(Board & board, Node * node)
 	{
 		for(int i = 0; i < board.width; i++)
 		{
-			if(node->getCurrent_position().x == i && node->getCurrent_position().y == j){
+			if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
+			{
 				cout << JENS;
 				continue;
 			}
 			found = false;
-			for(int k = 0; k < node->len; k++){
-				if(node->boxes_positions[k].x == i && node->boxes_positions[k].y == j){
+			for(int k = 0; k < node->len; k++)
+			{
+				if(node->boxes_positions[k].x == i && node->boxes_positions[k].y == j)
+				{
 					if (board.get(node->boxes_positions[k]) == GOAL)
 						cout << BOX_ONGOAL;
 					else
 						cout << BOX;
+					
 					found = true;
 					break;
 				}
 			}
-			if(!found){
+			if(!found)
+			{
 				cout << (unsigned char) board.get(i,j) << "";
 			}
 		}
@@ -44,12 +49,12 @@ void printBoard(Board & board, Node * node)
 }
 
 /**
- * Reads the board into a int matrix called board (global var)
- * @param string The String representing the board.
- */
+* Reads the board into a int matrix called board (global var)
+* @param string The String representing the board.
+*/
 Node readBoard(std::string boardIn, Board & board)
 {
-    // Creates an iterator.
+	// Creates an iterator.
 	string::iterator iterator;
 	iterator = boardIn.begin();
 	vector<Position> boxes;
@@ -60,24 +65,24 @@ Node readBoard(std::string boardIn, Board & board)
 	int height = boardIn.length() / width;
 	cout << "Height:\t" << height << endl << "Width:\t" << width << endl;
 
-    // Koskenkorva.
+	// Koskenkorva.
 	int x = 0, y = 0;
-	
+
 	Position jens;  // Jens is the man, this is his position. Will be in root.
-	
-	//Allocate memory for matrix
-	board = Board(width, height);
-	
-	while(iterator != boardIn.end())
+
+	//Allocate memory for matrix, an iterates.
+	for(board = Board(width, height) ; iterator != boardIn.end(); iterator++)
 	{
 		if(*iterator == '\n')
 		{
 			// if newline add y (column)
 			y++;
 			x = 0;
-		} else {
-    		Position p(x,y);
-    		switch (*iterator) {
+		}
+		else
+		{
+			Position p(x,y);
+			switch (*iterator) {
 				case BOX:
 					boxes.push_back(p);
 					board.set_floor(p);
@@ -99,17 +104,17 @@ Node readBoard(std::string boardIn, Board & board)
 			}
 			x++;
 		}
-		iterator++;
 	}
-	
 	return Node(jens, jens, &boxes, &board);
 }
 
 /**
- * Return true if all boxes are on goal positions else false.
- */
-bool solutionCheck(Board & board, Node * node){
-	for(int i =0; i<node->len; i++){
+* Return true if all boxes are on goal positions else false.
+*/
+bool solutionCheck(Board & board, Node * node)
+{
+	for(int i =0; i<node->len; i++)
+	{
 		if (board.get(node->boxes_positions[i]) != GOAL) {
 			return false;
 		}
@@ -129,13 +134,13 @@ bool been_in_node(NodeSet nodeset, Node * node)
 }
 
 /**
- * Main
- */
+* Main
+*/
 int main(int argc, char ** argv)
 {
 	// Command-line argument handling
-//*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
-    std::string lHost,lPort,lBoard;
+	//*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
+	std::string lHost,lPort,lBoard;
 	if(argc==4)
 	{
 		lHost = std::string(argv[1]);
@@ -150,17 +155,17 @@ int main(int argc, char ** argv)
 	}
 	else
 	{
-        std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
-        return 1;
+		std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
+		return 1;
 	}
-//  */
-	
-	// öppna socket som håller connection till server
+	//  */
+
+	// Open a socket with a connection to the server.
 	boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
 
-	// välj board lBoard och läs in från server
+	// Reads lBoard from the server.
 	string boardStr(read(*socket, lBoard));
-	
+
 	//***** HERE IS ACTION *****
 	Board board;
 	Node rootNode = readBoard(boardStr, board);
@@ -178,27 +183,30 @@ int main(int argc, char ** argv)
 	{
 		iterations++;
 		Node *child;
-		if((child = stack.front().getChild())  == NULL){
+		if((child = stack.front().getChild())  == NULL)
+		{
 			stack.pop_front();
-		}else{
+		}
+		else if (!been_in_node(nodeset, child))
+		{
 			//check if we already visited child.
-			if (!been_in_node(nodeset, child)){
-				nodeset.insert(*child);
-				stack.push_front(*child);
-				//printBoard(board, child);
-				//c.get();
-			}
+			nodeset.insert(*child);
+			stack.push_front(*child);
+			//printBoard(board, child);
+			//c.get();
 		}
 	}
 
-	if(stack.empty()){
-		cout << "NU går skamm på torra land!"<< endl;
+	if(stack.empty())
+	{
+		cout << "Stack turned out to be empty. Not good."<< endl;
 		exit(1);
 	}
-	
+
 	string solution;
 	stack.pop_front(); // First node has no LAST_SET, may cause weird error
-	while(!stack.empty()){
+	while(!stack.empty())
+	{
 		solution += moves_real[stack.back().LAST_DIR] + " ";
 		stack.pop_back();
 	}
