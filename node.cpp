@@ -1,25 +1,32 @@
 #include "node.hpp"
 #include "Board.hpp"
 
-Node::Node(){
+#include <ctime>
+#include <cstdlib> 	// RANDOM
 
+using namespace std;
+
+Node::Node()
+{
 }
 
 Node::Node(Position p_current, Position p_prev, vector<Position> *boxes,
-		Board * board){
+Board * board)
+{
 	//Allocates array with positions.
 	boxes_positions = new Position[boxes->size()];
 	len = boxes->size();
-	for(short j = 0; j<4; j++){
+	for(short j = 0; j < 4; j++)
+	{
 		used_directions[j] = 0;
 	}
-	//
-	for(unsigned int i = 0; i < boxes->size(); i++){
+	
+	// Uncommented
+	for(unsigned int i = 0; i < boxes->size(); i++)
+	{
 		boxes_positions[i] = boxes->at(i);
 	}
-
-	// Johan > Jacob
-
+	
 	//Saves positions.
 	p_current_position = p_current;
 	p_prev_position = p_prev;
@@ -27,21 +34,23 @@ Node::Node(Position p_current, Position p_prev, vector<Position> *boxes,
 }
 
 /**
- * Göra barn
+ * Create children
  */
-Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len){
-
+Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len)
+{
 	this->len = len;
 	//Allocates array with positions.
 	boxes_positions = new Position[len];
-	for(short j = 0; j<4; j++){
+	for(short j = 0; j<4; j++)
+	{
 		used_directions[j] = 0;
 	}
-	//
-	for(int i = 0; i < len; i++){
+	
+	// Uncommented
+	for(int i = 0; i < len; i++)
+	{
 		boxes_positions[i] = boxes[i];
 	}
-
 	//Saves positions.
 	p_current_position = p_current;
 
@@ -51,21 +60,26 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, 
 }
 
 /**
- * Göra barn
+ * Creat children (again)
  */
-Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len, int movedBoxx, int movedBoxy){
-
+Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len, int movedBoxx, int movedBoxy)
+{
 	this->len = len;
 	//Allocates array with positions.
 	boxes_positions = new Position[len];
-	//used_directions = {0,0,0,0}; see header
+
+	//used_directions = {0,0,0,0}; // see header
+	
 	//
-	for(short j = 0; j<4; j++){
+	for(short j = 0; j < 4; j++)
+	{
 		used_directions[j] = 0;
 	}
-	for(int i = 0; i < len; i++){
+	for(int i = 0; i < len; i++)
+	{
 		boxes_positions[i] = boxes[i];
-		if (boxes_positions[i].x == p_current.x && boxes_positions[i].y == p_current.y){
+		if (boxes_positions[i].x == p_current.x && boxes_positions[i].y == p_current.y)
+		{
 			boxes_positions[i].x = movedBoxx;
 			boxes_positions[i].y = movedBoxy;
 		}
@@ -80,25 +94,41 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, 
 /**
  * Return NULL if no children found, otherwise, return the child
  */
-Node  * Node::getChildDirection(int dir, int xdir, int ydir)
+Node  * Node::getChildDirection(int dir)
 {
+	int xdir = 0, ydir = 0;
+	if(dir == UP)
+		ydir = -1;
+	else if(dir == RIGHT)
+		xdir = 1;
+	else if(dir == DOWN)
+		ydir = 1;
+	else // dir == LEFT
+		xdir = -1;
+	
 	// Check if Jens goes in to wall, if already tested direction, if previous position
 	if (board->get(p_current_position.x+xdir, p_current_position.y+ydir) == WALL || used_directions[dir] == USED
-			|| (p_prev_position.x == (p_current_position.x+xdir) && p_prev_position.y == (p_current_position.y+ydir))) {
+	|| (p_prev_position.x == (p_current_position.x+xdir) && p_prev_position.y == (p_current_position.y+ydir)))
+	{
 		//Avoids repeating this action
 		used_directions[dir] = USED;
 		return NULL;
-	} else {
+	}
+	else
+	{
 		//Check if there is a box
 		for (int i = 0; i<len; i++)
 		{
-			// kolla om de e låda
-			if (boxes_positions[i].x == p_current_position.x+xdir && boxes_positions[i].y == p_current_position.y+ydir) {
+			// Check if it as box in front.
+			if (boxes_positions[i].x == p_current_position.x+xdir && boxes_positions[i].y == p_current_position.y+ydir)
+			{
 
 				// If there is a wall on the other side of the box
-				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) == WALL){
+				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) == WALL)
+				{
 					return NULL;
 				}
+
 				// If moving box to corner column and there is no goal there (then it's stuck)
 				if (!board->xline_has_goal(p_current_position.x+xdir+xdir))
 				{
@@ -111,27 +141,32 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 					if (p_current_position.y+ydir+ydir == 1 || p_current_position.y+ydir+ydir == board->height-2)
 						return NULL;
 				}
-				
+
 				// If box would go to corner that is not goal
-				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) != GOAL) {
+				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) != GOAL)
+				{
 					// UP-DOWN
 					if (board->get(p_current_position.x+xdir*3, p_current_position.y+ydir*3) == WALL &&
-							(board->get(p_current_position.x+1, p_current_position.y+ydir*2) == WALL ||
-							board->get(p_current_position.x-1, p_current_position.y+ydir*2) == WALL)) {
-//						cout << "kiss\n";
+					(board->get(p_current_position.x+1, p_current_position.y+ydir*2) == WALL ||
+					board->get(p_current_position.x-1, p_current_position.y+ydir*2) == WALL))
+					{
 						return NULL;
 					}
+					
 					// LEFT-RIGHT
 					if (board->get(p_current_position.x+xdir*3, p_current_position.y+ydir*3) == WALL &&
-							(board->get(p_current_position.x+xdir*2, p_current_position.y+1) == WALL ||
-							board->get(p_current_position.x+xdir*2, p_current_position.y-1) == WALL)) {
-//						cout << "bajs\n";
+					(board->get(p_current_position.x+xdir*2, p_current_position.y+1) == WALL ||
+					board->get(p_current_position.x+xdir*2, p_current_position.y-1) == WALL))
+					{
 						return NULL;
 					}
 				}
+
 				// Check if there is box on other side of box
-				for (int j=0; j<len; j++) {
-					if (boxes_positions[j].x == p_current_position.x+xdir+xdir && boxes_positions[j].y == p_current_position.y+ydir+ydir) {
+				for (int j=0; j<len; j++)
+				{
+					if (boxes_positions[j].x == p_current_position.x+xdir+xdir && boxes_positions[j].y == p_current_position.y+ydir+ydir)
+					{
 						return NULL;
 					}
 				}
@@ -155,24 +190,64 @@ Node  * Node::getChildDirection(int dir, int xdir, int ydir)
 
 		return new Node(newp, p_current_position, boxes_positions, board, len);
 
-	//	Node child = Node(newPos, p_current_position,
+		//	Node child = Node(newPos, p_current_position,
 	}
 	return NULL;
 }
 
-Node  * Node::getChild(){
-	//go trough every movment we can do.
-	Node  * ret = getChildDirection(UP, 0, -1);
-	if (ret == NULL){
+Node  * Node::getChild()
+{
 
-		ret = getChildDirection(RIGHT, 1, 0);
-	}
-	if (ret == NULL){
+//* SUGGESTION ON RANDOM WALK
 
-		ret = getChildDirection(DOWN, 0, 1);
+	bool check[] = {0, 0, 0, 0};
+	int random = USED;
+	Node * ret = NULL;
+	// Seed
+	srand(time(0));
+	do
+	{
+		random = rand() % 4;
+//		cout << random << endl;	// Print the random numbers.
+		ret = getChildDirection( random );
+		check[random] = 1;
+	} while( ret == NULL && ! (check[UP] && check[RIGHT] && check[DOWN] && check[LEFT]));
+	
+	return ret;
+
+//*/
+
+/*
+	// Go through every movment we can do.
+//	Node  * ret = getChildDirection(UP, 0, -1);		// Get UP
+	Node  * ret = getChildDirection(UP);		// Get UP
+	if (ret == NULL)
+	{
+//		ret = getChildDirection(RIGHT, 1, 0);		// Get RIGHT
+		ret = getChildDirection(RIGHT);		// Get RIGHT
 	}
 	if (ret == NULL)
-		ret = getChildDirection(LEFT, -1, 0);
+	{
+//		ret = getChildDirection(DOWN, 0, 1);		// Get DOWN
+		ret = getChildDirection(DOWN);		// Get DOWN
+	}
+	if (ret == NULL)
+	{
+//		ret = getChildDirection(LEFT, -1, 0);		// Get LEFT
+		ret = getChildDirection(LEFT);			// Get LEFT
+	}
+// */
+
+
+/*	// Shorter version of the above code. Not the random walk.
+	Node * ret = getChildDirection(0);	// UP
+	// RIGHT, DOWN, LEFT
+	for(int i = 1; i < 4 ; i++)
+	{
+		if (ret != NULL)
+			break;
+		ret = getChildDirection(i);
+	}
+//*/
 	return ret;
 }
-
