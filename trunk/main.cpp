@@ -141,6 +141,8 @@ int main(int argc, char ** argv)
 	// Command-line argument handling
 	//*  // Set or remove / at the beginning of this line to uncomment or comment following 18 lines
 	std::string lHost,lPort,lBoard;
+
+	bool PRINT = false;
 	if(argc==4)
 	{
 		lHost = std::string(argv[1]);
@@ -152,6 +154,13 @@ int main(int argc, char ** argv)
 		lHost = std::string("cvap103.nada.kth.se");
 		lPort = std::string("5555");
 		lBoard = std::string(argv[1]);
+	}
+	else if (argc==3)
+	{
+		lHost = std::string("cvap103.nada.kth.se");
+		lPort = std::string("5555");
+		lBoard = std::string(argv[1]);
+		PRINT = (bool) argv[2];
 	}
 	else
 	{
@@ -181,20 +190,27 @@ int main(int argc, char ** argv)
 
 	while(!stack.empty() && !solutionCheck(board, &stack.front()))
 	{
+		cout << "Iteration " << iterations << endl;
+		if(iterations == 63){
+			int apa = 1;
+		}
 		iterations++;
 		Node *child;
 		if((child = stack.front().getChild())  == NULL)
 		{
 			stack.pop_front();
+			//cout << "POPPED" << endl;
 		}
 		else if (!been_in_node(nodeset, child))
 		{
 			//check if we already visited child.
 			nodeset.insert(*child);
 			stack.push_front(*child);
-			//printBoard(board, child);
+			if(PRINT){
+				printBoard(board, child);
 			//sleep(0.1);
-			//cin.get();
+				cin.get();
+			}
 		}
 	}
 

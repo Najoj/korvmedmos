@@ -24,6 +24,7 @@ class Node{
 
 		Node  * getChildDirection(int dir/*, int xdir, int ydir*/);
 
+		bool deadlock(Position pos, Position parent);
 	public:
 		Node();
 		Node(Position p_current, Position p_prev,  vector <Position> *boxes,
@@ -33,6 +34,8 @@ class Node{
 
 		//Returns null if no child is available.
 		Node  * getChild();
+
+
 
 		//Saves the latest direction
 		short LAST_DIR;
