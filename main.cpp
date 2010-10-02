@@ -191,7 +191,7 @@ int main(int argc, char ** argv)
 	while(!stack.empty() && !solutionCheck(board, &stack.front()))
 	{
 		cout << "Iteration " << iterations << endl;
-		if(iterations == 63){
+		if(iterations == 62){
 			int apa = 1;
 		}
 		iterations++;
