@@ -97,13 +97,17 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, 
 bool Node::deadlock(Position pos, Position parent)
 {
 	// Check left-right direction empty
-	if ((board->get(pos.left()) != WALL || board->get(pos.left()) != BOX ) && (board->get(pos.right()) != WALL || board->get(pos.right()) != BOX )) {
+
+	if ((board->get(pos.left()) == GOAL || board->get(pos.left()) == FLOOR ) && (board->get(pos.right()) == FLOOR || board->get(pos.right()) == GOAL )) {
 		return false;
 	}
 	//Check up-right direction
-	if ( (board->get(pos.up()) != WALL || board->get(pos.up()) != BOX ) && (board->get(pos.down()) != WALL || board->get(pos.down()) != BOX ) ) {
-		return false;
-	}
+	if ((board->get(pos.up()) == GOAL || board->get(pos.up()) == FLOOR ) && (board->get(pos.down()) == FLOOR || board->get(pos.down()) == GOAL )) {
+			return false;
+		}
+	//if ( (board->get(pos.up()) != WALL || board->get(pos.up()) != BOX ) && (board->get(pos.down()) != WALL || board->get(pos.down()) != BOX ) ) {
+//		return false;
+//	}
 //	if(pos.right() == parent || pos.left() == parent ){
 	//	return false;
 //	}
@@ -189,7 +193,7 @@ Node  * Node::getChildDirection(int dir)
 					}
 				}
 
-				if(deadlock( Position(p_current_position.x+xdir, p_current_position.y+ydir ), Position(p_current_position.x+xdir, p_current_position.y+ydir ) ) ){
+				if(deadlock( Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ), Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ) ) ){
 					return NULL;
 				}
 				// If box would go to corner that is not goal
