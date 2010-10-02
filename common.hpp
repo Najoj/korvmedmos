@@ -5,6 +5,9 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
+#include <iostream>
+#include <string>
+
 // Directions
 #define UP 0
 #define RIGHT 1
@@ -25,6 +28,7 @@
 #define JENS '@'
 #define JENS_ONGOAL '+'
 
+#define FAIL -1
 // Chars on the board
 
 /**
@@ -71,7 +75,16 @@ struct Position
 	{
 		return Position(x-1, y);
 	}
+
+	void addPosition(Position pos){
+		x += pos.x;
+		y += pos.y;
+	}
+
 };
+
+
+
 
 const std::string moves_real[4] = {"U","R","D","L"};
 #endif

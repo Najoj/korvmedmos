@@ -2,8 +2,12 @@
 #define BOARD_HPP
 #include "common.hpp"
 #include <vector>
+
+using namespace std;
 struct Board
 {
+	protected:
+		vector<Position> boxes;
 	private:
 		int ** matrix;       	// Used for representing the entire board.
 	public:
@@ -60,7 +64,7 @@ struct Board
 		{
 			matrix[p.x][p.y] = value;
 		}
-
+/*
 		void insert_boxes(Position* boxes,int len){
 			for(int i = 0; i < len; i++){
 				if(matrix[boxes[i].x][boxes[i].y] == GOAL){
@@ -82,6 +86,7 @@ struct Board
 				}
 			}
 		}
+		*/
 
 };
 #endif

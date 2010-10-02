@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "common.hpp"
+
 using namespace std;
 
 class Board;
@@ -14,34 +15,28 @@ class Board;
 class Node{
 	private:
 		// Position of player.
-		Position p_current_position;
+		Position jens;
 		
-		// Previous position of player.
-		Position p_prev_position;
+
 		short used_directions[4];
 		
-		Board * board;
+		int len;
+		// Pointer to boxes positions.
+		Position * boxes_positions;
 
+		//Path lenght
+		int path_cost;
+
+		//Parent
+		Node * parent;
 		Node  * getChildDirection(int dir/*, int xdir, int ydir*/);
 
 		bool deadlock(Position pos, Position parent);
 	public:
 		Node();
-		Node(Position p_current, Position p_prev,  vector <Position> *boxes,
-		Board * board);
-		Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len);
-		Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len, int movedBoxx, int movedBoxy);
-
-		//Returns null if no child is available.
-		Node  * getChild();
+		Node(Position jens, Node * parent, Position *boxes, int len, Position dir);
 
 
-
-		//Saves the latest direction
-		short LAST_DIR;
-		int len;
-		// Pointer to boxes positions.
-		Position * boxes_positions;
 
 		/**
 		* Auto genereated getter and setter methods.
@@ -51,30 +46,29 @@ class Node{
 			return boxes_positions;
 		}
 		
+		int getPathCost(){
+			return path_cost;
+		}
 		Position getCurrent_position() const
 		{
-			return p_current_position;
+			return jens;
 		}
 		
-		Position getPrev_position() const
+		
+		void setCurrent_position(Position jens)
 		{
-			return p_prev_position;
+			this->jens = jens;
 		}
 		
-		void setCurrent_position(Position p_current_position)
-		{
-			this->p_current_position = p_current_position;
-		}
-		
-		void setPrev_position(Position p_prev_position)
-		{
-			this->p_prev_position = p_prev_position;
+
+		Node * getParent(){
+			return parent;
 		}
 		
 		void print()
 		{
 			cout << "================="<<endl;
-			cout << "JENS POS: " << p_current_position.x << " " << p_current_position.y << endl;
+			cout << "JENS POS: " << jens.x << " " << jens.y << endl;
 			for(int i = 0; i < len; i++)
 			{
 				cout << "BOXES" << boxes_positions[i].x << " " << boxes_positions[i].y  << endl;
@@ -86,19 +80,14 @@ class Node{
 			cout << "================="<<endl;
 		}
 
-		int sumBoxes()
-		{
-			int ret = 0;
-			for(int i=0; i < len; i++)
-			{
-				ret += (boxes_positions[i].x)*17 * (boxes_positions[i].y)*29;
-			}
-			return ret;
-		}
+
+		/**
+		 * Hash grejjer här nere grejja inte me
+		 */
 
 		bool operator==(const Node & other) const
 		{
-			if (this->p_current_position != other.p_current_position)
+			if (this->jens != other.jens)
 				return false;
 			for (int i = 0; i < len; i++)
 			{
@@ -111,7 +100,7 @@ class Node{
 		friend std::size_t hash_value(Node const& p)
 		{
 			std::size_t hash = 0;
-			hash += p.p_current_position.x + p.p_current_position.y;
+			hash += p.jens.x + p.jens.y;
 			for(int i = 0; i < p.len; i++)
 			{
 				hash += p.boxes_positions[i].x + p.boxes_positions[i].y;
