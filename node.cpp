@@ -96,48 +96,59 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, 
  */
 bool Node::deadlock(Position pos, Position parent)
 {
-	// Check left-right direction empty
+	bool reply = false;
 
 	if ((board->get(pos.left()) == GOAL || board->get(pos.left()) == FLOOR ) && (board->get(pos.right()) == FLOOR || board->get(pos.right()) == GOAL )) {
-		return false;
+		reply = reply || false;
 	}
 	//Check up-right direction
 	if ((board->get(pos.up()) == GOAL || board->get(pos.up()) == FLOOR ) && (board->get(pos.down()) == FLOOR || board->get(pos.down()) == GOAL )) {
-			return false;
-		}
-	//if ( (board->get(pos.up()) != WALL || board->get(pos.up()) != BOX ) && (board->get(pos.down()) != WALL || board->get(pos.down()) != BOX ) ) {
-//		return false;
-//	}
-//	if(pos.right() == parent || pos.left() == parent ){
-	//	return false;
-//	}
-	if (board->get(pos.right()) == BOX || board->get(pos.left()) == BOX ) {
-
-		if(pos.right() == parent){
-			return deadlock(pos.left(),pos);
-		}
-
-		else if(pos.left() == parent){
-			return deadlock(pos.right(),pos);
-		}
-
-		else{
-			return deadlock(pos.right(),pos) || deadlock(pos.left(),pos);
-		}
+		reply = reply || false;
 	}
 
-	if (board->get(pos.up()) == BOX || board->get(pos.down()) == BOX ) {
-		if(pos.up() == parent){
-			return deadlock(pos.down(),pos);
-		}else if(pos.down() == parent){
-			return deadlock(pos.up(),pos);
-		}else{
-			return deadlock(pos.down(),pos) || deadlock(pos.up(),pos);
+
+
+	// Fetch a box
+	for(int i = 0; i < len && ! reply; i++) {
+		// Check left-right direction empty
+		if( boxes_positions[i] == pos.left() || boxes_positions[i] == pos.right() || boxes_positions[i] == pos.up() || boxes_positions[i] == pos.down())
+		{
+		//if ( (board->get(pos.up()) != WALL || board->get(pos.up()) != BOX ) && (board->get(pos.down()) != WALL || board->get(pos.down()) != BOX ) ) {
+		//		return false;
+		//	}
+		//	if(pos.right() == parent || pos.left() == parent ){
+			//	return false;
+		//	}
+
+			//
+			if (pos.right() == boxes_positions[i] || pos.left() == boxes_positions[i] ) {
+
+				if(pos.right() == parent){
+					reply = reply || deadlock(pos.left(),pos);
+				}
+
+				else if(pos.left() == parent){
+					reply = reply || deadlock(pos.right(),pos);
+				}
+
+				else{
+					reply = reply || deadlock(pos.right(),pos) || deadlock(pos.left(),pos);
+				}
+			}
+			//
+			if (pos.up() == boxes_positions[i] || pos.down() == boxes_positions[i] ) {
+				if(pos.up() == parent){
+					reply = reply || deadlock(pos.down(),pos);
+				}else if(pos.down() == parent){
+					reply = reply || deadlock(pos.up(),pos);
+				}else{
+					reply = reply || deadlock(pos.down(),pos) || deadlock(pos.up(),pos);
+				}
+			}
 		}
 	}
-
 	cout << "DEAD LOCK!!!" << endl;
-	return true;
+	return reply;
 }
 
 /**
@@ -145,6 +156,8 @@ bool Node::deadlock(Position pos, Position parent)
  */
 Node  * Node::getChildDirection(int dir)
 {
+	cout << "Riktigt riktning " << moves_real[dir] << endl;
+	cout << "A: Positionen är: (" << p_current_position.x << ", " << p_current_position.y << ")" << endl;
 	int xdir = 0, ydir = 0;
 	if(dir == UP)
 		ydir = -1;
@@ -193,6 +206,15 @@ Node  * Node::getChildDirection(int dir)
 					}
 				}
 
+				// Check if there is box on other side of box
+				for (int j=0; j<len; j++)
+				{
+					if (boxes_positions[j].x == p_current_position.x+xdir+xdir && boxes_positions[j].y == p_current_position.y+ydir+ydir)
+					{
+						return NULL;
+					}
+				}
+				cout << "B: Positionen är: (" <<(p_current_position.x+xdir*2)<< ", " << (p_current_position.y+ydir*2)  << ")" << endl;
 				if(deadlock( Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ), Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ) ) ){
 					return NULL;
 				}
@@ -218,14 +240,7 @@ Node  * Node::getChildDirection(int dir)
 					}
 				}*/
 
-				// Check if there is box on other side of box
-				for (int j=0; j<len; j++)
-				{
-					if (boxes_positions[j].x == p_current_position.x+xdir+xdir && boxes_positions[j].y == p_current_position.y+ydir+ydir)
-					{
-						return NULL;
-					}
-				}
+
 				//Makes sure we never go this way again from this node.
 				used_directions[dir] = USED;
 
@@ -260,12 +275,14 @@ Node  * Node::getChild()
 	int random = USED;
 	Node * ret = NULL;
 	// Seed
-	srand(4711);
+	srand(4711); // TODO: SEED MÅSTE FLYTTAS
 	do
 	{
 		random = rand() % 4;
 //		cout << random << endl;	// Print the random numbers.
+		board->insert_boxes(boxes_positions,len);
 		ret = getChildDirection( random );
+		board->remove_boxes(boxes_positions,len);
 		check[random] = 1;
 	} while( ret == NULL && ! (check[UP] && check[RIGHT] && check[DOWN] && check[LEFT]));
 	
