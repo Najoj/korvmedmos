@@ -94,21 +94,45 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, 
 /**
  * DEAD LOCK HEAD SHOT, return true if locked position
  */
-bool Node::deadlock(Position pos)
+bool Node::deadlock(Position pos, Position parent)
 {
 	// Check left-right direction empty
-	if (board->get(pos.right()) == FLOOR && board->get(pos.left()) == FLOOR) {
+	if ((board->get(pos.left()) != WALL || board->get(pos.left()) != BOX ) && (board->get(pos.right()) != WALL || board->get(pos.right()) != BOX )) {
 		return false;
 	}
-	if (board->get(pos.up()) == FLOOR && board->get(pos.down()) == FLOOR) {
+	//Check up-right direction
+	if ( (board->get(pos.up()) != WALL || board->get(pos.up()) != BOX ) && (board->get(pos.down()) != WALL || board->get(pos.down()) != BOX ) ) {
 		return false;
 	}
-	if (board->get(pos.right()) == BOX) {
-		return deadlock(pos.right()) && deadlock(pos.left());
+//	if(pos.right() == parent || pos.left() == parent ){
+	//	return false;
+//	}
+	if (board->get(pos.right()) == BOX || board->get(pos.left()) == BOX ) {
+
+		if(pos.right() == parent){
+			return deadlock(pos.left(),pos);
+		}
+
+		else if(pos.left() == parent){
+			return deadlock(pos.right(),pos);
+		}
+
+		else{
+			return deadlock(pos.right(),pos) || deadlock(pos.left(),pos);
+		}
 	}
-	if (board->get(pos.left()) == BOX) {
-		return deadlock(pos.right()) && deadlock(pos.left());
+
+	if (board->get(pos.up()) == BOX || board->get(pos.down()) == BOX ) {
+		if(pos.up() == parent){
+			return deadlock(pos.down(),pos);
+		}else if(pos.down() == parent){
+			return deadlock(pos.up(),pos);
+		}else{
+			return deadlock(pos.down(),pos) || deadlock(pos.up(),pos);
+		}
 	}
+
+	cout << "DEAD LOCK!!!" << endl;
 	return true;
 }
 
@@ -143,7 +167,7 @@ Node  * Node::getChildDirection(int dir)
 			// Check if it as box in front.
 			if (boxes_positions[i].x == p_current_position.x+xdir && boxes_positions[i].y == p_current_position.y+ydir)
 			{
-				Position beyondbox(p_current_position.x+xdir*2, p_current_position.y+ydir*2);
+				//Position beyondbox(p_current_position.x+xdir*2, p_current_position.y+ydir*2);
 				// If there is a wall on the other side of the box
 				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) == WALL)
 				{
@@ -159,18 +183,24 @@ Node  * Node::getChildDirection(int dir)
 				// If moving box to corner row and there is no goal there (then it's stuck)
 				if (!board->yline_has_goal(p_current_position.y+ydir+ydir))
 				{
-					if (p_current_position.y+ydir+ydir == 1 || p_current_position.y+ydir+ydir == board->height-2)
+					if (p_current_position.y+ydir+ydir == 1 || p_current_position.y+ydir+ydir == board->height-2){
+
 						return NULL;
+					}
 				}
 
+				if(deadlock( Position(p_current_position.x+xdir, p_current_position.y+ydir ), Position(p_current_position.x+xdir, p_current_position.y+ydir ) ) ){
+					return NULL;
+				}
 				// If box would go to corner that is not goal
-				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) != GOAL)
+				/*if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) != GOAL)
 				{
 					// UP-DOWN
 					if (board->get(p_current_position.x+xdir*3, p_current_position.y+ydir*3) == WALL &&
 					(board->get(p_current_position.x+1, p_current_position.y+ydir*2) == WALL ||
 					board->get(p_current_position.x-1, p_current_position.y+ydir*2) == WALL))
 					{
+						cout << "If box would go to corner that is not goal:UP-DOWN" << endl;
 						return NULL;
 					}
 					
@@ -179,9 +209,10 @@ Node  * Node::getChildDirection(int dir)
 					(board->get(p_current_position.x+xdir*2, p_current_position.y+1) == WALL ||
 					board->get(p_current_position.x+xdir*2, p_current_position.y-1) == WALL))
 					{
+						cout << "If box would go to corner that is not goal:LEFT-RIGHT" << endl;
 						return NULL;
 					}
-				}
+				}*/
 
 				// Check if there is box on other side of box
 				for (int j=0; j<len; j++)
@@ -225,7 +256,7 @@ Node  * Node::getChild()
 	int random = USED;
 	Node * ret = NULL;
 	// Seed
-	srand(time(0));
+	srand(4711);
 	do
 	{
 		random = rand() % 4;
