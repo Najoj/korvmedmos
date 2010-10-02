@@ -92,6 +92,27 @@ Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, 
 }
 
 /**
+ * DEAD LOCK HEAD SHOT, return true if locked position
+ */
+bool Node::deadlock(Position pos)
+{
+	// Check left-right direction empty
+	if (board->get(pos.right()) == FLOOR && board->get(pos.left()) == FLOOR) {
+		return false;
+	}
+	if (board->get(pos.up()) == FLOOR && board->get(pos.down()) == FLOOR) {
+		return false;
+	}
+	if (board->get(pos.right()) == BOX) {
+		return deadlock(pos.right()) && deadlock(pos.left());
+	}
+	if (board->get(pos.left()) == BOX) {
+		return deadlock(pos.right()) && deadlock(pos.left());
+	}
+	return true;
+}
+
+/**
  * Return NULL if no children found, otherwise, return the child
  */
 Node  * Node::getChildDirection(int dir)
@@ -122,7 +143,7 @@ Node  * Node::getChildDirection(int dir)
 			// Check if it as box in front.
 			if (boxes_positions[i].x == p_current_position.x+xdir && boxes_positions[i].y == p_current_position.y+ydir)
 			{
-
+				Position beyondbox(p_current_position.x+xdir*2, p_current_position.y+ydir*2);
 				// If there is a wall on the other side of the box
 				if (board->get(p_current_position.x+xdir+xdir, p_current_position.y+ydir+ydir) == WALL)
 				{
