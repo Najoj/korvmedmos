@@ -9,91 +9,33 @@ using namespace std;
 Node::Node()
 {
 }
+Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir){
 
-Node::Node(Position p_current, Position p_prev, vector<Position> *boxes,
-Board * board)
-{
-	//Allocates array with positions.
-	boxes_positions = new Position[boxes->size()];
-	len = boxes->size();
-	for(short j = 0; j < 4; j++)
-	{
-		used_directions[j] = 0;
-	}
-	
-	// Uncommented
-	for(unsigned int i = 0; i < boxes->size(); i++)
-	{
-		boxes_positions[i] = boxes->at(i);
-	}
-	
-	//Saves positions.
-	p_current_position = p_current;
-	p_prev_position = p_prev;
-	this->board = board;
-}
-
-/**
- * Create children
- */
-Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len)
-{
 	this->len = len;
-	//Allocates array with positions.
 	boxes_positions = new Position[len];
-	for(short j = 0; j<4; j++)
-	{
-		used_directions[j] = 0;
-	}
-	
-	// Uncommented
+	//Copy boxes.
 	for(int i = 0; i < len; i++)
 	{
-		boxes_positions[i] = boxes[i];
-	}
-	//Saves positions.
-	p_current_position = p_current;
-
-	//cout << "Positionen e: " << p_current_position.x << " " << p_current_position.y << endl;
-	p_prev_position = p_prev;
-	this->board = board;
-}
-
-/**
- * Creat children (again)
- */
-Node::Node(Position p_current, Position p_prev, Position *boxes, Board * board, int len, int movedBoxx, int movedBoxy)
-{
-	this->len = len;
-	//Allocates array with positions.
-	boxes_positions = new Position[len];
-
-	//used_directions = {0,0,0,0}; // see header
-	
-	//
-	for(short j = 0; j < 4; j++)
-	{
-		used_directions[j] = 0;
-	}
-	for(int i = 0; i < len; i++)
-	{
-		boxes_positions[i] = boxes[i];
-		if (boxes_positions[i].x == p_current.x && boxes_positions[i].y == p_current.y)
-		{
-			boxes_positions[i].x = movedBoxx;
-			boxes_positions[i].y = movedBoxy;
+		//Uppdaterar ev. boxar om det behövs
+		if(boxes[i].x == jens.x && boxes[i].y == jens.y){
+			boxes_positions[i].x = boxes[i].x + dir.x;
+			boxes_positions[i].y = boxes[i].y + dir.y;
+		}else{
+			boxes_positions[i] = boxes[i];
 		}
 	}
 
-	//Saves positions.
-	p_current_position = p_current;
-	p_prev_position = p_current;
-	this->board = board;
+	//Saves jens pos.
+	this->jens = jens;
+	this->parent = parent;
+
+	path_cost = 0;
 }
 
 /**
  * DEAD LOCK HEAD SHOT, return true if locked position
  */
+/* SKA IN I RULES
 bool Node::deadlock(Position pos, Position parent)
 {
 	bool reply = false;
@@ -150,10 +92,11 @@ bool Node::deadlock(Position pos, Position parent)
 	cout << "DEAD LOCK!!!" << endl;
 	return reply;
 }
-
+*/
 /**
  * Return NULL if no children found, otherwise, return the child
  */
+/** SKA IN I RULES
 Node  * Node::getChildDirection(int dir)
 {
 	cout << "Riktigt riktning " << moves_real[dir] << endl;
@@ -238,7 +181,7 @@ Node  * Node::getChildDirection(int dir)
 						cout << "If box would go to corner that is not goal:LEFT-RIGHT" << endl;
 						return NULL;
 					}
-				}*/
+				}
 
 
 				//Makes sure we never go this way again from this node.
@@ -265,8 +208,12 @@ Node  * Node::getChildDirection(int dir)
 	}
 	return NULL;
 }
+*/
 
-Node  * Node::getChild()
+
+/*
+ *
+ Node  * Node::getChild()
 {
 
 //* SUGGESTION ON RANDOM WALK
@@ -280,13 +227,13 @@ Node  * Node::getChild()
 	{
 		random = rand() % 4;
 //		cout << random << endl;	// Print the random numbers.
-		board->insert_boxes(boxes_positions,len);
+
 		ret = getChildDirection( random );
-		board->remove_boxes(boxes_positions,len);
+
 		check[random] = 1;
 	} while( ret == NULL && ! (check[UP] && check[RIGHT] && check[DOWN] && check[LEFT]));
 	
-	return ret;
+	return ret;*/
 
 //*/
 
@@ -322,5 +269,5 @@ Node  * Node::getChild()
 		ret = getChildDirection(i);
 	}
 //*/
-	return ret;
-}
+	//return ret;
+//}

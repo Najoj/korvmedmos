@@ -7,13 +7,18 @@
 //Custom includes
 #include "client.hpp"
 #include "node.hpp"
-#include "Board.hpp"
+
+
+#include "rules.hpp"
+
 using namespace std;
 
+Rules *rules;
+deque<Node> stack;
 /**
 * Prints the board based on given board and node.
 */
-void printBoard(Board & board, Node * node)
+/*void printBoard(Board & board, Node * node)
 {
 	bool found = false;
 	cout << endl << "JENS position: x" << node->getCurrent_position().x << " Y " << node->getCurrent_position().y << endl;
@@ -47,72 +52,13 @@ void printBoard(Board & board, Node * node)
 		}
 		cout << endl;
 	}
-}
+}*/
 
-/**
-* Reads the board into a int matrix called board (global var)
-* @param string The String representing the board.
-*/
-Node readBoard(std::string boardIn, Board & board)
-{
-	// Creates an iterator.
-	string::iterator iterator;
-	iterator = boardIn.begin();
-	vector<Position> boxes;
-
-	//Get the lenght of the board. Which is the position of first '\n'.
-	int width = boardIn.find("\n");
-	// Height is then the total length of the string, divide with the height.
-	int height = boardIn.length() / width;
-	cout << "Height:\t" << height << endl << "Width:\t" << width << endl;
-
-	// Koskenkorva.
-	int x = 0, y = 0;
-
-	Position jens;  // Jens is the man, this is his position. Will be in root.
-
-	//Allocate memory for matrix, an iterates.
-	for(board = Board(width, height) ; iterator != boardIn.end(); iterator++)
-	{
-		if(*iterator == '\n')
-		{
-			// if newline add y (column)
-			y++;
-			x = 0;
-		}
-		else
-		{
-			Position p(x,y);
-			switch (*iterator) {
-				case BOX:
-					boxes.push_back(p);
-					board.set_floor(p);
-					break;
-				case JENS:
-					jens = p;
-					board.set_floor(p);
-					break;
-				case BOX_ONGOAL:
-					boxes.push_back(p);
-					board.add_goal(p);
-					break;
-				case JENS_ONGOAL:
-					jens = p;
-					board.add_goal(p);
-					break;
-				default:
-					board.set(p, *iterator);
-			}
-			x++;
-		}
-	}
-	return Node(jens, jens, &boxes, &board);
-}
 
 /**
 * Return true if all boxes are on goal positions else false.
 */
-bool solutionCheck(Board & board, Node * node)
+/*bool solutionCheck(Board & board, Node * node)
 {
 	for(int i =0; i<node->len; i++)
 	{
@@ -121,19 +67,65 @@ bool solutionCheck(Board & board, Node * node)
 		}
 	}
 	return true;
-}
+}*/
 
-typedef boost::unordered_set<Node> NodeSet;
+//typedef boost::unordered_set<Node> NodeSet;
 
-bool been_in_node(NodeSet & nodeset, Node * node)
+/*bool been_in_node(NodeSet & nodeset, Node * node)
 {
 	NodeSet::iterator iterator = nodeset.find(*node);
 	if (iterator != nodeset.end())
 		return true;
 	else
 		return false;
-}
+}*/
+Position getXYDir(int dir){
+	Position ret(0,0);
+	if(dir == UP)
+		ret.y = -1;
+	else if(dir == RIGHT)
+		ret.x = 1;
+	else if(dir == DOWN)
+		ret.y = 1;
+	else // dir == LEFT
+		ret.x = -1;
 
+	return ret;
+}
+void process(Node *n){
+
+
+	int best_cost = FAIL;
+	int best_dir = FAIL;
+	//Kötta igenom alla direction
+	for(unsigned int i = 0; i < 4; i++){
+		if( rules->enforce(i, n) != FAIL){
+			//Fick en bra väg att gå
+			int temp = rules->heuristics(i,n);
+
+			//Kollar om den är bäst
+			if(temp < best_cost){
+				best_cost = temp;
+				best_dir = i;
+			}
+		}
+	}
+
+	if(best_dir == FAIL){
+		//Poppa nått.
+		stack.pop_front();
+		return;
+	}
+
+
+	Position p = n->getCurrent_position();
+
+	p.addPosition(getXYDir(best_dir));
+
+	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir));
+	stack.push_front( *temp );
+
+}
 /**
 * Main
 */
@@ -177,42 +169,33 @@ int main(int argc, char ** argv)
 	string boardStr(read(*socket, lBoard));
 
 	//***** HERE IS ACTION *****
-	Board board;
-	Node rootNode = readBoard(boardStr, board);
+	//Node rootNode = readBoard(boardStr, board);
 	cout << boardStr;
 
-	NodeSet nodeset;
-	nodeset.insert(rootNode);
+	rules = new Rules(boardStr);
+
+	//NodeSet nodeset;
+	//nodeset.insert(rootNode);
 	int iterations = 0;
-	deque<Node> stack;
+
 
 	//Push root node onto stack
-	stack.push_front(rootNode);
 
-	while(!stack.empty() && !solutionCheck(board, &stack.front()))
+
+	while(!stack.empty())
 	{
+		process(&stack.front());
 		cout << "Iteration " << iterations << endl;
 		if(iterations == 37){
 			int apa = 1;
 		}
 		iterations++;
-		Node *child;
-		if((child = stack.front().getChild())  == NULL)
-		{
-			stack.pop_front();
-			//cout << "POPPED" << endl;
-		}
-		else if (!been_in_node(nodeset, child))
-		{
-			//check if we already visited child.
-			nodeset.insert(*child);
-			stack.push_front(*child);
-			if(PRINT){
-				printBoard(board, child);
+		if(PRINT){
+			//	printBoard(board, child);
 			//sleep(0.1);
 				cin.get();
 			}
-		}
+
 	}
 
 	if(stack.empty())
@@ -225,7 +208,7 @@ int main(int argc, char ** argv)
 	stack.pop_front(); // First node has no LAST_SET, may cause weird error
 	while(!stack.empty())
 	{
-		solution += moves_real[stack.back().LAST_DIR] + " ";
+		//solution += moves_real[stack.back().LAST_DIR] + " ";
 		stack.pop_back();
 	}
 
