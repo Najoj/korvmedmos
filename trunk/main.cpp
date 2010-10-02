@@ -124,7 +124,7 @@ bool solutionCheck(Board & board, Node * node)
 
 typedef boost::unordered_set<Node> NodeSet;
 
-bool been_in_node(NodeSet nodeset, Node * node)
+bool been_in_node(NodeSet & nodeset, Node * node)
 {
 	NodeSet::iterator iterator = nodeset.find(*node);
 	if (iterator != nodeset.end())
@@ -193,7 +193,8 @@ int main(int argc, char ** argv)
 			nodeset.insert(*child);
 			stack.push_front(*child);
 			//printBoard(board, child);
-			//c.get();
+			//sleep(0.1);
+			//cin.get();
 		}
 	}
 
