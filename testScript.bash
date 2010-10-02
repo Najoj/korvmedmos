@@ -9,9 +9,7 @@ make
 # ... and let the fun begin. :-)
 for i in $(seq 1 136); do
     echo -ne "=== $i ===\n"
-    time ./main $i
-    ps -e | grep main | awk '{print $3}'
+    time ./main $i &
+    sleep 61 && killall -9 main	
     echo -e "\n"
 done
-
-# To make a process kill after given time use timelimit.bash
