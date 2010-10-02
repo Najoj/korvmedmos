@@ -44,13 +44,44 @@ struct Board
 		{
 			matrix[p.x][p.y] = FLOOR;
 		}
-		int & get(int x, int y)
+		int get(int x, int y)
 		{
+			if(x < 0 || width <= x)
+				return WALL;
+			if(y < 0 || height <= y)
+				return WALL;
 			return matrix[x][y];
 		}
-		int & get(Position p)
+		int get(Position p)
 		{
 			return get(p.x, p.y);
 		}
+		void set(Position p, int value)
+		{
+			matrix[p.x][p.y] = value;
+		}
+
+		void insert_boxes(Position* boxes,int len){
+			for(int i = 0; i < len; i++){
+				if(matrix[boxes[i].x][boxes[i].y] == GOAL){
+					matrix[boxes[i].x][boxes[i].y] = BOX_ONGOAL;
+					cout << "BOX_ONGOAL inserted (" << boxes[i].x << "," << boxes[i].y << endl;
+				}else{
+					matrix[boxes[i].x][boxes[i].y] = BOX;
+					cout << "BOX inserted (" << boxes[i].x << "," << boxes[i].y << endl;
+				}
+			}
+		}
+
+		void remove_boxes(Position* boxes,int len){
+			for(int i = 0; i < len; i++){
+				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL){
+					matrix[boxes[i].x][boxes[i].y] = GOAL;
+				}else{
+					matrix[boxes[i].x][boxes[i].y] = FLOOR;
+				}
+			}
+		}
+
 };
 #endif

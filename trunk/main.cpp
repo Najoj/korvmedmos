@@ -16,6 +16,7 @@ using namespace std;
 void printBoard(Board & board, Node * node)
 {
 	bool found = false;
+	cout << endl << "JENS position: x" << node->getCurrent_position().x << " Y " << node->getCurrent_position().y << endl;
 	for(int j = 0; j < board.height; j++)
 	{
 		for(int i = 0; i < board.width; i++)
@@ -34,7 +35,7 @@ void printBoard(Board & board, Node * node)
 						cout << BOX_ONGOAL;
 					else
 						cout << BOX;
-					
+
 					found = true;
 					break;
 				}
@@ -100,7 +101,7 @@ Node readBoard(std::string boardIn, Board & board)
 					board.add_goal(p);
 					break;
 				default:
-					board.get(p) = *iterator;
+					board.set(p, *iterator);
 			}
 			x++;
 		}
@@ -191,7 +192,7 @@ int main(int argc, char ** argv)
 	while(!stack.empty() && !solutionCheck(board, &stack.front()))
 	{
 		cout << "Iteration " << iterations << endl;
-		if(iterations == 62){
+		if(iterations == 37){
 			int apa = 1;
 		}
 		iterations++;
