@@ -38,8 +38,12 @@ bool Rules::readBoard(std::string boardIn)
 	int x = 0, y = 0;
 
 
-	Position jens;  // Jens is the man, this is his position. Will be in root.
+	//Create the board.
+	board = new Board(width,height);
 
+	if(board == NULL){
+		cerr << "FAILED" << endl;
+	}
 	//Allocate memory for matrix, an iterates.
 	while(iterator != boardIn.end())
 	{
@@ -54,23 +58,23 @@ bool Rules::readBoard(std::string boardIn)
 			Position p(x,y);
 			switch (*iterator) {
 				case BOX:
-					boxes.push_back(p);
-					this->set_floor(p);
+					board->boxes.push_back(p);
+					board->set_floor(p);
 					break;
 				case JENS:
-					jens = p;
-					this->set_floor(p);
+					board->setJens(p);
+					board->set_floor(p);
 					break;
 				case BOX_ONGOAL:
-					boxes.push_back(p);
-					this->add_goal(p);
+					board->boxes.push_back(p);
+					board->add_goal(p);
 					break;
 				case JENS_ONGOAL:
-					jens = p;
-					this->add_goal(p);
+					board->setJens(p);
+					board->add_goal(p);
 					break;
 				default:
-					this->set(p, *iterator);
+					board->set(p, *iterator);
 			}
 			x++;
 		}
@@ -80,4 +84,57 @@ bool Rules::readBoard(std::string boardIn)
 	return true;
 	//return Node(*jens,*jens,NULL,2);//Node(jens, jens, &boxes, &board);
 }
+
+Node Rules::getRootNode(){
+
+	/**
+	 * TODO: Makes this nicer!
+	 */
+	//Temporarily copies boxes into a vector rather than stack!
+	Position *temp_boxes = new Position[board->boxes.size()];
+	for(unsigned short i = 0; i< board->boxes.size(); i++){
+		temp_boxes[i] = board->boxes[i];
+	}
+	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1));
+}
+/**
+		 * Prints the board with a give Node
+		 * TODO: TEST! This is basically copy paste from original main.cpp file!
+		 */
+		void Rules::printBoard(Node * node){
+
+
+			bool found = false;
+				cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
+				for(int j = 0; j < board->height; j++)
+				{
+					for(int i = 0; i < board->width; i++)
+					{
+						if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
+						{
+							cout << JENS;
+							continue;
+						}
+						found = false;
+						for(int k = 0; k < node->getLen(); k++)
+						{
+							if(node->getBoxes()[k].x == i && node->getBoxes()[k].y == j)
+							{
+								if (board->get(node->getBoxes()[k]) == GOAL)
+									cout << BOX_ONGOAL;
+								else
+									cout << BOX;
+
+								found = true;
+								break;
+							}
+						}
+						if(!found)
+						{
+							cout << (unsigned char) board->get(i,j) << "";
+						}
+					}
+					cout << endl;
+				}
+		}
 
