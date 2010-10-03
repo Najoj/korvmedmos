@@ -17,11 +17,16 @@ struct Board
 		
 		// This is the original position of Jens.
 		Position jens;
+
+
 	private:
 		// Used for representing the entire board.
 		int ** matrix;
 	public:
 		
+		//TODO: Remove this var.
+		//This is the original position of the goals (when the game starts)
+				vector<Position> goals;
 		/**
 		 * TODO: Should this be public?
 		 */
@@ -59,6 +64,7 @@ struct Board
 		}
 		void add_goal(Position p)
 		{
+			goals.push_back(p);
 			matrix[p.x][p.y] = GOAL;
 		}
 		void set_floor(Position p)
@@ -86,14 +92,17 @@ struct Board
 			for(int i = 0; i < len; i++){
 				if(matrix[boxes[i].x][boxes[i].y] == GOAL){
 					matrix[boxes[i].x][boxes[i].y] = BOX_ONGOAL;
-					cout << "BOX_ONGOAL inserted (" << boxes[i].x << "," << boxes[i].y << endl;
+				//	cout << "BOX_ONGOAL inserted (" << boxes[i].x << "," << boxes[i].y << endl;
 				}else{
 					matrix[boxes[i].x][boxes[i].y] = BOX;
-					cout << "BOX inserted (" << boxes[i].x << "," << boxes[i].y << endl;
+				//	cout << "BOX inserted (" << boxes[i].x << "," << boxes[i].y << endl;
 				}
 			}
 		}
 		
+		/**
+		 * Denna gör en dum grejj med goals! Nån annan får fixa.
+		 */
 		void remove_boxes(Position* boxes,int len){
 			for(int i = 0; i < len; i++){
 				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL){

@@ -6,8 +6,7 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-#include <iostream>
-#include <string>
+#include "std_header.hpp"
 
 // Directions
 #define UP 0
@@ -33,6 +32,8 @@
 #define JENS_ONGOAL '+'
 
 #define FAIL -1
+
+#define OK 1
 // Chars on the board
 
 /**
@@ -82,6 +83,26 @@ struct Position
 	void addPosition(Position pos) {
 		x += pos.x;
 		y += pos.y;
+	}
+
+	Position getDirection(int dir){
+		switch(dir){
+		case LEFT:
+			return left();
+			break;
+		case RIGHT:
+			return right();
+			break;
+		case UP:
+			return up();
+			break;
+		case DOWN:
+			return down();
+			break;
+		default:
+			return *this;
+		}
+
 	}
 
 };

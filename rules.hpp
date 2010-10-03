@@ -1,9 +1,3 @@
-/**
- * rules.hpp
- *
- * 
- */
-
 #ifndef RULES_HPP
 #define RULES_HPP
 
@@ -15,42 +9,91 @@
 #include "node.hpp"
 #include "common.hpp"
 
-class Rules: protected Heuristics {
+class Rules: protected Heuristics{
 private:
 	bool box_into_wall();
 	bool box_into_box();
 	bool jens_into_box();
 	bool jens_into_wall();
 	bool been_in_node(Node * node);
-	
+
 	typedef boost::unordered_set<Node> NodeSet;
 	NodeSet visited_nodes;
-	
+
 	Board * board;
+
+	Node * node_in_process;
+	Position  new_position;
+
+	int w_dir;
+
+	void addBoxes();
+	void removeBoxes();
 public:
-	bool readBoard(std::string boardIn);
-	Node getRootNode();
-	void printBoard(Node * node);
-	
-	Rules(std::string board) {
+
+	Rules(std::string board){
 		readBoard(board);
 	}
-	
-	/**
-	 * Checks if direction we want to go is accepted by the fundamental rules
-	 * of Sokoban. An example would be not going into the wall.
-	 */
-	int enforce(int dir, Node * parent) {
-		// We should call alot of private methods here.
-		return 0;
+	int enforce(int dir, Node * parent){
+		w_dir = dir;
+		//node_in_process = parent;
+		//new_position = node_in_process->getCurrent_position().getDirection(dir);
+		//Anropa en jävla massa privata metoder
+
+		node_in_process = parent;
+		//CLASSIC JAKE HAXX!
+		new_position = (node_in_process->getCurrent_position().getDirection(dir));
+
+		//CLASSIC TIM HAXX!
+		addBoxes();
+
+		//Add boxes to the board.
+		board->insert_boxes(node_in_process->getBoxes(), parent->getLen());
+
+		//If jens is walking into a wall return fail.
+		if(jens_into_wall()){
+				removeBoxes();
+				return FAIL;
+		}
+		//Is JENS walking into a box?
+		if(jens_into_box()){
+
+			//see if we can push this box.
+			if((box_into_wall() && box_into_box()) == false){
+					removeBoxes();
+					cout << "BOX push fail";
+					return FAIL;
+				}else{
+					cout << "============== VI FLYTTAR BOX!" << endl;
+				}
+
+
+		}
+		Position p(new_position.x, new_position.y);
+		Node * n = new Node(p, parent,parent->getBoxes(),parent->getLen(), Position(0,0).getDirection(w_dir) );
+		if(been_in_node(n)){
+				removeBoxes();
+				return FAIL;
+			}
+
+		removeBoxes();
+		return OK;
 	}
-	/**
-	 * Checks if direction we want to go is accepted by the our heuristic rules
-	 * to make the search speed up. An example would be not pushing a box into a
-	 * corner, where the player then can not move it the box anywhere else.
-	 */
-	int heuristics(int dir, Node * parent) {
-		return 0;
+
+	int heuristics(int dir, Node * parent){
+		return OK;
 	}
+
+	void markAsVisited(Node * n){
+		visited_nodes.insert(*n);
+	}
+	bool readBoard(std::string boardIn);
+
+	Node getRootNode();
+	void printBoard(Node * node);
+
+	bool solutionCheck(Node * n);
+
 };
+
 #endif
