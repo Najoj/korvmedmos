@@ -1,31 +1,37 @@
-#include "node.hpp"
-#include "Board.hpp"
-
+/**
+ * node.cpp
+ * 
+ * We need this in the tree of all possible directions to that we use in our
+ * search for a Sokokban board solution.
+ */
 #include <ctime>
 #include <cstdlib> 	// RANDOM
+
+#include "node.hpp"
+#include "Board.hpp"
 
 using namespace std;
 
 Node::Node()
 {
 }
-Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir){
+Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir) {
 
 	this->len = len;
 	boxes_positions = new Position[len];
 	//Copy boxes.
 	for(int i = 0; i < len; i++)
 	{
-		//Uppdaterar ev. boxar om det behövs
-		if(boxes[i].x == jens.x && boxes[i].y == jens.y){
+		// Update boxes if needed.
+		if(boxes[i].x == jens.x && boxes[i].y == jens.y) {
 			boxes_positions[i].x = boxes[i].x + dir.x;
 			boxes_positions[i].y = boxes[i].y + dir.y;
-		}else{
+		} else {
 			boxes_positions[i] = boxes[i];
 		}
 	}
 
-	//Saves jens pos.
+	// Saves Jens' posistion.
 	this->jens = jens;
 	this->parent = parent;
 
@@ -58,18 +64,18 @@ bool Node::deadlock(Position pos, Position parent)
 		//if ( (board->get(pos.up()) != WALL || board->get(pos.up()) != BOX ) && (board->get(pos.down()) != WALL || board->get(pos.down()) != BOX ) ) {
 		//		return false;
 		//	}
-		//	if(pos.right() == parent || pos.left() == parent ){
+		//	if(pos.right() == parent || pos.left() == parent ) {
 			//	return false;
 		//	}
 
 			//
 			if (pos.right() == boxes_positions[i] || pos.left() == boxes_positions[i] ) {
 
-				if(pos.right() == parent){
+				if(pos.right() == parent) {
 					reply = reply || deadlock(pos.left(),pos);
 				}
 
-				else if(pos.left() == parent){
+				else if(pos.left() == parent) {
 					reply = reply || deadlock(pos.right(),pos);
 				}
 
@@ -79,24 +85,24 @@ bool Node::deadlock(Position pos, Position parent)
 			}
 			//
 			if (pos.up() == boxes_positions[i] || pos.down() == boxes_positions[i] ) {
-				if(pos.up() == parent){
+				if(pos.up() == parent) {
 					reply = reply || deadlock(pos.down(),pos);
-				}else if(pos.down() == parent){
+				}else if(pos.down() == parent) {
 					reply = reply || deadlock(pos.up(),pos);
-				}else{
+				} else {
 					reply = reply || deadlock(pos.down(),pos) || deadlock(pos.up(),pos);
 				}
 			}
 		}
 	}
-	cout << "DEAD LOCK!!!" << endl;
+	cout << "DEAD LOCK" << endl;
 	return reply;
 }
 */
 /**
  * Return NULL if no children found, otherwise, return the child
  */
-/** SKA IN I RULES
+/** SHOULD BE IN "Rules".
 Node  * Node::getChildDirection(int dir)
 {
 	cout << "Riktigt riktning " << moves_real[dir] << endl;
@@ -143,7 +149,7 @@ Node  * Node::getChildDirection(int dir)
 				// If moving box to corner row and there is no goal there (then it's stuck)
 				if (!board->yline_has_goal(p_current_position.y+ydir+ydir))
 				{
-					if (p_current_position.y+ydir+ydir == 1 || p_current_position.y+ydir+ydir == board->height-2){
+					if (p_current_position.y+ydir+ydir == 1 || p_current_position.y+ydir+ydir == board->height-2) {
 
 						return NULL;
 					}
@@ -158,7 +164,7 @@ Node  * Node::getChildDirection(int dir)
 					}
 				}
 				cout << "B: Positionen är: (" <<(p_current_position.x+xdir*2)<< ", " << (p_current_position.y+ydir*2)  << ")" << endl;
-				if(deadlock( Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ), Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ) ) ){
+				if(deadlock( Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ), Position(p_current_position.x+xdir*2, p_current_position.y+ydir*2 ) ) ) {
 					return NULL;
 				}
 				// If box would go to corner that is not goal
@@ -222,7 +228,7 @@ Node  * Node::getChildDirection(int dir)
 	int random = USED;
 	Node * ret = NULL;
 	// Seed
-	srand(4711); // TODO: SEED MÅSTE FLYTTAS
+	srand(4711); // TODO: The seed has to be moved and be changed.
 	do
 	{
 		random = rand() % 4;

@@ -1,7 +1,8 @@
 /**
-* Stores all kinds of common and utility functions and structures.
-*
-*/
+ * common.hpp
+ *
+ * Stores all kinds of common and utility functions and structures.
+ */
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
@@ -17,7 +18,10 @@
 // Used for used node.
 #define USED  1337
 
-//Defines board elements, see, http://www.sokobano.de/wiki/index.php?title=Level_format
+/**
+ * Defines board elements, see link:
+ *   http://www.sokobano.de/wiki/index.php?title=Level_format
+ */
 // Board chars.
 #define WALL '#'
 #define BOX '$'
@@ -39,9 +43,8 @@ struct Position
 {
 	int x;
 	int y;
-	Position()
-	{
-	}
+	Position() {}
+	
 	Position(int x, int y)
 	{
 		set(x,y);
@@ -75,16 +78,13 @@ struct Position
 	{
 		return Position(x-1, y);
 	}
-
-	void addPosition(Position pos){
+	
+	void addPosition(Position pos) {
 		x += pos.x;
 		y += pos.y;
 	}
 
 };
-
-
-
 
 const std::string moves_real[4] = {"U","R","D","L"};
 #endif

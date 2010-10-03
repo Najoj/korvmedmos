@@ -1,6 +1,9 @@
 /**
-* 
-*/
+ * client.hpp
+ * 
+ * Client to enable communication with server so we can get a board to solve,
+ * and to send out solution to it.
+ */
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <unistd.h>
@@ -54,10 +57,10 @@ std::string read(tcp::socket& socket, std::string lBoard)
 	try
 	{
 		boost::system::error_code ignored_error;
-		// Skicka att vi vill ha bräda lBoard
+		// Send information that we want board lBoard
 		boost::asio::write(socket, boost::asio::buffer(lBoard),
 		boost::asio::transfer_all(), ignored_error);
-
+		
 		for (;;)
 		{
 			// We use a boost::array to hold the received data
