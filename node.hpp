@@ -49,7 +49,7 @@ class Node{
 		int getPathCost(){
 			return path_cost;
 		}
-		Position getCurrent_position() const
+		Position getCurrent_position()
 		{
 			return jens;
 		}

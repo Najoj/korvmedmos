@@ -2,15 +2,26 @@
 #define BOARD_HPP
 #include "common.hpp"
 #include <vector>
-
+#include "node.hpp"
 using namespace std;
 struct Board
 {
 	protected:
-		vector<Position> boxes;
+
+
+
+		//This is the original position of JENS
+		Position jens;
 	private:
 		int ** matrix;       	// Used for representing the entire board.
 	public:
+
+		/**
+		 * TODO: Should not be public?
+		 */
+		//This is the original position of the boxes (when the game starts)
+			vector<Position> boxes;
+
 		int width, height;  // Width and height of the board.
 
 		Board() {}
@@ -64,7 +75,9 @@ struct Board
 		{
 			matrix[p.x][p.y] = value;
 		}
-/*
+
+
+
 		void insert_boxes(Position* boxes,int len){
 			for(int i = 0; i < len; i++){
 				if(matrix[boxes[i].x][boxes[i].y] == GOAL){
@@ -86,7 +99,15 @@ struct Board
 				}
 			}
 		}
-		*/
+
+		Position * getJens(){
+			return &jens;
+		}
+
+		void setJens(Position p){
+			jens = p;
+		}
+
 
 };
 #endif

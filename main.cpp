@@ -172,8 +172,15 @@ int main(int argc, char ** argv)
 	//Node rootNode = readBoard(boardStr, board);
 	cout << boardStr;
 
+	//Create the rules and parse indata
 	rules = new Rules(boardStr);
 
+	//Make the root node, this will be pushed onto stack later on!
+	Node rootNode = rules->getRootNode();
+
+
+	rules->printBoard(&rootNode);
+	exit(0);
 	//NodeSet nodeset;
 	//nodeset.insert(rootNode);
 	int iterations = 0;
@@ -186,9 +193,7 @@ int main(int argc, char ** argv)
 	{
 		process(&stack.front());
 		cout << "Iteration " << iterations << endl;
-		if(iterations == 37){
-			int apa = 1;
-		}
+
 		iterations++;
 		if(PRINT){
 			//	printBoard(board, child);

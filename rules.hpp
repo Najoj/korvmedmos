@@ -9,7 +9,7 @@
 #include "node.hpp"
 #include "common.hpp"
 
-class Rules: protected Board, protected Heuristics{
+class Rules: protected Heuristics{
 private:
 	bool box_into_wall();
 	bool box_into_box();
@@ -19,6 +19,8 @@ private:
 
 	typedef boost::unordered_set<Node> NodeSet;
 	NodeSet visited_nodes;
+
+	Board * board;
 public:
 
 	Rules(std::string board){
@@ -33,6 +35,9 @@ public:
 		return 0;
 	}
 	bool readBoard(std::string boardIn);
+
+	Node getRootNode();
+	void printBoard(Node * node);
 
 };
 
