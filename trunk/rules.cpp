@@ -1,7 +1,8 @@
-/**
+/*
  * rules.cpp
  *
- * Keeps the fundamental, basic rules of the Sokoban game play.
+ *  Created on: 2 okt 2010
+ *      Author: jacob
  */
 
 #include "rules.hpp"
@@ -15,6 +16,41 @@ bool Rules::been_in_node(Node * node)
 	else
 		return false;
 }
+bool Rules::box_into_wall(){
+	//Gets the prospective postion of the box.
+	Position boxp = new_position.getDirection(w_dir);
+
+	//Cannot do this
+	if(board->get(boxp) == WALL){
+		cout << "TROR ATT DET REDAN SITTER EN vagg  PÅ: " << boxp.x << " " << boxp.y << endl;
+		return false;
+	}
+
+	return true;
+}
+bool Rules::box_into_box(){
+	//Gets the prospective postion of the box.
+	Position boxp = new_position.getDirection(w_dir);
+
+	//Cannot do this move
+	if(board->get(boxp) == BOX){
+		cout << "TROR ATT DET REDAN SITTER EN BOX PÅ: " << boxp.x << " " << boxp.y << endl;
+		return false;
+	}
+	return true;
+}
+bool Rules::jens_into_box(){
+	if(board->get(new_position) == BOX){
+		return true;
+	}
+	return false;
+}
+bool Rules::jens_into_wall(){
+	if(board->get(new_position) == WALL){
+		return true;
+	}
+	return false;
+}
 
 /**
 * Reads the board into a int matrix called board (global var)
@@ -27,7 +63,7 @@ bool Rules::readBoard(std::string boardIn)
 	iterator = boardIn.begin();
 
 
-	// Get the lenght of the board. Which is the position of first '\n'.
+	//Get the lenght of the board. Which is the position of first '\n'.
 	int width = boardIn.find("\n");
 	// Height is then the total length of the string, divide with the height.
 	int height = boardIn.length() / width;
@@ -37,18 +73,19 @@ bool Rules::readBoard(std::string boardIn)
 	int x = 0, y = 0;
 
 
-	// Create the board.
+	//Create the board.
 	board = new Board(width,height);
 
-	if(board == NULL) {
-		cerr << "FAILED" << endl;
+	if(board == NULL){
+		cerr << "Failed to create board" << endl;
+		exit(1);
 	}
-	// Allocate memory for matrix, an iterates.
+	//Allocate memory for matrix, an iterates.
 	while(iterator != boardIn.end())
 	{
 		if(*iterator == '\n')
 		{
-			// If iterator is a newline, then we add y and reset x.
+			// if newline add y (column)
 			y++;
 			x = 0;
 		}
@@ -72,6 +109,9 @@ bool Rules::readBoard(std::string boardIn)
 					board->setJens(p);
 					board->add_goal(p);
 					break;
+				case GOAL:
+					board->add_goal(p);
+					break;
 				default:
 					board->set(p, *iterator);
 			}
@@ -84,54 +124,77 @@ bool Rules::readBoard(std::string boardIn)
 	//return Node(*jens,*jens,NULL,2);//Node(jens, jens, &boxes, &board);
 }
 
-Node Rules::getRootNode() {
+Node Rules::getRootNode(){
 
 	/**
-	 * TODO: Make this nicer.
+	 * TODO: Makes this nicer!
 	 */
-	// Temporarily copies boxes into a vector rather than stack.
+	//Temporarily copies boxes into a vector rather than stack!
 	Position *temp_boxes = new Position[board->boxes.size()];
-	for(unsigned short i = 0; i< board->boxes.size(); i++) {
+	for(unsigned short i = 0; i< board->boxes.size(); i++){
 		temp_boxes[i] = board->boxes[i];
 	}
 	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1));
 }
 /**
  * Prints the board with a give Node
- * TODO: Test this. This is basically copy-paste from original main.cpp file.
+ * TODO: TEST! This is basically copy paste from original main.cpp file!
  */
-void Rules::printBoard(Node * node) {
-bool found = false;
-	cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
-	for(int j = 0; j < board->height; j++)
-	{
-		for(int i = 0; i < board->width; i++)
+void Rules::printBoard(Node * node){
+
+
+	bool found = false;
+		cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
+		for(int j = 0; j < board->height; j++)
 		{
-			if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
+			for(int i = 0; i < board->width; i++)
 			{
-				cout << JENS;
-				continue;
-			}
-			found = false;
-			for(int k = 0; k < node->getLen(); k++)
-			{
-				if(node->getBoxes()[k].x == i && node->getBoxes()[k].y == j)
+				if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
 				{
-					if (board->get(node->getBoxes()[k]) == GOAL)
-						cout << BOX_ONGOAL;
-					else
-						cout << BOX;
-					
-					found = true;
-					break;
+					cout << JENS;
+					continue;
+				}
+				found = false;
+				for(int k = 0; k < node->getLen(); k++)
+				{
+					if(node->getBoxes()[k].x == i && node->getBoxes()[k].y == j)
+					{
+						if (board->get(node->getBoxes()[k]) == GOAL)
+							cout << BOX_ONGOAL;
+						else
+							cout << BOX;
+
+						found = true;
+						break;
+					}
+				}
+				if(!found)
+				{
+					cout << (unsigned char) board->get(i,j) << "";
 				}
 			}
-			if(!found)
-			{
-				cout << (unsigned char) board->get(i,j) << "";
-			}
+			cout << endl;
 		}
-		cout << endl;
+}
+
+void Rules::addBoxes(){
+
+	board->insert_boxes(node_in_process->getBoxes(),node_in_process->getLen());
+}
+void Rules::removeBoxes(){
+	board->remove_boxes(node_in_process->getBoxes(),node_in_process->getLen());
+	node_in_process = NULL;
+}
+
+bool Rules::solutionCheck(Node *n){
+	board->insert_boxes(n->getBoxes(),n->getLen());
+
+	for(unsigned int i = 0; i < board->goals.size(); i++){
+		if(board->get( board->goals[i] ) != BOX){
+			return false;
+		}
+
 	}
+	return true;
 }
 
