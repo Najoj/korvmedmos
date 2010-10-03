@@ -1,3 +1,10 @@
+/**
+ * Board.hpp
+ *
+ * Representing the static parts of the Sokoban board. Which is the walls, the
+ * floor and the goal positions.
+ */
+
 #ifndef BOARD_HPP
 #define BOARD_HPP
 #include "common.hpp"
@@ -7,23 +14,22 @@ using namespace std;
 struct Board
 {
 	protected:
-
-
-
-		//This is the original position of JENS
+		
+		// This is the original position of Jens.
 		Position jens;
 	private:
-		int ** matrix;       	// Used for representing the entire board.
+		// Used for representing the entire board.
+		int ** matrix;
 	public:
-
+		
 		/**
-		 * TODO: Should not be public?
+		 * TODO: Should this be public?
 		 */
-		//This is the original position of the boxes (when the game starts)
-			vector<Position> boxes;
-
+		// This is the original position of the boxes (when the game starts)
+		vector<Position> boxes;
+		
 		int width, height;  // Width and height of the board.
-
+		
 		Board() {}
 		Board(int width, int height)
 		{
@@ -75,9 +81,7 @@ struct Board
 		{
 			matrix[p.x][p.y] = value;
 		}
-
-
-
+		
 		void insert_boxes(Position* boxes,int len){
 			for(int i = 0; i < len; i++){
 				if(matrix[boxes[i].x][boxes[i].y] == GOAL){
@@ -89,7 +93,7 @@ struct Board
 				}
 			}
 		}
-
+		
 		void remove_boxes(Position* boxes,int len){
 			for(int i = 0; i < len; i++){
 				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL){
@@ -99,15 +103,13 @@ struct Board
 				}
 			}
 		}
-
+		
 		Position * getJens(){
 			return &jens;
 		}
-
+		
 		void setJens(Position p){
 			jens = p;
 		}
-
-
 };
 #endif

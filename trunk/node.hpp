@@ -1,3 +1,9 @@
+/**
+ * node.hpp
+ *
+ * 
+ */
+
 #ifndef NODE_HPP
 #define NODE_HPP
 
@@ -17,36 +23,38 @@ class Node{
 		// Position of player.
 		Position jens;
 		
-
+		// Used direction of, that is the nodes childrens directions.
 		short used_directions[4];
 		
+		// Length of the board matrix
 		int len;
+		
 		// Pointer to boxes positions.
 		Position * boxes_positions;
-
-		//Path lenght
+		
+		// Path cost
 		int path_cost;
-
-		//Parent
+		
+		// Parent of the node
 		Node * parent;
-		Node  * getChildDirection(int dir/*, int xdir, int ydir*/);
-
+		
+		Node * getChildDirection(int dir/*, int xdir, int ydir*/);
+		
 		bool deadlock(Position pos, Position parent);
+		
 	public:
 		Node();
 		Node(Position jens, Node * parent, Position *boxes, int len, Position dir);
-
-
-
+		
 		/**
-		* Auto genereated getter and setter methods.
-		*/
+		 * Auto genereated getter and setter methods.
+		 */
 		Position * getBoxes()
 		{
 			return boxes_positions;
 		}
 		
-		int getPathCost(){
+		int getPathCost() {
 			return path_cost;
 		}
 		Position getCurrent_position()
@@ -61,7 +69,7 @@ class Node{
 		}
 		
 
-		Node * getParent(){
+		Node * getParent() {
 			return parent;
 		}
 		
@@ -72,19 +80,17 @@ class Node{
 			for(int i = 0; i < len; i++)
 			{
 				cout << "BOXES" << boxes_positions[i].x << " " << boxes_positions[i].y  << endl;
-				/*if(boxes_positions[i].x == 6 && boxes_positions[i].y == 3){
-				cout << "LÖSTE DE!" << endl;
+				/*if(boxes_positions[i].x == 6 && boxes_positions[i].y == 3) {
+				cout << "LÖSTE DET!" << endl;
 				exit(0);
 				}*/
 			}
 			cout << "================="<<endl;
 		}
-
-
+		
 		/**
-		 * Hash grejjer här nere grejja inte me
+		 * Hash and hash related stuff. DO NOT TOUCH!
 		 */
-
 		bool operator==(const Node & other) const
 		{
 			if (this->jens != other.jens)
@@ -96,7 +102,7 @@ class Node{
 			}
 			return true;
 		}
-
+		
 		friend std::size_t hash_value(Node const& p)
 		{
 			std::size_t hash = 0;
@@ -107,8 +113,8 @@ class Node{
 			}
 			return hash;
 		}
-
-		int getLen(){
+		
+		int getLen() {
 			return len;
 		}
 };

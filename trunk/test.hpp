@@ -1,8 +1,7 @@
 /*
  * test.hpp
  *
- *  Created on: 25 sep 2010
- *      Author: jacob
+ * 
  */
 
 #ifndef TEST_HPP_
@@ -50,24 +49,23 @@ void test(){
 	for(unsigned int box = 0; box<NUM_BOXES; box++){
 		for(unsigned int j = 0; j<X; j++){
 			for(unsigned int k = 0; k<Y; k++){
-					//Uppdatera boxens position.
-					boxes[box].x = j;
-					boxes[box].y = k;
-					for(unsigned int jx = 0; jx < X ; jx++){
-						for(unsigned int jy = 0; jy < Y ; jy++){
-							jens.x = jx;
-							jens.y = jy;
-							Node n(jens,jens,boxes,NULL,NUM_BOXES);
-							if(filter.contains(n)){
-							//	cout << "\t COLLIDED: "<<endl;
-								collisions++;
-							}
-						//	n.print();
-							filter.insert(n);
-							iterations++;
-							}
+				//Uppdatera boxens position.
+				boxes[box].x = j;
+				boxes[box].y = k;
+				for(unsigned int jx = 0; jx < X ; jx++){
+					for(unsigned int jy = 0; jy < Y ; jy++){
+						jens.x = jx;
+						jens.y = jy;
+						Node n(jens,jens,boxes,NULL,NUM_BOXES);
+						if(filter.contains(n)){
+						//	cout << "\t COLLIDED: "<<endl;
+							collisions++;
+						}
+					//	n.print();
+						filter.insert(n);
+						iterations++;
+						}
 					}
-
 				}
 			}
 		}
@@ -75,7 +73,7 @@ void test(){
 	cout.precision(15);
 	cout <<"" << d << "%" << endl;
 	cout << "Iterations " << iterations <<  "  Collisions " << collisions << endl;
-		//new Node()
+	//  new Node()
 
 }
 

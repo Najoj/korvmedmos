@@ -1,8 +1,7 @@
-/*
+/**
  * rules.cpp
  *
- *  Created on: 2 okt 2010
- *      Author: jacob
+ * Keeps the fundamental, basic rules of the Sokoban game play.
  */
 
 #include "rules.hpp"
@@ -28,7 +27,7 @@ bool Rules::readBoard(std::string boardIn)
 	iterator = boardIn.begin();
 
 
-	//Get the lenght of the board. Which is the position of first '\n'.
+	// Get the lenght of the board. Which is the position of first '\n'.
 	int width = boardIn.find("\n");
 	// Height is then the total length of the string, divide with the height.
 	int height = boardIn.length() / width;
@@ -38,18 +37,18 @@ bool Rules::readBoard(std::string boardIn)
 	int x = 0, y = 0;
 
 
-	//Create the board.
+	// Create the board.
 	board = new Board(width,height);
 
-	if(board == NULL){
+	if(board == NULL) {
 		cerr << "FAILED" << endl;
 	}
-	//Allocate memory for matrix, an iterates.
+	// Allocate memory for matrix, an iterates.
 	while(iterator != boardIn.end())
 	{
 		if(*iterator == '\n')
 		{
-			// if newline add y (column)
+			// If iterator is a newline, then we add y and reset x.
 			y++;
 			x = 0;
 		}
@@ -85,56 +84,54 @@ bool Rules::readBoard(std::string boardIn)
 	//return Node(*jens,*jens,NULL,2);//Node(jens, jens, &boxes, &board);
 }
 
-Node Rules::getRootNode(){
+Node Rules::getRootNode() {
 
 	/**
-	 * TODO: Makes this nicer!
+	 * TODO: Make this nicer.
 	 */
-	//Temporarily copies boxes into a vector rather than stack!
+	// Temporarily copies boxes into a vector rather than stack.
 	Position *temp_boxes = new Position[board->boxes.size()];
-	for(unsigned short i = 0; i< board->boxes.size(); i++){
+	for(unsigned short i = 0; i< board->boxes.size(); i++) {
 		temp_boxes[i] = board->boxes[i];
 	}
 	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1));
 }
 /**
-		 * Prints the board with a give Node
-		 * TODO: TEST! This is basically copy paste from original main.cpp file!
-		 */
-		void Rules::printBoard(Node * node){
-
-
-			bool found = false;
-				cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
-				for(int j = 0; j < board->height; j++)
+ * Prints the board with a give Node
+ * TODO: Test this. This is basically copy-paste from original main.cpp file.
+ */
+void Rules::printBoard(Node * node) {
+bool found = false;
+	cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
+	for(int j = 0; j < board->height; j++)
+	{
+		for(int i = 0; i < board->width; i++)
+		{
+			if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
+			{
+				cout << JENS;
+				continue;
+			}
+			found = false;
+			for(int k = 0; k < node->getLen(); k++)
+			{
+				if(node->getBoxes()[k].x == i && node->getBoxes()[k].y == j)
 				{
-					for(int i = 0; i < board->width; i++)
-					{
-						if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
-						{
-							cout << JENS;
-							continue;
-						}
-						found = false;
-						for(int k = 0; k < node->getLen(); k++)
-						{
-							if(node->getBoxes()[k].x == i && node->getBoxes()[k].y == j)
-							{
-								if (board->get(node->getBoxes()[k]) == GOAL)
-									cout << BOX_ONGOAL;
-								else
-									cout << BOX;
-
-								found = true;
-								break;
-							}
-						}
-						if(!found)
-						{
-							cout << (unsigned char) board->get(i,j) << "";
-						}
-					}
-					cout << endl;
+					if (board->get(node->getBoxes()[k]) == GOAL)
+						cout << BOX_ONGOAL;
+					else
+						cout << BOX;
+					
+					found = true;
+					break;
 				}
+			}
+			if(!found)
+			{
+				cout << (unsigned char) board->get(i,j) << "";
+			}
 		}
+		cout << endl;
+	}
+}
 
