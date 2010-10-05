@@ -14,26 +14,26 @@ using namespace std;
 struct Board
 {
 	protected:
-		
 		// This is the original position of Jens.
 		Position jens;
-
-
+		
 	private:
 		// Used for representing the entire board.
 		int ** matrix;
-	public:
 		
-		//TODO: Remove this var.
-		//This is the original position of the goals (when the game starts)
-				vector<Position> goals;
+	public:
+		//TODO: Remove this variable.
+		//This is the original position of the when the game starts
+		vector<Position> goals;
+		
 		/**
-		 * TODO: Should this be public?
+		 * TODO: Does this need be public?
 		 */
-		// This is the original position of the boxes (when the game starts)
+		// This is the original position of the boxes when the game starts
 		vector<Position> boxes;
 		
-		int width, height;  // Width and height of the board.
+		// Width and height of the board.
+		int width, height;
 		
 		Board() {}
 		Board(int width, int height)
@@ -41,6 +41,7 @@ struct Board
 			this->width = width;
 			this->height = height;
 			matrix = new int*[width];
+			
 			for (int i = 0; i < width; i++)
 				matrix[i] = new int[height];
 		}
@@ -73,6 +74,7 @@ struct Board
 		}
 		int get(int x, int y)
 		{
+			// If we are outside to board.
 			if(x < 0 || width <= x)
 				return WALL;
 			if(y < 0 || height <= y)
@@ -88,12 +90,17 @@ struct Board
 			matrix[p.x][p.y] = value;
 		}
 		
-		void insert_boxes(Position* boxes,int len){
-			for(int i = 0; i < len; i++){
-				if(matrix[boxes[i].x][boxes[i].y] == GOAL){
+		void insert_boxes(Position* boxes,int len)
+		{
+			for(int i = 0; i < len; i++)
+			{
+				if(matrix[boxes[i].x][boxes[i].y] == GOAL)
+				{
 					matrix[boxes[i].x][boxes[i].y] = BOX_ONGOAL;
 				//	cout << "BOX_ONGOAL inserted (" << boxes[i].x << "," << boxes[i].y << endl;
-				}else{
+				}
+				else
+				{
 					matrix[boxes[i].x][boxes[i].y] = BOX;
 				//	cout << "BOX inserted (" << boxes[i].x << "," << boxes[i].y << endl;
 				}
@@ -103,21 +110,27 @@ struct Board
 		/**
 		 * Denna gör en dum grejj med goals! Nån annan får fixa.
 		 */
-		void remove_boxes(Position* boxes,int len){
+		void remove_boxes(Position* boxes,int len)
+		{
 			for(int i = 0; i < len; i++){
-				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL){
+				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL)
+				{
 					matrix[boxes[i].x][boxes[i].y] = GOAL;
-				}else{
+				}
+				else
+				{
 					matrix[boxes[i].x][boxes[i].y] = FLOOR;
 				}
 			}
 		}
 		
-		Position * getJens(){
+		Position * getJens()
+		{
 			return &jens;
 		}
 		
-		void setJens(Position p){
+		void setJens(Position p)
+		{
 			jens = p;
 		}
 };
