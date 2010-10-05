@@ -9,7 +9,8 @@ make
 # ... and let the fun begin. :-)
 for i in $(seq 1 136); do
     echo -ne "=== $i ===\n"
-    time ./main $i &
-    sleep 61 && killall -9 main	
+#    time ./main $i &
+    time ../clients/client_c $i | grep -v Good | grep -v Wrong | ./main 1 &
+    sleep 61 && killall -9 main
     echo -e "\n"
 done
