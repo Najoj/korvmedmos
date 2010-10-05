@@ -3,6 +3,8 @@
 #include <vector>
 #include <deque>
 #include <boost/unordered_set.hpp>
+#include <cstdlib> 	// Used for random.
+#include <ctime>    // Used for seed.
 
 //Custom includes
 #include "client.hpp"
@@ -94,31 +96,45 @@ Position getXYDir(int dir){
 void process(Node *n){
 
 
-	int best_cost = 1337;
-	int best_dir = FAIL;
+	unsigned int best_cost = -1;        // BIG value.
+	unsigned int way_to_walk;
+	int best_dir;
+	int best_dirs[] = {-1,-1,-1,-1};                                   // RANDOM WALK
+	int mod = 0;
 	// Go through all the four possible directions.
 	for(unsigned int i = 0; i < 4; i++){
 		if( rules->enforce(i, n) != FAIL){
 			cout << "Fann en bra väg! " << moves_real[i] << endl;
-
+			
 			// Recives a way to walk.
-			int temp = rules->heuristics(i,n);
+			way_to_walk = rules->heuristics(i,n);
 			// Checks if the best
-			if(temp <= best_cost){
-				best_cost = temp;
-				best_dir = i;
-			//	cout << "UPdatera bestidr " << moves_real[best_dir] << endl;
+			if(way_to_walk == best_cost){
+//				best_dir = i;
+				
+				best_dirs[mod] = i;                                             // RANDOM WALK
+				mod++;                                                          // RANDOM WALK
+			//	cout << "Updatera bestidr " << moves_real[best_dir] << endl;
+			} else if (way_to_walk < best_cost) {
+				best_cost = way_to_walk;
+				best_dirs[0] = i;                                               // RANDOM WALK
+				mod = 1;
 			}
 		}
 	}
-
-	if(best_dir == FAIL){
+	
+    if(mod > 0)                                                                 // RANDOM WALK
+    {
+	    srand(time(0));
+	    best_dir = best_dirs[rand() % mod];
+	}
+	else
+	{
 		// Poped.
 		cout << "POPPADE DIG :D" << endl;
 		stack.pop_front();
 		return;
 	}
-
 
 	Position p = n->getCurrent_position();
 
@@ -133,7 +149,7 @@ void process(Node *n){
 	rules->printBoard(temp);
 
 	if(rules->solutionCheck(temp)){
-		cout << "DONE!";
+		cout << "DONE!" << endl;
 		exit(0);
 	}
 	stack.push_front( *temp );
@@ -148,13 +164,7 @@ int main(int argc, char ** argv)
 	std::string lHost,lPort,lBoard;
 
 	bool PRINT = false;
-	if(argc==4)
-	{
-		lHost = std::string(argv[1]);
-		lPort = std::string(argv[2]);
-		lBoard = std::string(argv[3]);
-	}
-	else if (argc==2)
+	if (argc==2)
 	{
 		lHost = std::string("cvap103.nada.kth.se");
 		lPort = std::string("5555");
@@ -166,6 +176,12 @@ int main(int argc, char ** argv)
 		lPort = std::string("5555");
 		lBoard = std::string(argv[1]);
 		PRINT = (bool) argv[2];
+	}
+	else if(argc==4)
+	{
+		lHost = std::string(argv[1]);
+		lPort = std::string(argv[2]);
+		lBoard = std::string(argv[3]);
 	}
 	else
 	{
@@ -227,6 +243,7 @@ int main(int argc, char ** argv)
 
 	}
 	cout << "DONE!" << endl;
+	
 	if(stack.empty())
 	{
 		cout << "Stack turned out to be empty. Not good."<< endl;
