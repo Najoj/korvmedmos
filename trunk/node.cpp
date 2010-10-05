@@ -5,7 +5,7 @@
  * search for a Sokokban board solution.
  */
 #include <ctime>
-#include <cstdlib> 	// RANDOM
+#include <cstdlib> 	// Used for random.
 
 #include "node.hpp"
 #include "Board.hpp"
@@ -19,7 +19,7 @@ Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir)
 
 	this->len = len;
 	boxes_positions = new Position[len];
-	//Copy boxes.
+	// Copy boxes.
 	for(int i = 0; i < len; i++)
 	{
 		// Update boxes if needed.
@@ -50,7 +50,7 @@ bool Node::deadlock(Position pos, Position parent)
 	if ((board->get(pos.left()) == GOAL || board->get(pos.left()) == FLOOR ) && (board->get(pos.right()) == FLOOR || board->get(pos.right()) == GOAL )) {
 		reply = reply || false;
 	}
-	//Check up-right direction
+	// Check up-right direction
 	if ((board->get(pos.up()) == GOAL || board->get(pos.up()) == FLOOR ) && (board->get(pos.down()) == FLOOR || board->get(pos.down()) == GOAL )) {
 		reply = reply || false;
 	}

@@ -20,7 +20,7 @@ class Board;
 
 class Node{
 	private:
-		// Position of player.
+		// Position of player, Jens.
 		Position jens;
 		
 		// Used direction of, that is the nodes childrens directions.
@@ -95,6 +95,7 @@ class Node{
 		{
 			if (this->jens != other.jens)
 				return false;
+			
 			for (int i = 0; i < len; i++)
 			{
 				if (this->boxes_positions[i] != other.boxes_positions[i])

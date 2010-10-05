@@ -13,12 +13,6 @@
 
 #include <vector>
 
-
 #include <boost/unordered_set.hpp>
-
-
-
-
-
 
 #endif /* STD_HEADER_HPP_ */

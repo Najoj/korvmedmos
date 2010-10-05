@@ -102,9 +102,7 @@ struct Position
 		default:
 			return *this;
 		}
-
 	}
-
 };
 
 const std::string moves_real[4] = {"U","R","D","L"};

@@ -7,10 +7,7 @@
 //Custom includes
 #include "client.hpp"
 #include "node.hpp"
-
-
 #include "rules.hpp"
-
 #include "common.hpp"
 
 using namespace std;
@@ -99,14 +96,14 @@ void process(Node *n){
 
 	int best_cost = 1337;
 	int best_dir = FAIL;
-	//Kötta igenom alla direction
+	// Go through all the four possible directions.
 	for(unsigned int i = 0; i < 4; i++){
 		if( rules->enforce(i, n) != FAIL){
 			cout << "Fann en bra väg! " << moves_real[i] << endl;
 
-			//Fick en bra väg att gå
+			// Recives a way to walk.
 			int temp = rules->heuristics(i,n);
-			//Kollar om den är bäst
+			// Checks if the best
 			if(temp <= best_cost){
 				best_cost = temp;
 				best_dir = i;
@@ -116,7 +113,7 @@ void process(Node *n){
 	}
 
 	if(best_dir == FAIL){
-		//Poppa nått.
+		// Poped.
 		cout << "POPPADE DIG :D" << endl;
 		stack.pop_front();
 		return;
@@ -175,8 +172,7 @@ int main(int argc, char ** argv)
 		std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
 		return 1;
 	}
-	//
-
+	
 	// Open a socket with a connection to the server.
 	//boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
 
@@ -196,10 +192,10 @@ int main(int argc, char ** argv)
 
 	    cout << "Read from stdin:\n" <<  boardStr << endl;
 
-	//Create the rules and parse indata
+	// Create the rules and parse indata
 	rules = new Rules(boardStr);
 
-	//Make the root node, this will be pushed onto stack later on!
+	// Make the root node, this will be pushed onto stack later on!
 	Node rootNode = rules->getRootNode();
 
 
@@ -214,7 +210,7 @@ int main(int argc, char ** argv)
 	int iterations = 0;
 
 
-	//Push root node onto stack
+	// Push root node onto stack.
 
 
 	while(!stack.empty())
@@ -238,7 +234,8 @@ int main(int argc, char ** argv)
 	}
 
 	string solution;
-	stack.pop_front(); // First node has no LAST_SET, may cause weird error
+	// First node has no LAST_SET, may cause weird errors.
+	stack.pop_front();
 	while(!stack.empty())
 	{
 		//solution += moves_real[stack.back().LAST_DIR] + " ";
@@ -248,7 +245,7 @@ int main(int argc, char ** argv)
 	cout << "Solution:\t" << solution << endl;
 	cout << "Iterations:\t" << iterations << endl;
 
-	// skicka in lösning och skriv ut svar
+	// Send a solution and prints
 	cout << "Server answer:\t";
 	//send(*socket, solution);
 	return 0;
