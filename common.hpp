@@ -36,7 +36,7 @@
 #define BIG_VALUE 2147483647
 
 #define OK 1
-#define DEBUG 1
+#define DEBUG 0
 // Chars on the board
 
 /**
@@ -53,6 +53,7 @@ struct Position
 	{
 		set(x,y);
 	}
+
 	void set(int x, int y)
 	{
 		this->x = x;
@@ -102,8 +103,7 @@ struct Position
 		case DOWN:
 			return down();
 			break;
-		default:
-			return *this;
+
 		}
 	}
 };

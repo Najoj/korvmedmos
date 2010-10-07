@@ -19,10 +19,22 @@ bool Rules::been_in_node(Node * node)
 bool Rules::box_into_wall(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
-
+//cout << "BOX_INTO WALL dir : " << moves_real[w_dir] << " POS: " << boxp.x << " " << boxp.y << endl;
 	// Can not push a box into a wall.
 	if(board->get(boxp) == WALL){
-		cout << "TROR ATT DET REDAN SITTER EN vagg  PÅ: " << boxp.x << " " << boxp.y << endl;
+		//cout << "TROR ATT DET REDAN SITTER EN vagg  PÅ: " << boxp.x << " " << boxp.y << " dir" << moves_real[w_dir]<< endl;
+		return false;
+	}
+
+	return true;
+}
+bool Rules::box_into_deadlock(){
+	// Gets the prospective postion of the box.
+	Position boxp = new_position.getDirection(w_dir);
+
+	// Can not push a box into a forbidden place.
+	if(board->get(boxp) == BAD_POS){
+
 		return false;
 	}
 
@@ -32,8 +44,9 @@ bool Rules::box_into_box(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
 
+
 	// Can not push a box into a box.
-	if(board->get(boxp) == BOX){
+	if(board->get(boxp) == BOX || board->get(boxp) == BOX_ONGOAL){
 		cout << "TROR ATT DET REDAN SITTER EN BOX PÅ: " << boxp.x << " " << boxp.y << endl;
 		return false;
 	}
@@ -41,7 +54,7 @@ bool Rules::box_into_box(){
 }
 bool Rules::jens_into_box(){
 	// Jens can not walk into a box.
-	if(board->get(new_position) == BOX){
+	if(board->get(new_position) == BOX || board->get(new_position) == BOX_ONGOAL) {
 		return true;
 	}
 	return false;
@@ -196,6 +209,7 @@ bool Rules::solutionCheck(Node *n)
 	{
 		if(board->get( board->goals[i] ) != BOX_ONGOAL)
 		{
+			board->remove_boxes(n->getBoxes(),n->getLen());
 			return false;
 		}
 

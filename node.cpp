@@ -24,7 +24,7 @@ Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir)
 	{
 		// Update boxes if needed.
 		if(boxes[i].x == jens.x && boxes[i].y == jens.y) {
-			cout << "Uppdaterar boxar!";
+		//	cout << "Uppdaterar boxar!";
 			boxes_positions[i].x = boxes[i].x + dir.x;
 			boxes_positions[i].y = boxes[i].y + dir.y;
 		} else {

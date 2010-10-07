@@ -15,6 +15,7 @@ private:
 	bool box_into_box();
 	bool jens_into_box();
 	bool jens_into_wall();
+	bool box_into_deadlock();
 	bool been_in_node(Node * node);
 
 	typedef boost::unordered_set<Node> NodeSet;
@@ -46,10 +47,9 @@ public:
 		new_position = (node_in_process->getCurrent_position().getDirection(dir));
 
 		//CLASSIC TIM HAXX!
+		//Insert boxes.
 		addBoxes();
 
-		//Add boxes to the board.
-		board->insert_boxes(node_in_process->getBoxes(), parent->getLen());
 
 		//If jens is walking into a wall return fail.
 		if(jens_into_wall()){
@@ -60,12 +60,12 @@ public:
 		if(jens_into_box()){
 
 			//see if we can push this box.
-			if( ! (box_into_wall() && box_into_box())){
+			if( ! (box_into_wall() && box_into_box() && box_into_deadlock())){
 					removeBoxes();
-					cout << "BOX push fail";
+					cout << "EN VÄGG!!" << endl;
 					return FAIL;
 				}else{
-					cout << "============== VI FLYTTAR BOX!" << endl;
+
 				}
 
 
