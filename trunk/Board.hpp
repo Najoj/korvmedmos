@@ -20,6 +20,7 @@ struct Board
 	private:
 		// Used for representing the entire board.
 		int ** matrix;
+		int ** cost_matrix;
 		
 	public:
 		//TODO: Remove this variable.
@@ -41,9 +42,11 @@ struct Board
 			this->width = width;
 			this->height = height;
 			matrix = new int*[width];
-			
+		//	cost_matrix = new int*[width];
 			for (int i = 0; i < width; i++)
 				matrix[i] = new int[height];
+		//		cost_matrix[i] = new int[height];
+			//	cost_matrix[i] = 0;
 		}
 		bool xline_has_goal(int x)
 		{
