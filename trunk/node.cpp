@@ -34,7 +34,18 @@ Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir)
 
 	// Saves Jens' posistion.
 	this->jens = jens;
+	// Sets parent node
 	this->parent = parent;
+	
+	// Sets the dir used
+	if(dir.y == -1)
+		LAST_DIR = UP;
+	else if( dir.x == 1 )
+		LAST_DIR = RIGHT;
+	else if( dir.y == 1 )
+		LAST_DIR = DOWN;
+	else // dir.x == -1
+		LAST_DIR = LEFT;
 
 	path_cost = 0;
 }

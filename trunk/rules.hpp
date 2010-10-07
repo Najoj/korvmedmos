@@ -33,6 +33,7 @@ public:
 
 	Rules(std::string board){
 		readBoard(board);
+		improve_board(this->board);
 	}
 	int enforce(int dir, Node * parent){
 		w_dir = dir;
@@ -59,7 +60,7 @@ public:
 		if(jens_into_box()){
 
 			//see if we can push this box.
-			if((box_into_wall() && box_into_box()) == false){
+			if( ! (box_into_wall() && box_into_box())){
 					removeBoxes();
 					cout << "BOX push fail";
 					return FAIL;
@@ -71,17 +72,68 @@ public:
 		}
 		Position p(new_position.x, new_position.y);
 		Node * n = new Node(p, parent,parent->getBoxes(),parent->getLen(), Position(0,0).getDirection(w_dir) );
-		if(been_in_node(n)){
-				removeBoxes();
-				return FAIL;
-			}
+		
+		if(been_in_node(n))
+		{
+			removeBoxes();
+			return FAIL;
+		}
 
 		removeBoxes();
+		
 		return OK;
 	}
 
 	int heuristics(int dir, Node * parent){
-		return OK;
+		int cost = 0;
+		
+		Position new_jens = parent->getCurrent_position();
+		
+		int min = BIG_VALUE;
+		int save;
+		if(dir == UP)
+		{
+			new_jens.y--;
+			for(int i = 0; i < parent->getLen(); i++)
+			{
+				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+				if(save < min)
+					min = save;
+			}
+		}
+		else if(dir == RIGHT)
+		{
+			new_jens.x++;
+			for(int i = 0; i < parent->getLen(); i++)
+			{
+				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+				if(save < min)
+					min = save;
+			}
+		}
+		else if(dir == DOWN)
+		{
+			new_jens.y++;
+			for(int i = 0; i < parent->getLen(); i++)
+			{
+				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+				if(save < min)
+					min = save;
+			}
+		}
+		else // (dir == LEFT)
+		{
+			new_jens.x--;
+			for(int i = 0; i < parent->getLen(); i++)
+			{
+				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+				if(save < min)
+					min = save;
+			}
+		}
+		cost += min;
+		
+		return cost;
 	}
 
 	void markAsVisited(Node * n){

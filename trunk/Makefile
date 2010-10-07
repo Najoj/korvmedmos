@@ -1,7 +1,7 @@
 # Ugly makefile. :-)
 
 all:  main.cpp node.cpp rules.cpp Board.hpp client.hpp common.hpp hash_functions.hpp heuristics.hpp node.hpp rules.hpp
-	g++ -lboost_system main.cpp node.cpp rules.cpp -o main
+	g++ -lboost_system -O3 main.cpp node.cpp rules.cpp -o main
 
 clean: main
 	rm main
