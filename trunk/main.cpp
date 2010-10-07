@@ -35,63 +35,65 @@ void debug_print(std::string text)
 	if (DEBUG) std::cout << text << std::endl;
 }
 void process(Node *n){
-	int best_cost = BIG_VALUE;        // BIG value.
-	int new_cost;
-	int best_dir;
-	int best_dirs[] = {-1,-1,-1,-1};                                   // RANDOM WALK
-	int mod = 0;
-	// Go through all the four possible directions.
-	for(unsigned int i = 0; i < 4; i++){
-		if( rules->enforce(i, n) != FAIL ){
-			cout << "Should go to: " << moves_real[i] << endl;
-	
-			// Recives a way to walk.
-			new_cost = rules->heuristics(i,n);
-			cout << "New cost: " << new_cost << endl;
-//			new_cost = 1;
-			// Checks if the best
-			if(new_cost == best_cost){
-	//			best_dir = i;
-				best_dirs[mod] = i;                                             // RANDOM WALK
-				mod++;                                                          // RANDOM WALK
-			//	cout << "Updatera bestidr " << moves_real[best_dir] << endl;
-			} else if ( 0 <= new_cost && new_cost < best_cost) {
-				best_cost = new_cost;
-				best_dirs[0] = i;                                               // RANDOM WALK
-				mod = 1;
-			}
-		}
-	}
+
+
+        unsigned int best_cost = -1;        // BIG value.
+        unsigned int way_to_walk;
+        int best_dir;
+        int best_dirs[] = {-1,-1,-1,-1};                                   // RANDOM WALK
+        int mod = 0;
+        // Go through all the four possible directions.
+        for(unsigned int i = 0; i < 4; i++){
+                if( rules->enforce(i, n) != FAIL){
+                        cout << "Fann en bra väg! " << moves_real[i] << endl;
+
+                        // Recives a way to walk.
+                        way_to_walk = rules->heuristics(i,n);
+                        // Checks if the best
+                        if(way_to_walk == best_cost){
+//                              best_dir = i;
+
+                                best_dirs[mod] = i;                                             // RANDOM WALK
+                                mod++;                                                          // RANDOM WALK
+                        //      cout << "Updatera bestidr " << moves_real[best_dir] << endl;
+                        } else if (way_to_walk < best_cost) {
+                                best_cost = way_to_walk;
+                                best_dirs[0] = i;                                               // RANDOM WALK
+                                mod = 1;
+                        }
+                }
+        }
+
     if(mod > 0)                                                                 // RANDOM WALK
     {
-	    best_dir = best_dirs[rand() % mod];
-//	    cout << "Best dir: " << best_dir << endl;
-	}
-	else
-	{
-		// Poped.
-		debug_print("Poped something.");
-		stack.pop_front();
-		return;
-	}
+            srand(time(0));
+            best_dir = best_dirs[rand() % mod];
+        }
+        else
+        {
+                // Poped.
+                cout << "POPPADE DIG :D" << endl;
+                stack.pop_front();
+                return;
+        }
 
-	Position p = n->getCurrent_position();
+        Position p = n->getCurrent_position();
 
-	p.addPosition(getXYDir(best_dir));
+        p.addPosition(getXYDir(best_dir));
 
-	Position boxmov = p;
-	boxmov.addPosition(getXYDir(best_dir));
-	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir));
-//	cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
-	rules->markAsVisited(temp);
+        Position boxmov = p;
+        boxmov.addPosition(getXYDir(best_dir));
+        Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir));
+//      cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
+        rules->markAsVisited(temp);
 
-	rules->printBoard(temp);
+        rules->printBoard(temp);
 
-	if(rules->solutionCheck(temp)){
-		cout << "Done!" << endl;
-		exit(0);
-	}
-	stack.push_front( *temp );
+        if(rules->solutionCheck(temp)){
+                cout << "DONE!" << endl;
+                exit(0);
+        }
+        stack.push_front( *temp );
 
 }
 /**
@@ -102,7 +104,7 @@ int main(int argc, char ** argv)
 	// Command-line argument handling
 	std::string lHost,lPort,lBoard;
 
-	bool PRINT = false;
+	bool PRINT = true;
 /*
 	if (argc==2)
 	{
@@ -177,23 +179,26 @@ int main(int argc, char ** argv)
 		process(&stack.front());
 		cout << "Iteration " << iterations << endl;
 
+		if(iterations == 59){
+			//exit(0);
+		}
 		iterations++;
 		if(PRINT)
 		{
-			//	printBoard(board, child);
+			rules->printBoard(&stack.front());
 			//sleep(0.1);
 				cin.get();
 		}
 
 	}
-	cout << "Done!" << endl;
+
 	
 	if(stack.empty())
 	{
-		cout << "Stack turned out to be empty. Not good."<< endl;
+		cout << "FAIL: Stack turned out to be empty. Not good."<< endl;
 		exit(1);
 	}
-
+/*
 	string solution;
 	// First node has no LAST_SET, may cause weird errors.
 	stack.pop_front();
@@ -206,8 +211,10 @@ int main(int argc, char ** argv)
 	cout << "Solution:\t" << solution << endl;
 	cout << "Iterations:\t" << iterations << endl;
 
+
 	// Send a solution and prints
-	cout << "Server answer:\t";
+	cout << "Server answer:\t";*/
+
 	//send(*socket, solution);
 	return 0;
 }
