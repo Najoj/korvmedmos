@@ -85,6 +85,10 @@ struct Board
 		{
 			return get(p.x, p.y);
 		}
+		void set(int x, int y, int value)
+		{
+			matrix[x][y] = value;
+		}
 		void set(Position p, int value)
 		{
 			matrix[p.x][p.y] = value;

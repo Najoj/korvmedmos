@@ -3,8 +3,8 @@
 #include <vector>
 #include <deque>
 #include <boost/unordered_set.hpp>
-#include <cstdlib> 	// Used for random.
-#include <ctime>    // Used for seed.
+#include <cstdlib>	// Used for random.
+#include <ctime>	// Used for seed.
 
 //Custom includes
 #include "client.hpp"
@@ -16,70 +16,7 @@ using namespace std;
 
 Rules *rules;
 deque<Node> stack;
-/**
-* Prints the board based on given board and node.
-*/
-/*void printBoard(Board & board, Node * node)
-{
-	bool found = false;
-	cout << endl << "JENS position: x" << node->getCurrent_position().x << " Y " << node->getCurrent_position().y << endl;
-	for(int j = 0; j < board.height; j++)
-	{
-		for(int i = 0; i < board.width; i++)
-		{
-			if(node->getCurrent_position().x == i && node->getCurrent_position().y == j)
-			{
-				cout << JENS;
-				continue;
-			}
-			found = false;
-			for(int k = 0; k < node->len; k++)
-			{
-				if(node->boxes_positions[k].x == i && node->boxes_positions[k].y == j)
-				{
-					if (board.get(node->boxes_positions[k]) == GOAL)
-						cout << BOX_ONGOAL;
-					else
-						cout << BOX;
 
-					found = true;
-					break;
-				}
-			}
-			if(!found)
-			{
-				cout << (unsigned char) board.get(i,j) << "";
-			}
-		}
-		cout << endl;
-	}
-}*/
-
-
-/**
-* Return true if all boxes are on goal positions else false.
-*/
-/*bool solutionCheck(Board & board, Node * node)
-{
-	for(int i =0; i<node->len; i++)
-	{
-		if (board.get(node->boxes_positions[i]) != GOAL) {
-			return false;
-		}
-	}
-	return true;
-}*/
-
-//typedef boost::unordered_set<Node> NodeSet;
-
-/*bool been_in_node(NodeSet & nodeset, Node * node)
-{
-	NodeSet::iterator iterator = nodeset.find(*node);
-	if (iterator != nodeset.end())
-		return true;
-	else
-		return false;
-}*/
 Position getXYDir(int dir){
 	Position ret(0,0);
 	if(dir == UP)
@@ -93,45 +30,47 @@ Position getXYDir(int dir){
 
 	return ret;
 }
+void debug_print(std::string text)
+{
+	if (DEBUG) std::cout << text << std::endl;
+}
 void process(Node *n){
-
-
-	unsigned int best_cost = -1;        // BIG value.
-	unsigned int way_to_walk;
+	int best_cost = BIG_VALUE;        // BIG value.
+	int new_cost;
 	int best_dir;
 	int best_dirs[] = {-1,-1,-1,-1};                                   // RANDOM WALK
 	int mod = 0;
 	// Go through all the four possible directions.
 	for(unsigned int i = 0; i < 4; i++){
-		if( rules->enforce(i, n) != FAIL){
-			cout << "Fann en bra väg! " << moves_real[i] << endl;
-			
+		if( rules->enforce(i, n) != FAIL ){
+			cout << "Should go to: " << moves_real[i] << endl;
+	
 			// Recives a way to walk.
-			way_to_walk = rules->heuristics(i,n);
+			new_cost = rules->heuristics(i,n);
+			cout << "New cost: " << new_cost << endl;
+//			new_cost = 1;
 			// Checks if the best
-			if(way_to_walk == best_cost){
-//				best_dir = i;
-				
+			if(new_cost == best_cost){
+	//			best_dir = i;
 				best_dirs[mod] = i;                                             // RANDOM WALK
 				mod++;                                                          // RANDOM WALK
 			//	cout << "Updatera bestidr " << moves_real[best_dir] << endl;
-			} else if (way_to_walk < best_cost) {
-				best_cost = way_to_walk;
+			} else if ( 0 <= new_cost && new_cost < best_cost) {
+				best_cost = new_cost;
 				best_dirs[0] = i;                                               // RANDOM WALK
 				mod = 1;
 			}
 		}
 	}
-	
     if(mod > 0)                                                                 // RANDOM WALK
     {
-	    srand(time(0));
 	    best_dir = best_dirs[rand() % mod];
+//	    cout << "Best dir: " << best_dir << endl;
 	}
 	else
 	{
 		// Poped.
-		cout << "POPPADE DIG :D" << endl;
+		debug_print("Poped something.");
 		stack.pop_front();
 		return;
 	}
@@ -149,21 +88,22 @@ void process(Node *n){
 	rules->printBoard(temp);
 
 	if(rules->solutionCheck(temp)){
-		cout << "DONE!" << endl;
+		cout << "Done!" << endl;
 		exit(0);
 	}
 	stack.push_front( *temp );
 
 }
 /**
-* Main
-*/
+ * Main
+ */
 int main(int argc, char ** argv)
 {
 	// Command-line argument handling
 	std::string lHost,lPort,lBoard;
 
 	bool PRINT = false;
+/*
 	if (argc==2)
 	{
 		lHost = std::string("cvap103.nada.kth.se");
@@ -188,7 +128,7 @@ int main(int argc, char ** argv)
 		std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
 		return 1;
 	}
-	
+*/	
 	// Open a socket with a connection to the server.
 	//boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
 
@@ -201,12 +141,13 @@ int main(int argc, char ** argv)
 
 	string boardStr;
 	string fbuf;
-	  while(cin) {
+	
+	while(cin) {
 	    getline(cin, fbuf);
-	    boardStr += fbuf +"\n";
-	  };
+		boardStr += fbuf +"\n";
+	};
 
-	    cout << "Read from stdin:\n" <<  boardStr << endl;
+	cout << "Read from stdin:\n" <<  boardStr << endl;
 
 	// Create the rules and parse indata
 	rules = new Rules(boardStr);
@@ -224,7 +165,9 @@ int main(int argc, char ** argv)
 	//NodeSet nodeset;
 	//nodeset.insert(rootNode);
 	int iterations = 0;
-
+	
+	// Seed for the random.
+	srand(time(0));
 
 	// Push root node onto stack.
 
@@ -235,14 +178,15 @@ int main(int argc, char ** argv)
 		cout << "Iteration " << iterations << endl;
 
 		iterations++;
-		if(PRINT){
+		if(PRINT)
+		{
 			//	printBoard(board, child);
 			//sleep(0.1);
 				cin.get();
-			}
+		}
 
 	}
-	cout << "DONE!" << endl;
+	cout << "Done!" << endl;
 	
 	if(stack.empty())
 	{
@@ -255,7 +199,7 @@ int main(int argc, char ** argv)
 	stack.pop_front();
 	while(!stack.empty())
 	{
-		//solution += moves_real[stack.back().LAST_DIR] + " ";
+		solution += moves_real[stack.back().LAST_DIR] + " ";
 		stack.pop_back();
 	}
 

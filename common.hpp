@@ -6,7 +6,8 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-#include "std_header.hpp"
+#include <iostream>
+#include <string>
 
 // Directions
 #define UP 0
@@ -30,16 +31,18 @@
 // Him name is Jens
 #define JENS '@'
 #define JENS_ONGOAL '+'
-
+#define BAD_POS 'x'
 #define FAIL -1
+#define BIG_VALUE 2147483647
 
 #define OK 1
+#define DEBUG 1
 // Chars on the board
 
 /**
 * Common definitions
 */
-#define FILTER_SIZE 1000000
+
 struct Position
 {
 	int x;

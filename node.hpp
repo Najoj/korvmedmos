@@ -38,11 +38,14 @@ class Node{
 		// Parent of the node
 		Node * parent;
 		
-		Node * getChildDirection(int dir/*, int xdir, int ydir*/);
+		Node * getChildDirection(int dir);
 		
 		bool deadlock(Position pos, Position parent);
 		
 	public:
+		// XXX: FIX THIS
+		char LAST_DIR;
+		
 		Node();
 		Node(Position jens, Node * parent, Position *boxes, int len, Position dir);
 		
@@ -57,6 +60,7 @@ class Node{
 		int getPathCost() {
 			return path_cost;
 		}
+		
 		Position getCurrent_position()
 		{
 			return jens;

@@ -141,7 +141,7 @@ Node Rules::getRootNode(){
 /**
  * Prints the board with a give Node
  * TODO: TEST! This is basically copy paste from original main.cpp file.
- * TODO: Comment his SoB.
+ * TODO: Comment this SoB.
  */
 void Rules::printBoard(Node * node){
 	bool found = false;
@@ -194,7 +194,7 @@ bool Rules::solutionCheck(Node *n)
 	board->insert_boxes(n->getBoxes(),n->getLen());
 	for(unsigned int i = 0; i < board->goals.size(); i++)
 	{
-		if(board->get( board->goals[i] ) != BOX)
+		if(board->get( board->goals[i] ) != BOX_ONGOAL)
 		{
 			return false;
 		}
