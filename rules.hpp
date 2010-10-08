@@ -63,7 +63,7 @@ public:
 			//see if we can push this box.
 			if( ! (box_into_wall() && box_into_box() && box_into_deadlock())){
 					removeBoxes();
-					cout << "EN VÄGG!!" << endl;
+//					cout << "EN VÄGG!!" << endl;
 					return FAIL;
 				}else{
 					jens_pushing_box = true;

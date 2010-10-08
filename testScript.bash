@@ -10,7 +10,7 @@ make
 for i in $(seq 1 136); do
     echo -ne "=== $i ===\n"
 #    time ./main $i &
-    time ../clients/client_c $i | grep -v Good | grep -v Wrong | ./main 1 &
-    sleep 61 && killall -9 main
+    time ./server.bash $i | ./main &
+    sleep 1m 30s && killall -9 main
     echo -e "\n"
 done
