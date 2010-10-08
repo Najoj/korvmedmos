@@ -37,66 +37,66 @@ void debug_print(std::string text)
 
 bool process(Node *n)
 {
-        unsigned int best_cost = -1;        // BIG value.
-        unsigned int way_to_walk;
-        int best_dir;
-        int best_dirs[] = {-1,-1,-1,-1};                                   // RANDOM WALK
-        int mod = 0;
-        // Go through all the four possible directions.
-        for(unsigned int i = 0; i < 4; i++){
-        		int enforce_return = rules->enforce(i, n); 
-                if( enforce_return != FAIL){
-                        cout << "Fann en bra väg! " << moves_real[i] << endl;
+		unsigned int best_cost = -1;		// BIG value.
+		unsigned int way_to_walk;
+		int best_dir;
+		int best_dirs[] = {-1,-1,-1,-1};								   // RANDOM WALK
+		int mod = 0;
+		// Go through all the four possible directions.
+		for(unsigned int i = 0; i < 4; i++){
+				int enforce_return = rules->enforce(i, n); 
+				if( enforce_return != FAIL){
+//						cout << "Fann en bra väg! " << moves_real[i] << endl;
 
-                        // Recives a way to walk.
-                        way_to_walk = rules->heuristics(i,n,enforce_return);
-                        cout << "cost: " << way_to_walk << endl;
-                        // Checks if the best
-                        if(way_to_walk == best_cost){
-//                              best_dir = i;
+						// Recives a way to walk.
+						way_to_walk = rules->heuristics(i,n,enforce_return);
+//						cout << "cost: " << way_to_walk << endl;
+						// Checks if the best
+						if(way_to_walk == best_cost){
+//							  best_dir = i;
 
-                                best_dirs[mod] = i;                                             // RANDOM WALK
-                                mod++;                                                          // RANDOM WALK
-                        //      cout << "Updatera bestidr " << moves_real[best_dir] << endl;
-                        } else if (way_to_walk < best_cost) {
-                                best_cost = way_to_walk;
-                                best_dirs[0] = i;                                               // RANDOM WALK
-                                mod = 1;
-                        }
-                }
-        }
+								best_dirs[mod] = i;											 // RANDOM WALK
+								mod++;														  // RANDOM WALK
+						//	  cout << "Updatera bestidr " << moves_real[best_dir] << endl;
+						} else if (way_to_walk < best_cost) {
+								best_cost = way_to_walk;
+								best_dirs[0] = i;											   // RANDOM WALK
+								mod = 1;
+						}
+				}
+		}
 
-    if(mod > 0)                                                                 // RANDOM WALK
-    {
-            srand(time(0));
-//            best_dir = best_dirs[rand() % mod];
-            best_dir = best_dirs[0];
-        }
-        else
-        {
-                // Poped.
-                cout << "POPPADE DIG :D" << endl;
-                stack.pop_front();
-                return false;
-        }
+	if(mod > 0)																 // RANDOM WALK
+	{
+			srand(time(0));
+//			best_dir = best_dirs[rand() % mod];
+			best_dir = best_dirs[0];
+		}
+		else
+		{
+				// Poped.
+//				cout << "POPPADE DIG :D" << endl;
+				stack.pop_front();
+				return false;
+		}
 
-        Position p = n->getCurrent_position();
+		Position p = n->getCurrent_position();
 
-        p.addPosition(getXYDir(best_dir));
+		p.addPosition(getXYDir(best_dir));
 
-        Position boxmov = p;
-        boxmov.addPosition(getXYDir(best_dir));
-        Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
-//      cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
-        rules->markAsVisited(temp);
+		Position boxmov = p;
+		boxmov.addPosition(getXYDir(best_dir));
+		Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
+//	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
+		rules->markAsVisited(temp);
 
-        rules->printBoard(temp);
+//		rules->printBoard(temp);
 
-        if(rules->solutionCheck(temp)){
-                cout << "DONE!" << endl;
-                return true;
-        }
-        stack.push_front( *temp );
+		if(rules->solutionCheck(temp)){
+				cout << "DONE!" << endl;
+				return true;
+		}
+		stack.push_front( *temp );
 		return false;
 }
 /**
@@ -148,7 +148,7 @@ int main(int argc, char ** argv)
 	string fbuf;
 	
 	while(cin) {
-	    getline(cin, fbuf);
+		getline(cin, fbuf);
 		boardStr += fbuf +"\n";
 	};
 
@@ -161,7 +161,7 @@ int main(int argc, char ** argv)
 	Node rootNode = rules->getRootNode();
 
 
-	rules->printBoard(&rootNode);
+//	rules->printBoard(&rootNode);
 
 	rules->markAsVisited(&rootNode);
 
@@ -174,13 +174,11 @@ int main(int argc, char ** argv)
 	// Seed for the random.
 	srand(time(0));
 
-	// Push root node onto stack.
-
 
 	while(!stack.empty())
 	{
 		if (process(&stack.front())) break;
-		cout << "Iteration " << iterations << endl;
+//		cout << "Iteration " << iterations << endl;
 
 		if(iterations == 59){
 			//exit(0);
@@ -188,19 +186,21 @@ int main(int argc, char ** argv)
 		iterations++;
 		if(PRINT)
 		{
-			rules->printBoard(&stack.front());
+//			rules->printBoard(&stack.front());
 			//sleep(0.1);
 				cin.get();
 		}
 
 	}
+
 	
 	if(stack.empty())
 	{
 		cout << "FAIL: Stack turned out to be empty. Not good."<< endl;
 		exit(1);
 	}
-
+	
+	
 	string solution;
 	// frontens LAST_DIR är odef 
 //	stack.pop_front(); 

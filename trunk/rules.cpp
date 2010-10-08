@@ -47,7 +47,7 @@ bool Rules::box_into_box(){
 
 	// Can not push a box into a box.
 	if(board->get(boxp) == BOX || board->get(boxp) == BOX_ONGOAL){
-		cout << "TROR ATT DET REDAN SITTER EN BOX PÅ: " << boxp.x << " " << boxp.y << endl;
+//		cout << "TROR ATT DET REDAN SITTER EN BOX PÅ: " << boxp.x << " " << boxp.y << endl;
 		return false;
 	}
 	return true;
