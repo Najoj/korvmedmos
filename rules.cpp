@@ -149,7 +149,7 @@ Node Rules::getRootNode(){
 	for(unsigned short i = 0; i< board->boxes.size(); i++){
 		temp_boxes[i] = board->boxes[i];
 	}
-	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1));
+	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1), 0);
 }
 /**
  * Prints the board with a give Node

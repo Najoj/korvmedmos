@@ -47,7 +47,7 @@ class Node{
 		char LAST_DIR;
 		
 		Node();
-		Node(Position jens, Node * parent, Position *boxes, int len, Position dir);
+		Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walked);
 		
 		/**
 		 * Auto genereated getter and setter methods.

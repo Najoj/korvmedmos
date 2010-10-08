@@ -34,9 +34,9 @@ void debug_print(std::string text)
 {
 	if (DEBUG) std::cout << text << std::endl;
 }
-void process(Node *n){
 
-
+bool process(Node *n)
+{
         unsigned int best_cost = -1;        // BIG value.
         unsigned int way_to_walk;
         int best_dir;
@@ -44,11 +44,13 @@ void process(Node *n){
         int mod = 0;
         // Go through all the four possible directions.
         for(unsigned int i = 0; i < 4; i++){
-                if( rules->enforce(i, n) != FAIL){
+        		int enforce_return = rules->enforce(i, n); 
+                if( enforce_return != FAIL){
                         cout << "Fann en bra väg! " << moves_real[i] << endl;
 
                         // Recives a way to walk.
-                        way_to_walk = rules->heuristics(i,n);
+                        way_to_walk = rules->heuristics(i,n,enforce_return);
+                        cout << "cost: " << way_to_walk << endl;
                         // Checks if the best
                         if(way_to_walk == best_cost){
 //                              best_dir = i;
@@ -67,14 +69,15 @@ void process(Node *n){
     if(mod > 0)                                                                 // RANDOM WALK
     {
             srand(time(0));
-            best_dir = best_dirs[rand() % mod];
+//            best_dir = best_dirs[rand() % mod];
+            best_dir = best_dirs[0];
         }
         else
         {
                 // Poped.
                 cout << "POPPADE DIG :D" << endl;
                 stack.pop_front();
-                return;
+                return false;
         }
 
         Position p = n->getCurrent_position();
@@ -83,7 +86,7 @@ void process(Node *n){
 
         Position boxmov = p;
         boxmov.addPosition(getXYDir(best_dir));
-        Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir));
+        Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 //      cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
         rules->markAsVisited(temp);
 
@@ -91,10 +94,10 @@ void process(Node *n){
 
         if(rules->solutionCheck(temp)){
                 cout << "DONE!" << endl;
-                exit(0);
+                return true;
         }
         stack.push_front( *temp );
-
+		return false;
 }
 /**
  * Main
@@ -176,7 +179,7 @@ int main(int argc, char ** argv)
 
 	while(!stack.empty())
 	{
-		process(&stack.front());
+		if (process(&stack.front())) break;
 		cout << "Iteration " << iterations << endl;
 
 		if(iterations == 59){
@@ -191,17 +194,16 @@ int main(int argc, char ** argv)
 		}
 
 	}
-
 	
 	if(stack.empty())
 	{
 		cout << "FAIL: Stack turned out to be empty. Not good."<< endl;
 		exit(1);
 	}
-/*
+
 	string solution;
-	// First node has no LAST_SET, may cause weird errors.
-	stack.pop_front();
+	// frontens LAST_DIR är odef 
+//	stack.pop_front(); 
 	while(!stack.empty())
 	{
 		solution += moves_real[stack.back().LAST_DIR] + " ";
@@ -213,7 +215,7 @@ int main(int argc, char ** argv)
 
 
 	// Send a solution and prints
-	cout << "Server answer:\t";*/
+	cout << "Server answer:\t";
 
 	//send(*socket, solution);
 	return 0;

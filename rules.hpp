@@ -38,6 +38,7 @@ public:
 	}
 	int enforce(int dir, Node * parent){
 		w_dir = dir;
+		bool jens_pushing_box = false;
 		//node_in_process = parent;
 		//new_position = node_in_process->getCurrent_position().getDirection(dir);
 		//Anropa en jävla massa privata metoder
@@ -65,13 +66,13 @@ public:
 					cout << "EN VÄGG!!" << endl;
 					return FAIL;
 				}else{
-
+					jens_pushing_box = true;
 				}
 
 
 		}
 		Position p(new_position.x, new_position.y);
-		Node * n = new Node(p, parent,parent->getBoxes(),parent->getLen(), Position(0,0).getDirection(w_dir) );
+		Node * n = new Node(p, parent,parent->getBoxes(),parent->getLen(), Position(0,0).getDirection(w_dir), dir);
 		
 		if(been_in_node(n))
 		{
@@ -80,58 +81,51 @@ public:
 		}
 
 		removeBoxes();
-		
-		return OK;
+		if(jens_pushing_box){
+			return JENS_IS_PUSHING_BOX_OK;
+		}else{
+			return OK;
+		}
 	}
 
-	int heuristics(int dir, Node * parent){
+	int heuristics(int dir, Node * parent,int enforce_return){
 		int cost = 0;
 		
 		Position new_jens = parent->getCurrent_position();
 		
 		int min = BIG_VALUE;
+		int min_i = 0; // i-värdet för minsta boxen
 		int save;
 		if(dir == UP)
 		{
 			new_jens.y--;
-			for(int i = 0; i < parent->getLen(); i++)
-			{
-				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
-				if(save < min)
-					min = save;
-			}
 		}
 		else if(dir == RIGHT)
 		{
 			new_jens.x++;
-			for(int i = 0; i < parent->getLen(); i++)
-			{
-				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
-				if(save < min)
-					min = save;
-			}
 		}
 		else if(dir == DOWN)
 		{
 			new_jens.y++;
-			for(int i = 0; i < parent->getLen(); i++)
-			{
-				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
-				if(save < min)
-					min = save;
-			}
 		}
 		else // (dir == LEFT)
 		{
 			new_jens.x--;
-			for(int i = 0; i < parent->getLen(); i++)
+		}
+		
+		for(int i = 0; i < parent->getLen(); i++)
+		{
+			save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+			if(save < min)
 			{
-				save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
-				if(save < min)
-					min = save;
+				min = save;
+				min_i = i;
 			}
 		}
 		cost += min;
+		if (board->get(parent->getBoxes()[min_i]) == GOAL) {
+			cost += 5;
+		}
 		
 		return cost;
 	}
