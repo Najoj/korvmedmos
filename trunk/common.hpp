@@ -38,14 +38,16 @@
 #define JENS '@'
 #define JENS_ONGOAL '+'
 #define BAD_POS 'x'
+
 #define FAIL -1
+#define OK 1
+
 #define JENS_IS_PUSHING_BOX_OK 4711
 #define BIG_VALUE 2147483647
-
-#define OK 1
 #define DEBUG 0
-// Chars on the board
+#define COST_TO_MOVE_BOX_ON_GOAL 15
 
+#define
 /**
 * Common definitions
 */
