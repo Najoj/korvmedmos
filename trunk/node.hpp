@@ -24,7 +24,7 @@ class Node{
 		Position jens;
 		
 		// Used direction of, that is the nodes childrens directions.
-		short used_directions[4];
+		char used_directions[4];
 		
 		// Length of the board matrix
 		int len;
