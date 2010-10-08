@@ -6,11 +6,14 @@
 # Compile...
 make
 
+./timelimit.bash &
+
 # ... and let the fun begin. :-)
 for i in $(seq 1 136); do
     echo -ne "=== $i ===\n"
 #    time ./main $i &
-    time ./server.bash $i | ./main &
-    sleep 1m 30s && killall -9 main
+    time ./server.bash $i | ./main
     echo -e "\n"
 done
+
+killall -9 timelimit
