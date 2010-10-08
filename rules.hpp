@@ -3,6 +3,7 @@
 
 #include <boost/unordered_set.hpp>
 #include <vector>
+#include <cmath>
 
 #include "Board.hpp"
 #include "heuristics.hpp"
@@ -74,24 +75,87 @@ private:
 		return cost;
 	}
 	
+
 	int jens_box_goal_distance(int dir, Node * parent)
 	{
-		int min, save;
+		bool debug = false;
+		int debug_nr = 0;
+		node_in_process = parent;
+		addBoxes();
+		int min = -1, save, push_box_dir;
 		Position nearest_box, nearest_goal;
-		
+		Position temp;
+		int save_x, save_y,jens_to_push_box_dir, box_to_goal_distance;
+		int cost = 0;
+		Position new_jens = parent->getCurrent_position(); 
+
+
+		if(board->get(new_jens) == BOX_ONGOAL){
+			cost += COST_TO_MOVE_BOX_ON_GOAL;
+		}
+
+
+
 		for(int i = 0; i < parent->getLen(); i++)
 		{
-			save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+			temp = parent->getBoxes()[i];
+			save = Heuristics::length_to_box(new_jens, temp);
 			
-			if(save < min)
+			if(board->get(temp) != BOX_ONGOAL && save < min)
 			{
 				min = save;
-				nearest_box = parent->getBoxes()[i];
+				nearest_box = temp;
 			}
+		}		
+		for(int i = 0; i < parent->getLen(); i++)
+		{
+			temp = board->goals[i];
+			save = Heuristics::length_to_box(nearest_box, temp);
+			
+			if(board->get(temp) != BOX_ONGOAL && save < min)
+			{
+				min = save;
+				nearest_goal = temp;
+			}
+		}		
+		
+		box_to_goal_distance = min;
+		if( abs((float) nearest_goal.x - nearest_box.x) < abs((float) nearest_goal.y - nearest_box.y))
+		{
+			if( nearest_goal.x - nearest_box.x > 0 )
+				push_box_dir = RIGHT;
+			else // nearest_goal.x - nearest_box.x <= 0
+				push_box_dir = LEFT;
+				
+		}	
+		else if( abs((float) nearest_goal.x - nearest_box.x) >= abs((float) nearest_goal.y - nearest_box.y))
+		{
+			if( nearest_goal.y - nearest_box.y > 0 )
+				push_box_dir = DOWN;
+			else // nearest_goal.y - nearest_box.y <= 0
+				push_box_dir = UP;
 		}
+		else
+		{
+			cout << "WUT THE FUKK" << endl;
+		}		
+		if(push_box_dir == RIGHT)
+			temp = nearest_box.getDirection(LEFT);
+		else if(push_box_dir == LEFT)
+			temp = nearest_box.getDirection(RIGHT);
+		else if(push_box_dir == UP)
+			temp = nearest_box.getDirection(DOWN);
+		else if(push_box_dir == DOWN)
+			temp = nearest_box.getDirection(UP);			
+		jens_to_push_box_dir = Heuristics::length_to_box(new_jens, temp);
+		cost += jens_to_push_box_dir;
+		cost += box_to_goal_distance; 	
+
+
 		
+		removeBoxes();
 		
-		
+		return cost;
 	}
 		
 public:
@@ -153,9 +217,9 @@ public:
 
 	int heuristics(int dir, Node * parent, int enforce_return){
 		int cost = 0;
-		
-		cost += length_from_jens_to_box(dir, parent);
-		cost += ();
+		//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									cout << "HEURISTICS" << endl;		
+		//cost += length_from_jens_to_box(dir, parent);
+		cost += jens_box_goal_distance(dir,parent);
 		
 		return cost;
 	}
@@ -173,3 +237,5 @@ public:
 };
 
 #endif
+
+
