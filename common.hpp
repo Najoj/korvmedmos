@@ -47,7 +47,6 @@
 #define DEBUG 0
 #define COST_TO_MOVE_BOX_ON_GOAL 15
 
-#define
 /**
 * Common definitions
 */
