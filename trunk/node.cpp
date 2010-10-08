@@ -15,7 +15,7 @@ using namespace std;
 Node::Node()
 {
 }
-Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir) {
+Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker) {
 
 	this->len = len;
 	boxes_positions = new Position[len];
@@ -36,18 +36,11 @@ Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir)
 	this->jens = jens;
 	// Sets parent node
 	this->parent = parent;
-	
-	// Sets the dir used
-	if(dir.y == -1)
-		LAST_DIR = UP;
-	else if( dir.x == 1 )
-		LAST_DIR = RIGHT;
-	else if( dir.y == 1 )
-		LAST_DIR = DOWN;
-	else // dir.x == -1
-		LAST_DIR = LEFT;
 
 	path_cost = 0;
+	if (parent != NULL) {
+		parent->LAST_DIR = walker;
+	}
 }
 
 /**
