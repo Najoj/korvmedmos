@@ -159,7 +159,7 @@ int main(int argc, char ** argv)
 
 	// Make the root node, this will be pushed onto stack later on!
 	Node rootNode = rules->getRootNode();
-
+	rules->printBoard(&rootNode);
 
 //	rules->printBoard(&rootNode);
 

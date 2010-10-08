@@ -18,6 +18,12 @@
 // Used for used node.
 #define USED  1337
 
+//#include <stdio.h>
+#ifdef DEBUG
+	#define debug_print(text) cout<<text<<endl;
+#endif
+// Rishie gillar  barn.
+
 /**
  * Defines board elements, see link:
  *   http://www.sokobano.de/wiki/index.php?title=Level_format
@@ -46,16 +52,16 @@
 
 struct Position
 {
-	int x;
-	int y;
+	char x;
+	char y;
 	Position() {}
 	
-	Position(int x, int y)
+	Position(char x, char y)
 	{
 		set(x,y);
 	}
 
-	void set(int x, int y)
+	void set(char x, char y)
 	{
 		this->x = x;
 		this->y = y;
