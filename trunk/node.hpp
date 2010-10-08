@@ -111,10 +111,10 @@ class Node{
 		friend std::size_t hash_value(Node const& p)
 		{
 			std::size_t hash = 0;
-			hash += p.jens.x + p.jens.y;
+			hash += 863*p.jens.x + 1109*p.jens.y;
 			for(int i = 0; i < p.len; i++)
 			{
-				hash += p.boxes_positions[i].x + p.boxes_positions[i].y;
+				hash += (991*p.boxes_positions[i].x) & (773*p.boxes_positions[i].y);
 			}
 			return hash;
 		}
