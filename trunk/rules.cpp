@@ -136,7 +136,6 @@ bool Rules::readBoard(std::string boardIn)
 	}
 
 	return true;
-	//return Node(*jens,*jens,NULL,2);//Node(jens, jens, &boxes, &board);
 }
 
 Node Rules::getRootNode(){
@@ -158,7 +157,7 @@ Node Rules::getRootNode(){
  */
 void Rules::printBoard(Node * node){
 	bool found = false;
-	cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
+//	cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
 	for(int j = 0; j < board->height; j++)
 	{
 		for(int i = 0; i < board->width; i++)
