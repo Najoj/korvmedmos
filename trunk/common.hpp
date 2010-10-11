@@ -53,8 +53,8 @@
 
 struct Position
 {
-	char x;
-	char y;
+	unsigned char x;
+	unsigned char y;
 	Position() {}
 	
 	Position(char x, char y)
@@ -111,6 +111,7 @@ struct Position
 		case DOWN:
 			return down();
 			break;
+
 
 		}
 	}
