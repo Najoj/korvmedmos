@@ -59,6 +59,12 @@ class Node{
 		int getPathCost() {
 			return path_cost;
 		}
+		int getPathCost() const{
+			return path_cost;
+		}
+		void setPathCost(int p){
+			path_cost = p;
+		}
 		
 		Position getCurrent_position()
 		{
@@ -118,8 +124,22 @@ class Node{
 			return hash;
 		}
 		
+		/**
+		 * Ey leen!!
+		 */
 		int getLen() {
 			return len;
+		}
+
+
+		bool operator() ( Node& left_hs,  Node& right_hs) const
+		  {
+		    	return (left_hs.getPathCost()>right_hs.getPathCost());
+
+		  }
+		bool operator<( const Node & other) const
+		{
+			return this->getPathCost() > other.getPathCost();
 		}
 };
 #endif
