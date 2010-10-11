@@ -37,7 +37,8 @@ Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir,
 	// Sets parent node
 	this->parent = parent;
 
-	path_cost = 0;
+	path_cost = 4711;
+
 	if (parent != NULL) {
 		parent->LAST_DIR = walker;
 	}
