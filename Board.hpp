@@ -19,8 +19,8 @@ struct Board
 		
 	private:
 		// Used for representing the entire board.
-		int ** matrix;
-		int ** cost_matrix;
+		unsigned char ** matrix;
+		char ** cost_matrix;
 		
 	public:
 		//TODO: Remove this variable.
@@ -41,10 +41,10 @@ struct Board
 		{
 			this->width = width;
 			this->height = height;
-			matrix = new int*[width];
+			matrix = new unsigned char*[width];
 		//	cost_matrix = new int*[width];
 			for (int i = 0; i < width; i++)
-				matrix[i] = new int[height];
+				matrix[i] = new unsigned char[height];
 		//		cost_matrix[i] = new int[height];
 			//	cost_matrix[i] = 0;
 		}
