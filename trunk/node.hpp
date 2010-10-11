@@ -27,7 +27,7 @@ class Node{
 		char used_directions[4];
 		
 		// Length of the board matrix
-		int len;
+		char len;
 		
 		// Pointer to boxes positions.
 		Position * boxes_positions;
@@ -111,10 +111,10 @@ class Node{
 		friend std::size_t hash_value(Node const& p)
 		{
 			std::size_t hash = 0;
-			hash += 863*p.jens.x + 1109*p.jens.y;
+			hash += 499973*p.jens.x + 849731*p.jens.y;
 			for(int i = 0; i < p.len; i++)
 			{
-				hash += (991*p.boxes_positions[i].x) & (773*p.boxes_positions[i].y);
+				hash += (612301*p.boxes_positions[i].x) & (1182463*p.boxes_positions[i].y);
 			}
 			return hash;
 		}
