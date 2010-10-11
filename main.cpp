@@ -17,19 +17,19 @@ using namespace std;
 Rules *rules;
 deque<Node> stack;
 
-Position getXYDir(int dir){
-	Position ret(0,0);
+Position getXYDir(int dir, Position ret = Position(0,0) ){
 	if(dir == UP)
-		ret.y = -1;
+		ret.y += -1;
 	else if(dir == RIGHT)
-		ret.x = 1;
+		ret.x += 1;
 	else if(dir == DOWN)
-		ret.y = 1;
+		ret.y += 1;
 	else // dir == LEFT
-		ret.x = -1;
+		ret.x += -1;
 
 	return ret;
 }
+
 void debug_print(std::string text)
 {
 	if (DEBUG) std::cout << text << std::endl;
@@ -50,7 +50,7 @@ bool process(Node *n)
 
 						// Recives a way to walk.
 						way_to_walk = rules->heuristics(i,n,enforce_return);
-//						cout << "cost: " << way_to_walk << endl;
+//						cout << "cost for " << moves_real[i] << ": " << way_to_walk << endl;
 						// Checks if the best
 						if(way_to_walk == best_cost){
 //							  best_dir = i;
@@ -69,8 +69,8 @@ bool process(Node *n)
 	if(mod > 0)																 // RANDOM WALK
 	{
 			srand(time(0));
-			best_dir = best_dirs[rand() % mod];
-//			best_dir = best_dirs[0];
+//			best_dir = best_dirs[rand() % mod];
+			best_dir = best_dirs[0];
 		}
 		else
 		{
@@ -108,7 +108,7 @@ int main(int argc, char ** argv)
 	std::string lHost,lPort,lBoard;
 
 	bool PRINT = true;
-/*
+
 	if (argc==2)
 	{
 		lHost = std::string("cvap103.nada.kth.se");
@@ -133,24 +133,25 @@ int main(int argc, char ** argv)
 		std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
 		return 1;
 	}
-*/	
+	
 	// Open a socket with a connection to the server.
-	//boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
+	boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
 
 	// Reads lBoard from the server.
-	//string boardStr(read(*socket, lBoard));
+	string boardStr(read(*socket, lBoard));
 
 
 
 //	cout << boardStr;
 
-	string boardStr;
-	string fbuf;
+//	string boardStr;
+//	string fbuf;
 	
-	while(cin) {
+/*	while(cin) {
 		getline(cin, fbuf);
 		boardStr += fbuf +"\n";
 	};
+*/
 
 	cout << "Read from stdin:\n" <<  boardStr << endl;
 
@@ -184,12 +185,6 @@ int main(int argc, char ** argv)
 			//exit(0);
 		}
 		iterations++;
-		if(PRINT)
-		{
-//			rules->printBoard(&stack.front());
-			//sleep(0.1);
-				cin.get();
-		}
 
 	}
 
@@ -217,6 +212,6 @@ int main(int argc, char ** argv)
 	// Send a solution and prints
 	cout << "Server answer:\t";
 
-	//send(*socket, solution);
+	send(*socket, solution);
 	return 0;
 }
