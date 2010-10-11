@@ -16,7 +16,8 @@ class Heuristics
 	public:
 		int length_to_box(Position jens, Position box)
 		{
-			return sqrt((jens.x - box.x)*(jens.x - box.x) + (jens.y-box.y)*(jens.y-box.y));
+			return abs(jens.x - box.x) + abs(jens.y - box.y);
+//			return sqrt((jens.x - box.x)*(jens.x - box.x) + (jens.y-box.y)*(jens.y-box.y));
 		}
 		
 		void improve_board_wall_deadlocks_y(Board * board, int x, int y, int side){

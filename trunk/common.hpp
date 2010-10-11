@@ -117,4 +117,5 @@ struct Position
 };
 
 const std::string moves_real[4] = {"U","R","D","L"};
+Position getXYDir(int, Position);
 #endif

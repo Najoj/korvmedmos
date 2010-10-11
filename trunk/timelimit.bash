@@ -3,7 +3,7 @@
 # Limit time time usage for main.
 
 # Use "HH:MM" format.
-LIMIT="00:01:"
+LIMIT="00:30:"
 
 echo "timelimit.bash: START"
 
@@ -15,4 +15,5 @@ while true; do
         sleep 1
     fi
     # Should we sleep here?
+    sleep 10
 done

@@ -82,20 +82,18 @@ private:
 		int debug_nr = 0;
 		node_in_process = parent;
 		addBoxes();
-		int min = -1, save, push_box_dir;
+		int min = BIG_VALUE, save, push_box_dir;
 		Position nearest_box, nearest_goal;
 		Position temp;
 		int save_x, save_y,jens_to_push_box_dir, box_to_goal_distance;
 		int cost = 0;
-		Position new_jens = parent->getCurrent_position(); 
-
-
+		
+		Position new_jens = getXYDir(dir, parent->getCurrent_position()); 
+		
 		if(board->get(new_jens) == BOX_ONGOAL){
 			cost += COST_TO_MOVE_BOX_ON_GOAL;
 		}
-
-
-
+		
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			temp = parent->getBoxes()[i];
@@ -106,7 +104,12 @@ private:
 				min = save;
 				nearest_box = temp;
 			}
-		}		
+		}
+		
+//		cout << "Chosen box: " << (int) nearest_box.x << " " << (int) nearest_box.y << endl;
+		
+		// Reset min
+		min = BIG_VALUE;
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			temp = board->goals[i];
@@ -117,18 +120,22 @@ private:
 				min = save;
 				nearest_goal = temp;
 			}
-		}		
+		}
+//		cout << "Chosen goal: " << (int) nearest_goal.x << " " << (int) nearest_goal.y << endl;
 		
 		box_to_goal_distance = min;
-		if( abs((float) nearest_goal.x - nearest_box.x) < abs((float) nearest_goal.y - nearest_box.y))
+		if( abs((float) nearest_goal.x - nearest_box.x) < abs((float) nearest_goal.y - nearest_box.y)
+			&& abs((float) nearest_goal.x - nearest_box.x) != 0 )
 		{
+			
 			if( nearest_goal.x - nearest_box.x > 0 )
 				push_box_dir = RIGHT;
 			else // nearest_goal.x - nearest_box.x <= 0
 				push_box_dir = LEFT;
-				
+
 		}	
-		else if( abs((float) nearest_goal.x - nearest_box.x) >= abs((float) nearest_goal.y - nearest_box.y))
+		else if( abs((float) nearest_goal.x - nearest_box.x) >= abs((float) nearest_goal.y - nearest_box.y)
+				|| abs((float) nearest_goal.x - nearest_box.x) == 0 )
 		{
 			if( nearest_goal.y - nearest_box.y > 0 )
 				push_box_dir = DOWN;
@@ -138,7 +145,8 @@ private:
 		else
 		{
 			cout << "WUT THE FUKK" << endl;
-		}		
+		}
+			
 		if(push_box_dir == RIGHT)
 			temp = nearest_box.getDirection(LEFT);
 		else if(push_box_dir == LEFT)
@@ -146,14 +154,21 @@ private:
 		else if(push_box_dir == UP)
 			temp = nearest_box.getDirection(DOWN);
 		else if(push_box_dir == DOWN)
-			temp = nearest_box.getDirection(UP);			
-		jens_to_push_box_dir = Heuristics::length_to_box(new_jens, temp);
-		cost += jens_to_push_box_dir;
-		cost += box_to_goal_distance; 	
+			temp = nearest_box.getDirection(UP);
+		
+//		cout << "Direction: " << moves_real[push_box_dir] << endl;
+		if (parent->getCurrent_position() == temp && push_box_dir == dir) {
+			cost = 0;
+		} else {
+			jens_to_push_box_dir = Heuristics::length_to_box(new_jens, temp);		
+			cost += jens_to_push_box_dir;		
+		}
 
-
+		cost += box_to_goal_distance;
 		
 		removeBoxes();
+		
+//		cout << "Cost: " << cost << " To push: " << jens_to_push_box_dir << endl << endl;
 		
 		return cost;
 	}
