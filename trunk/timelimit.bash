@@ -3,7 +3,7 @@
 # Limit time time usage for main.
 
 # Use "HH:MM" format.
-LIMIT="00:30:"
+LIMIT="00:01:"
 
 echo "timelimit.bash: START"
 
