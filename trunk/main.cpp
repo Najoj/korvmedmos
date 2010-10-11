@@ -69,8 +69,8 @@ bool process(Node *n)
 	if(mod > 0)																 // RANDOM WALK
 	{
 //			srand(time(0));
-			best_dir = best_dirs[rand() % mod];
-//			best_dir = best_dirs[0];
+//			best_dir = best_dirs[rand() % mod];
+			best_dir = best_dirs[0];
 		}
 		else
 		{
