@@ -109,7 +109,7 @@ int main(int argc, char ** argv)
 
 	bool PRINT = true;
 
-	if (argc==2)
+	/*if (argc==2)
 	{
 		lHost = std::string("cvap103.nada.kth.se");
 		lPort = std::string("5555");
@@ -139,19 +139,16 @@ int main(int argc, char ** argv)
 
 	// Reads lBoard from the server.
 	string boardStr(read(*socket, lBoard));
+	cout << boardStr;*/
 
-
-
-//	cout << boardStr;
-
-//	string boardStr;
-//	string fbuf;
+	string boardStr;
+	string fbuf;
 	
-/*	while(cin) {
+	while(cin) {
 		getline(cin, fbuf);
 		boardStr += fbuf +"\n";
 	};
-*/
+
 
 	cout << "Read from stdin:\n" <<  boardStr << endl;
 
@@ -212,6 +209,6 @@ int main(int argc, char ** argv)
 	// Send a solution and prints
 	cout << "Server answer:\t";
 
-	send(*socket, solution);
+	//send(*socket, solution);
 	return 0;
 }
