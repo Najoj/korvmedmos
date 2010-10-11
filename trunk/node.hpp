@@ -43,8 +43,7 @@ class Node{
 		bool deadlock(Position pos, Position parent);
 		
 	public:
-		// XXX: FIX THIS
-		char LAST_DIR;
+		unsigned char LAST_DIR;
 		
 		Node();
 		Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walked);

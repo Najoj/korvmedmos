@@ -14,6 +14,7 @@
 #define RIGHT 1
 #define DOWN 2
 #define LEFT 3
+#define NO_DIR 5
 
 // Used for used node.
 #define USED  1337
@@ -55,7 +56,7 @@ struct Position
 {
 	unsigned char x;
 	unsigned char y;
-	Position() {}
+	Position() {x=0;y=0;}
 	
 	Position(char x, char y)
 	{
@@ -111,8 +112,8 @@ struct Position
 		case DOWN:
 			return down();
 			break;
-
-
+		default:
+			return Position(0,0);
 		}
 	}
 };
