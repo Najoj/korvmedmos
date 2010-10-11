@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <boost/unordered_set.hpp>
 #include <cstdlib>	// Used for random.
 #include <ctime>	// Used for seed.
@@ -16,6 +17,8 @@ using namespace std;
 
 Rules *rules;
 deque<Node> stack;
+
+priority_queue<Node> p_que;
 
 Position getXYDir(int dir, Position ret = Position(0,0) ){
 	if(dir == UP)
@@ -35,7 +38,7 @@ void debug_print(std::string text)
 	if (DEBUG) std::cout << text << std::endl;
 }
 
-bool process(Node *n)
+bool process(Node * n)
 {
 		unsigned int best_cost = -1;		// BIG value.
 		unsigned int way_to_walk;
@@ -76,7 +79,9 @@ bool process(Node *n)
 		{
 				// Poped.
 //				cout << "POPPADE DIG :D" << endl;
-				stack.pop_front();
+				//stack.pop_front();
+				p_que.pop();
+
 				return false;
 		}
 
@@ -87,16 +92,26 @@ bool process(Node *n)
 		Position boxmov = p;
 		boxmov.addPosition(getXYDir(best_dir));
 		Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
+
+		//rules->printBoard(temp);
+		//Sets the path cost to this node
+		temp->setPathCost(rules->total_goal_distance(temp));
+
+		//temp->setPathCost(rules->total_goal_distance(dir,temp));
+
+
+
 //	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
 		rules->markAsVisited(temp);
 
-//		rules->printBoard(temp);
+
 
 		if(rules->solutionCheck(temp)){
 				cout << "DONE!" << endl;
 				return true;
 		}
-		stack.push_front( *temp );
+		//stack.push_front( *temp );
+		p_que.push(*temp);
 		return false;
 }
 /**
@@ -161,7 +176,8 @@ int main(int argc, char ** argv)
 
 	rules->markAsVisited(&rootNode);
 
-	stack.push_front(rootNode);
+	//stack.push_front(rootNode);
+	p_que.push(rootNode);
 
 	//NodeSet nodeset;
 	//nodeset.insert(rootNode);
@@ -171,9 +187,14 @@ int main(int argc, char ** argv)
 	srand(time(0));
 
 
-	while(!stack.empty())
+	while(!p_que.empty())
 	{
-		if (process(&stack.front())) break;
+
+
+		//FEWL HACKZZ
+		if (process( const_cast<Node*>( &p_que.top() ) ) ){
+			break;
+		}
 //		cout << "Iteration " << iterations << endl;
 
 		if(iterations == 59){
@@ -183,22 +204,26 @@ int main(int argc, char ** argv)
 
 	}
 
-	
-	if(stack.empty())
+	if(p_que.empty())
+		{
+			cout << "FAIL: Que turned out to be empty. Not good."<< endl;
+			exit(1);
+		}
+	/*if(stack.empty())
 	{
 		cout << "FAIL: Stack turned out to be empty. Not good."<< endl;
 		exit(1);
-	}
+	}*/
 	
 	
 	string solution;
 	// frontens LAST_DIR är odef 
 //	stack.pop_front(); 
-	while(!stack.empty())
+	/*while(!stack.empty())
 	{
 		solution += moves_real[stack.back().LAST_DIR] + " ";
 		stack.pop_back();
-	}
+	}*/
 
 	cout << "Solution:\t" << solution << endl;
 	cout << "Iterations:\t" << iterations << endl;
