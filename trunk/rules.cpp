@@ -59,6 +59,9 @@ bool Rules::jens_into_box(){
 	}
 	return false;
 }
+/**
+ * Returns true when jens is about to walk into a wall
+ */
 bool Rules::jens_into_wall(){
 	// Jens can not walk into a wall.
 	if(board->get(new_position) == WALL){
@@ -137,7 +140,9 @@ bool Rules::readBoard(std::string boardIn)
 
 	return true;
 }
-
+/**
+ * Creates the root node, ie. the start state of the board and jens.
+ */
 Node Rules::getRootNode(){
 
 	/**
@@ -193,6 +198,10 @@ void Rules::printBoard(Node * node){
 void Rules::addBoxes()
 {
 	board->insert_boxes(node_in_process->getBoxes(),node_in_process->getLen());
+}
+void Rules::addGoals()
+{
+	board->insert_goals();
 }
 void Rules::removeBoxes()
 {
@@ -258,9 +267,14 @@ int Rules::length_from_jens_to_box(int dir, Node * parent)
 
 		return cost;
 	}
+/**
+ *
+ */
 
-int Rules::jens_box_goal_distance(int dir, Node * parent)
-	{
+/**
+ * Return the cost to get the nearest box to goal
+ */
+int Rules::jens_box_goal_distance(int dir, Node * parent){
 		//bool debug = false;
 		//int debug_nr = 0;
 
@@ -278,6 +292,7 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 			cost += COST_TO_MOVE_BOX_ON_GOAL;
 		}
 
+		//Finds out which box is closest to jens
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			temp = parent->getBoxes()[i];
@@ -294,6 +309,8 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 
 		// Reset min
 		min = BIG_VALUE;
+
+		//Finds the shortest path for the selected box to goal
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			temp = board->goals[i];
@@ -308,6 +325,7 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 //		cout << "Chosen goal: " << (int) nearest_goal.x << " " << (int) nearest_goal.y << endl;
 
 		box_to_goal_distance = min;
+		//Finds out what direction to push the box to.
 		if( abs((float) nearest_goal.x - nearest_box.x) < abs((float) nearest_goal.y - nearest_box.y)
 			&& abs((float) nearest_goal.x - nearest_box.x) != 0 )
 		{
@@ -326,10 +344,7 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 			else // nearest_goal.y - nearest_box.y <= 0
 				push_box_dir = UP;
 		}
-		else
-		{
-			cout << "WUT THE FUKK" << endl;
-		}
+
 
 		if(push_box_dir == RIGHT)
 			temp = nearest_box.getDirection(LEFT);
@@ -352,7 +367,83 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 
 		removeBoxes();
 
+
 //		cout << "Cost: " << cost << " To push: " << jens_to_push_box_dir << endl << endl;
+
+		return cost;
+	}
+/**
+ * Return the cost to get the nearest box to goal
+ */
+int Rules::box_goal_distance(Node * parent, Position &jens){
+
+
+		int save = BIG_VALUE;
+		int min_jens_to_box = BIG_VALUE;
+		int min_box_to_goal = BIG_VALUE;
+
+		Position nearest_box, nearest_goal;
+		Position temp;
+
+		int cost = 0;
+
+		Position new_jens = jens;
+
+		//Finds out which box is closest to jens
+		for(int i = 0; i < parent->getLen(); i++)
+		{
+
+			temp = parent->getBoxes()[i];
+			if(board->get(temp) == BOX){
+				save = Heuristics::length_to_box(new_jens, temp);
+				if(board->get(temp) != BOX_ONGOAL && save < min_jens_to_box)
+				{
+					min_jens_to_box = save;
+					nearest_box = temp;
+				}
+			}else if(board->get(temp) == BOX_ONGOAL){
+				//cout << (int)temp.x << "," << (int)temp.y << " has a box on a goal." << endl;
+
+			}
+		}
+
+
+		//Finds the shortest path for the selected box to goal
+		for(int i = 0; i < parent->getLen(); i++)
+		{
+			temp = board->goals[i];
+			if(board->get(temp) == GOAL){
+				save = Heuristics::length_to_box(nearest_box, temp);
+				if(board->get(temp) != BOX_ONGOAL && save < min_box_to_goal)
+				{
+					min_box_to_goal = save;
+					nearest_goal = temp;
+					//cout << "len to goal" << min_box_to_goal << endl;
+				}
+			}else{
+				//cout << (int)temp.x << "," << (int)temp.y << " has no goal." << endl;
+
+			}
+		}
+
+		if(min_box_to_goal == 0 || min_box_to_goal == BIG_VALUE){
+			return 0;
+		}
+
+		cost = min_box_to_goal + min_jens_to_box;
+
+
+
+		//cout << "DDD" << (int) nearest_box.x << " " << (int)nearest_box.y << endl;
+		//cout << "DDD" << (int)nearest_goal.x << " " << (int)nearest_goal.y << endl;
+
+
+		//Removes the boxes and goal positions
+		board->set(nearest_box,WALL);
+		board->set(nearest_goal, WALL);
+
+		jens = nearest_goal;
+
 
 		return cost;
 	}
@@ -417,7 +508,32 @@ int Rules::enforce(int dir, Node * parent){
 		int cost = 0;
 		//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									cout << "HEURISTICS" << endl;
 		//cost += length_from_jens_to_box(dir, parent);
+
 		cost += jens_box_goal_distance(dir,parent);
 
 		return cost;
 	}
+/**
+* Tries to figure out the distance to the goal.
+*/
+int Rules::total_goal_distance(Node * parent){
+	//bool debug = false;
+	//int debug_nr = 0;
+	int cost = 0;
+
+	node_in_process = parent;
+	Position p = parent->getCurrent_position();
+	//Must add boxes first
+	addBoxes();
+	for(short i = 0; i<parent->getLen(); i++){
+		cost += box_goal_distance(parent,p);
+		//cout << "COST" << cost << endl;
+	}
+
+
+	removeBoxes();
+	addGoals();
+	//cout << "TOTAL KOSTNAD: " << cost << endl;
+	return cost;
+
+}
