@@ -115,6 +115,7 @@ struct Board
 		}
 		
 		/**
+		 * TODO:
 		 * Denna gör en dum grejj med goals! Nån annan får fixa.
 		 */
 		void remove_boxes(Position* boxes,int len)
@@ -139,6 +140,14 @@ struct Board
 		void setJens(Position p)
 		{
 			jens = p;
+		}
+
+		void insert_goals(){
+
+		for(int i = 0; i < goals.size(); i++){
+			matrix[goals[i].x][goals[i].y] = GOAL;
+
+			}
 		}
 };
 #endif
