@@ -107,8 +107,6 @@ int main(int argc, char ** argv)
 	// Command-line argument handling
 	std::string lHost,lPort,lBoard;
 
-	bool PRINT = true;
-
 	/*if (argc==2)
 	{
 		lHost = std::string("cvap103.nada.kth.se");

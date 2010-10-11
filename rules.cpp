@@ -266,7 +266,7 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 
 		node_in_process = parent;
 		addBoxes();
-		int min = BIG_VALUE, save, push_box_dir;
+		int min = BIG_VALUE, save, push_box_dir = NO_DIR;
 		Position nearest_box, nearest_goal;
 		Position temp;
 		int jens_to_push_box_dir, box_to_goal_distance;
