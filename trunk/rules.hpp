@@ -37,15 +37,14 @@ private:
 	int jens_box_goal_distance(int dir, Node * parent);
 		
 public:
-
 	Rules(std::string board){
 		readBoard(board);
 		improve_board(this->board);
-		visited_nodes = NodeSet(3500000);
+		visited_nodes = NodeSet(3000000);
 	}
 	int enforce(int dir, Node * parent);
 
-	int buckets() { return visited_nodes.bucket_count(); }
+
 	int heuristics(int dir, Node * parent, int enforce_return);
 
 	void markAsVisited(Node * n){

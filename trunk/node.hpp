@@ -46,7 +46,6 @@ class Node{
 		unsigned char LAST_DIR;
 		
 		Node();
-		~Node();
 		Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walked);
 		
 		/**
@@ -60,7 +59,10 @@ class Node{
 		int getPathCost() {
 			return path_cost;
 		}
-		
+		void move_box(int i, Position p)
+		{
+		    boxes_positions[i] = p;
+		}
 		Position getCurrent_position()
 		{
 			return jens;
