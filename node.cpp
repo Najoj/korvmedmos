@@ -15,11 +15,6 @@ using namespace std;
 Node::Node()
 {
 }
-Node::~Node()
-{
-	delete[] boxes_positions;
-
-}
 Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker) {
 
 	this->len = len;

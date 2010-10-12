@@ -357,68 +357,74 @@ int Rules::jens_box_goal_distance(int dir, Node * parent)
 		return cost;
 	}
 int Rules::enforce(int dir, Node * parent){
-		w_dir = dir;
-		bool jens_pushing_box = false;
-		//node_in_process = parent;
-		//new_position = node_in_process->getCurrent_position().getDirection(dir);
-		//Anropa en jävla massa privata metoder
+	w_dir = dir;
+	bool jens_pushing_box = false;
+	//node_in_process = parent;
+	//new_position = node_in_process->getCurrent_position().getDirection(dir);
+	//Anropa en jävla massa privata metoder
 
-		node_in_process = parent;
-		//CLASSIC JAKE HAXX!
-		new_position = (node_in_process->getCurrent_position().getDirection(dir));
+	node_in_process = parent;
+	//CLASSIC JAKE HAXX!
+	new_position = (node_in_process->getCurrent_position().getDirection(dir));
 
-		//CLASSIC TIM HAXX!
-		//Insert boxes.
-		addBoxes();
+	//CLASSIC TIM HAXX!
+	//Insert boxes.
+	addBoxes();
 
-		//If jens is walking into a wall return fail.
-		if(jens_into_wall()){
-				removeBoxes();
-				return FAIL;
-		}
-		//Is JENS walking into a box?
-		if(jens_into_box()){
-
-			//see if we can push this box.
-			if( ! (box_into_wall() && box_into_box() && box_into_deadlock())){
-					removeBoxes();
-//					cout << "EN VÄGG!!" << endl;
-					return FAIL;
-				}else{
-					jens_pushing_box = true;
-				}
-
-
-		}
-		/**
-		 * TODO: Improve this plx
-		 */
-		Position p(new_position.x, new_position.y);
-		Node * n = new Node(p, parent,parent->getBoxes(),parent->getLen(), Position(0,0).getDirection(w_dir), dir);
-
-		if(been_in_node(n))
-		{
+	//If jens is walking into a wall return fail.
+	if(jens_into_wall()){
 			removeBoxes();
-			delete n;
 			return FAIL;
+	}
+	//Is JENS walking into a box?
+	if(jens_into_box()){
+
+		//see if we can push this box.
+		if( ! (box_into_wall() && box_into_box() && box_into_deadlock())){
+				removeBoxes();
+//					cout << "EN VÄGG!!" << endl;
+				return FAIL;
+			}else{
+				jens_pushing_box = true;
+			}
+	}
+	int moved = -1;
+	Position oldjens;
+	for(int i = 0; i < parent->getLen(); i++)
+	{
+		// Update box.
+		if(parent->getBoxes()[i] == new_position) {
+			parent->move_box(i, new_position+Position(0,0).getDirection(w_dir));
+			moved = i;
+			break;
 		}
-
-		//Rensar lite
-		delete n;
-
+	}
+	oldjens = parent->getCurrent_position();
+	parent->setCurrent_position(new_position);
+	if(been_in_node(parent))
+	{
+		if (moved != -1)
+			parent->move_box(moved, new_position);
+		parent->setCurrent_position(oldjens);
 		removeBoxes();
-		if(jens_pushing_box){
-			return JENS_IS_PUSHING_BOX_OK;
-		}else{
-			return OK;
-		}
+		return FAIL;
 	}
-
-	int Rules::heuristics(int dir, Node * parent, int enforce_return){
-		int cost = 0;
-		//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									cout << "HEURISTICS" << endl;
-		//cost += length_from_jens_to_box(dir, parent);
-		cost += jens_box_goal_distance(dir,parent);
-
-		return cost;
+	if (moved != -1)
+		parent->move_box(moved, new_position);
+	parent->setCurrent_position(oldjens);
+	removeBoxes();
+	if(jens_pushing_box){
+		return JENS_IS_PUSHING_BOX_OK;
+	}else{
+		return OK;
 	}
+}
+
+int Rules::heuristics(int dir, Node * parent, int enforce_return){
+	int cost = 0;
+	//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									cout << "HEURISTICS" << endl;
+	//cost += length_from_jens_to_box(dir, parent);
+	cost += jens_box_goal_distance(dir,parent);
+
+	return cost;
+}

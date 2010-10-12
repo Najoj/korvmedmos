@@ -76,6 +76,10 @@ struct Position
 	{
 		return !(*this == other);
 	}
+	Position operator+(const Position & other) const
+	{
+		return Position(other.x+this->x, other.y+this->y);
+	}
 	Position up()
 	{
 		return Position(x, y-1);
