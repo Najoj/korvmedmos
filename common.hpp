@@ -52,12 +52,8 @@
 * Common definitions
 */
 
-/**
- * Used for representing a position x and y cordinate.
- */
 struct Position
 {
-	//Uber small memory footprint FTW!
 	unsigned char x;
 	unsigned char y;
 	Position() {x=0;y=0;}
@@ -80,9 +76,6 @@ struct Position
 	{
 		return !(*this == other);
 	}
-	/**
-	 * Returns what the position would be if we move, in that direction
-	 */
 	Position up()
 	{
 		return Position(x, y-1);
@@ -105,10 +98,6 @@ struct Position
 		y += pos.y;
 	}
 
-	/**
-	 * Gives the next direction (i.e) the position if we move in the given dir,
-	 * dir is specified in COMMON_H
-	 */
 	Position getDirection(int dir){
 		switch(dir){
 		case LEFT:

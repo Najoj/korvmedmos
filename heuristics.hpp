@@ -8,13 +8,9 @@
 
 #include <cmath>
 #include "common.hpp"
-#include "Board.hpp"
-
 
 class Heuristics
 {
-
-
 	private:
 		
 	public:
@@ -115,6 +111,5 @@ class Heuristics
 			}
 			// hitta kant utan mål
 		}
-
 };
 #endif

@@ -10,7 +10,7 @@
 #include "node.hpp"
 #include "common.hpp"
 
-class Rules:public Heuristics{
+class Rules: protected Heuristics{
 private:
 	bool box_into_wall();
 	bool box_into_box();
@@ -31,26 +31,22 @@ private:
 
 	void addBoxes();
 	void removeBoxes();
-	void addGoals();
+	
 	int length_from_jens_to_box(int dir, Node * parent);
 
 	int jens_box_goal_distance(int dir, Node * parent);
-
-	int box_goal_distance(Node * parent, Position &jens);
 		
 public:
 
 	Rules(std::string board){
 		readBoard(board);
 		improve_board(this->board);
+		visited_nodes = NodeSet(3500000);
 	}
 	int enforce(int dir, Node * parent);
 
-
+	int buckets() { return visited_nodes.bucket_count(); }
 	int heuristics(int dir, Node * parent, int enforce_return);
-
-	//A heuristic.
-	int total_goal_distance(Node * parent);
 
 	void markAsVisited(Node * n){
 		visited_nodes.insert(*n);
