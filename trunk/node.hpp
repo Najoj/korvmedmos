@@ -44,19 +44,20 @@ class Node{
 		
 	public:
 		unsigned char LAST_DIR;
-		
+		int moved_box;
 		Node() {};
 		Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker) {
 			this->len = len;
+			moved_box = -1;
 			boxes_positions = new Position[len];
 			// Copy boxes.
 			for(int i = 0; i < len; i++)
 			{
 				// Update boxes if needed.
-				if(boxes[i].x == jens.x && boxes[i].y == jens.y) {
+				if(boxes[i] == jens) {
+					moved_box = i;
 				//	cout << "Uppdaterar boxar!";
-					boxes_positions[i].x = boxes[i].x + dir.x;
-					boxes_positions[i].y = boxes[i].y + dir.y;
+					boxes_positions[i] = boxes[i] + dir;
 				} else {
 					boxes_positions[i] = boxes[i];
 				}

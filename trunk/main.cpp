@@ -37,67 +37,91 @@ void debug_print(std::string text)
 
 bool process(Node *n)
 {
-		unsigned int best_cost = -1;		// BIG value.
-		unsigned int way_to_walk;
-		int best_dir;
-		int best_dirs[] = {-1,-1,-1,-1};								   // RANDOM WALK
-		int mod = 0;
-		// Go through all the four possible directions.
-		for(unsigned int i = 0; i < 4; i++){
-				int enforce_return = rules->enforce(i, n); 
-				if( enforce_return != FAIL){
-//						cout << "Fann en bra väg! " << moves_real[i] << endl;
+	unsigned int best_cost = -1;		// BIG value.
+	unsigned int way_to_walk;
+	int best_dir;
+	int best_dirs[] = {-1,-1,-1,-1};								   // RANDOM WALK
+	int mod = 0;
+	rules->set_node(n);
+	// Go through all the four possible directions.
+	for(unsigned int i = 0; i < 4; i++) {
+		int enforce_return = rules->enforce(i);
+		if( enforce_return != FAIL) {
+//			cout << "Fann en bra väg! " << moves_real[i] << endl;
 
-						// Recives a way to walk.
-						way_to_walk = rules->heuristics(i,n,enforce_return);
-//						cout << "cost for " << moves_real[i] << ": " << way_to_walk << endl;
-						// Checks if the best
-						if(way_to_walk == best_cost){
-//							  best_dir = i;
-
-								best_dirs[mod] = i;											 // RANDOM WALK
-								mod++;														  // RANDOM WALK
-						//	  cout << "Updatera bestidr " << moves_real[best_dir] << endl;
-						} else if (way_to_walk < best_cost) {
-								best_cost = way_to_walk;
-								best_dirs[0] = i;											   // RANDOM WALK
-								mod = 1;
-						}
-				}
+			// Recives a way to walk.
+			way_to_walk = rules->heuristics(i);
+//				cout << "cost for " << moves_real[i] << ": " << way_to_walk << endl;
+			// Checks if the best
+			if(way_to_walk == best_cost){
+//					best_dir = i;
+					best_dirs[mod] = i;
+					mod++;
+			//	  cout << "Updatera bestidr " << moves_real[best_dir] << endl;
+			} else if (way_to_walk < best_cost) {
+					best_cost = way_to_walk;
+					best_dirs[0] = i;
+					mod = 1;
+			}
 		}
+	}
 
-	if(mod > 0)																 // RANDOM WALK
+	if(mod > 0)
 	{
-//			srand(time(0));
-//			best_dir = best_dirs[rand() % mod];
-			best_dir = best_dirs[0];
-		}
-		else
+//		srand(time(0));
+//		best_dir = best_dirs[rand() % mod];
+		best_dir = best_dirs[0];
+	}
+	else
+	{
+		// Poped.
+//		cout << "POPPADE DIG :D" << endl;
+
+		if (n->moved_box != -1)
 		{
-				// Poped.
-//				cout << "POPPADE DIG :D" << endl;
-				stack.pop_front();
-				return false;
+			Position p = n->getBoxes()[n->moved_box];
+			if (rules->board->get(p) == BOX_ONGOAL)
+				rules->board->set(p, GOAL);
+			else
+				rules->board->set(p, FLOOR);
+			p = n->getCurrent_position();
+			if (rules->board->get(p) == GOAL)
+				rules->board->set(p, BOX_ONGOAL);
+			else
+				rules->board->set(p, BOX);
 		}
+		stack.pop_front();
+		return false;
+	}
 
-		Position p = n->getCurrent_position();
+	Position p = n->getCurrent_position();
 
-		p.addPosition(getXYDir(best_dir));
+	p.addPosition(getXYDir(best_dir));
 
-		Position boxmov = p;
-		boxmov.addPosition(getXYDir(best_dir));
-		Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
+	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 //	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
-		rules->markAsVisited(temp);
-
+	rules->markAsVisited(temp);
+	if (temp->moved_box != -1)
+	{
+		Position p = temp->getBoxes()[temp->moved_box];
+		if (rules->board->get(p) == GOAL)
+			rules->board->set(p, BOX_ONGOAL);
+		else
+			rules->board->set(p, BOX);
+		p = temp->getCurrent_position();
+		if (rules->board->get(p) == BOX_ONGOAL)
+			rules->board->set(p, GOAL);
+		else
+			rules->board->set(p, FLOOR);
+	}
 //		rules->printBoard(temp);
 
-		if(rules->solutionCheck(temp)){
-				cout << "DONE!" << endl;
-				return true;
-		}
-		stack.push_front( *temp );
-		return false;
+	if(rules->solutionCheck(temp)){
+			cout << "DONE!" << endl;
+			return true;
+	}
+	stack.push_front( *temp );
+	return false;
 }
 /**
  * Main
@@ -153,6 +177,8 @@ int main(int argc, char ** argv)
 
 	// Make the root node, this will be pushed onto stack later on!
 	Node rootNode = rules->getRootNode();
+	rules->set_node(&rootNode);
+	rules->addBoxes();
 	rules->printBoard(&rootNode);
 	rules->markAsVisited(&rootNode);
 	stack.push_front(rootNode);

@@ -23,19 +23,14 @@ private:
 	typedef boost::unordered_set<Node> NodeSet;
 	NodeSet visited_nodes;
 
-	Board * board;
-
 	Node * node_in_process;
 	Position  new_position;
 
 	int w_dir;
-
-	void addBoxes();
-	void removeBoxes();
 	
 	int length_from_jens_to_box(int dir, Node * parent);
 
-	int jens_box_goal_distance(int dir, Node * parent);
+	int jens_box_goal_distance(int dir);
 		
 public:
 	Rules(std::string board){
@@ -43,15 +38,18 @@ public:
 		improve_board(this->board);
 		visited_nodes = NodeSet(3000000);
 	}
-	int enforce(int dir, Node * parent);
+	Board * board;
+	void addBoxes();
+	void removeBoxes();
+	int enforce(int dir);
 
-	int heuristics(int dir, Node * parent, int enforce_return);
+	int heuristics(int dir);
 
 	void markAsVisited(Node * n){
 		visited_nodes.insert(*n);
 	}
 	bool readBoard(std::string boardIn);
-
+	void set_node(Node * node) { node_in_process = node; };
 	Node getRootNode();
 	void printBoard(Node * node);
 
