@@ -105,96 +105,81 @@ bool process(Node *n)
 int main(int argc, char ** argv)
 {
 	// Command-line argument handling
-	std::string lHost,lPort,lBoard;
+	string host, port, board_nr;
+	boost::asio::ip::tcp::socket * socket = NULL;
+	string board_str;
+	bool server = false;
 
-	/*if (argc==2)
+	if (argc > 1) // Use server
 	{
-		lHost = std::string("cvap103.nada.kth.se");
-		lPort = std::string("5555");
-		lBoard = std::string(argv[1]);
+		switch (argc)
+		{
+			case 2:
+				host = string("cvap103.nada.kth.se");
+				port = string("5555");
+				board_nr = string(argv[1]);
+				break;
+			case 3:
+				host = string("cvap103.nada.kth.se");
+				port = string("5555");
+				board_nr = string(argv[1]);
+				break;
+			case 4:
+				host = string(argv[1]);
+				port = string(argv[2]);
+				board_nr = string(argv[3]);
+				break;
+		}
+		// Open a socket with a connection to the server.
+		socket = open(host, port);
+
+		// Reads lBoard from the server.
+		board_str = string(read(*socket, board_nr));
+		cout << "Reading from server" << endl;
+		server = true;
 	}
-	else if (argc==3)
+	else // Read from stdin
 	{
-		lHost = std::string("cvap103.nada.kth.se");
-		lPort = std::string("5555");
-		lBoard = std::string(argv[1]);
-		PRINT = (bool) argv[2];
-	}
-	else if(argc==4)
-	{
-		lHost = std::string(argv[1]);
-		lPort = std::string(argv[2]);
-		lBoard = std::string(argv[3]);
-	}
-	else
-	{
-		std::cerr << "Usage: main (<host> <port>) <board2Solve>" << std::endl;
-		return 1;
+		string fbuf;
+		while(cin) {
+			getline(cin, fbuf);
+			board_str += fbuf + '\n';
+		}
+		cout << "Reading from stdin" << endl;
 	}
 	
-	// Open a socket with a connection to the server.
-	boost::asio::ip::tcp::socket * socket = open(lHost, lPort);
-
-	// Reads lBoard from the server.
-	string boardStr(read(*socket, lBoard));
-	cout << boardStr;*/
-
-	string boardStr;
-	string fbuf;
-	
-	while(cin) {
-		getline(cin, fbuf);
-		boardStr += fbuf +"\n";
-	};
-
-
-	cout << "Read from stdin:\n" <<  boardStr << endl;
-
-	// Create the rules and parse indata
-	rules = new Rules(boardStr);
+	cout << board_str << endl; // Print board as read
+	rules = new Rules(board_str); // Create the rules and parse indata
 
 	// Make the root node, this will be pushed onto stack later on!
 	Node rootNode = rules->getRootNode();
 	rules->printBoard(&rootNode);
-
-//	rules->printBoard(&rootNode);
-
 	rules->markAsVisited(&rootNode);
-
 	stack.push_front(rootNode);
 
-	//NodeSet nodeset;
-	//nodeset.insert(rootNode);
-	int iterations = 0;
-	
-	// Seed for the random.
-	srand(time(0));
-
+	int iterations = 0;	
+	srand(time(0)); // Seed for the random.
 
 	while(!stack.empty())
 	{
-		if (process(&stack.front())) break;
+		if (process(&stack.front()))
+			break;
 //		cout << "Iteration " << iterations << endl;
-
 		if(iterations > 10000000){
-			cerr << "Too many iterations, exiting..." << endl;
+			cerr << "FAIL: Too many iterations, exiting..." << endl;
 			rules->printBoard(&stack.front());
 			exit(0);
 		}
 		iterations++;
 	}
-
 	
 	if(stack.empty())
 	{
-		cout << "FAIL: Stack turned out to be empty. Not good."<< endl;
+		cerr << "FAIL: Stack turned out to be empty. Not good."<< endl;
 		exit(1);
 	}
 	
-	
 	string solution;
-	// frontens LAST_DIR är odef 
-//	stack.pop_front(); 
 	while(!stack.empty())
 	{
 		solution += moves_real[stack.back().LAST_DIR] + " ";
@@ -204,10 +189,12 @@ int main(int argc, char ** argv)
 	cout << "Solution:\t" << solution << endl;
 	cout << "Iterations:\t" << iterations << endl;
 
-
-	// Send a solution and prints
-	cout << "Server answer:\t";
-
-	//send(*socket, solution);
+	if (server)
+	{
+		// Send a solution and prints
+		cout << "Server answer:\t";
+		send(*socket, solution);
+	}
+	
 	return 0;
 }
