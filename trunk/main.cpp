@@ -165,7 +165,7 @@ int main(int argc, char ** argv)
 		if (process(&stack.front()))
 			break;
 //		cout << "Iteration " << iterations << endl;
-		if(iterations > 10000000){
+		if(iterations > 20000000){
 			cerr << "FAIL: Too many iterations, exiting..." << endl;
 			rules->printBoard(&stack.front());
 			exit(0);
