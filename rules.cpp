@@ -54,13 +54,34 @@ bool Rules::box_into_box(){
 	return true;
 }
 
+void print_matrix(int matrix[3][3])
+{
+	for (int j = 0; j < 3; j++)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (matrix[i][j] == 0) cout << " ";
+			else cout << (char)matrix[i][j];
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+
+/*int matrix_hash(int matrix[3][3])
+{
+	int hash = 0;
+	for (int i = 0; i < 9; i++)
+	{
+		hash += (int*)matrix[i] 
+}*/
+
 /*
  * return true if boxlock was not found
  */
 bool find_boxlock(int matrix[3][3])
 {
 	bool equal = true;
-
 	for (int i = 0; i < NUMBER_OF_LOCKS; i++)
 	{
 		equal = true;
@@ -68,26 +89,13 @@ bool find_boxlock(int matrix[3][3])
 		{
 			for (int k = 0; k < 3; k++)
 			{
-				if (boxlocks[i][k][j] == 0)
+				if (boxlocks[i][j][k] == 0)
 					continue;
-				if (matrix[k][j] != boxlocks[i][k][j])
+				if (matrix[j][k] != boxlocks[i][j][k])
 					equal = false;
-				else{
-					cout << "("<< matrix[k][j] << ") is the same as (" << boxlocks[i][k][j] << ")" << endl;
-				}
 			}
 		}
 		if (equal) {
-			cout << "i: " << i << endl;
-			for (int m = 0; m < 3; m++)
-			{
-				for (int n = 0; n < 3; n++)
-				{
-					if (boxlocks[i][n][m] == 0) cout << " ";
-					else cout << (char)boxlocks[i][n][m];
-				}
-				cout << endl;
-			}
 			return true;
 		}
 	}
@@ -100,19 +108,19 @@ bool Rules::box_into_boxlock()
 	
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
-	printBoard(node_in_process);
-	cout << "direction: " << moves_real[w_dir] << endl;
 	int oldbox = board->get(new_position);
 	board->set(new_position, FLOOR);
+	
 	matrix[0][0] = board->get(boxp.left().up());
 	matrix[1][0] = board->get(boxp.up());
 	matrix[2][0] = board->get(boxp.up().right());
 	matrix[0][1] = board->get(boxp.left());
-	matrix[1][1] = BOX;
+	matrix[1][1] = (board->get(boxp) == GOAL) ? BOX_ONGOAL : BOX;
 	matrix[2][1] = board->get(boxp.right());
 	matrix[0][2] = board->get(boxp.down().left());
 	matrix[1][2] = board->get(boxp.down());
 	matrix[2][2] = board->get(boxp.down().right());
+	
 	bool boxes_on_goal = true;
 	for (int i = 0; i < 3; i++)
 	{
@@ -120,9 +128,6 @@ bool Rules::box_into_boxlock()
 		{
 			if (matrix[i][j] == BOX)
 				boxes_on_goal = false;
-
-
-			
 			if (matrix[i][j] == BOX_ONGOAL)
 				matrix[i][j] = BOX;
 			else if (matrix[i][j] == BAD_POS)
@@ -134,23 +139,8 @@ bool Rules::box_into_boxlock()
 			}
 		}
 	}
+	board->set(new_position, oldbox); // reset box position
 
-			for (int m = 0; m < 3; m++)
-			{
-				for (int n = 0; n < 3; n++)
-				{
-					if (matrix[n][m] == 0) cout << " ";
-					else cout << (char)matrix[n][m];
-				}
-				cout << endl;
-			}
-
-
-	
-	cout << endl;
-	cout << "boxes_on_goal: " << boxes_on_goal << endl;
-	cout << "find_boxlock()" << find_boxlock(matrix) << endl;
-	board->set(new_position, oldbox);
 	if (boxes_on_goal)
 		return true;
 	else
