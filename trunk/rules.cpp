@@ -6,6 +6,7 @@
  */
 
 #include "rules.hpp"
+#include "boxlocks.hpp"
 
 bool Rules::been_in_node(Node * node)
 {
@@ -52,6 +53,110 @@ bool Rules::box_into_box(){
 	}
 	return true;
 }
+
+/*
+ * return true if boxlock was not found
+ */
+bool find_boxlock(int matrix[3][3])
+{
+	bool equal = true;
+
+	for (int i = 0; i < NUMBER_OF_LOCKS; i++)
+	{
+		equal = true;
+		for (int j = 0; j < 3; j++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				if (boxlocks[i][k][j] == 0)
+					continue;
+				if (matrix[k][j] != boxlocks[i][k][j])
+					equal = false;
+				else{
+					cout << "("<< matrix[k][j] << ") is the same as (" << boxlocks[i][k][j] << ")" << endl;
+				}
+			}
+		}
+		if (equal) {
+			cout << "i: " << i << endl;
+			for (int m = 0; m < 3; m++)
+			{
+				for (int n = 0; n < 3; n++)
+				{
+					if (boxlocks[i][n][m] == 0) cout << " ";
+					else cout << (char)boxlocks[i][n][m];
+				}
+				cout << endl;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Rules::box_into_boxlock()
+{
+	int matrix[3][3];
+	
+	// Gets the prospective postion of the box.
+	Position boxp = new_position.getDirection(w_dir);
+	printBoard(node_in_process);
+	cout << "direction: " << moves_real[w_dir] << endl;
+	int oldbox = board->get(new_position);
+	board->set(new_position, FLOOR);
+	matrix[0][0] = board->get(boxp.left().up());
+	matrix[1][0] = board->get(boxp.up());
+	matrix[2][0] = board->get(boxp.up().right());
+	matrix[0][1] = board->get(boxp.left());
+	matrix[1][1] = BOX;
+	matrix[2][1] = board->get(boxp.right());
+	matrix[0][2] = board->get(boxp.down().left());
+	matrix[1][2] = board->get(boxp.down());
+	matrix[2][2] = board->get(boxp.down().right());
+	bool boxes_on_goal = true;
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (matrix[i][j] == BOX)
+				boxes_on_goal = false;
+
+
+			
+			if (matrix[i][j] == BOX_ONGOAL)
+				matrix[i][j] = BOX;
+			else if (matrix[i][j] == BAD_POS)
+				matrix[i][j] = 0;
+			else if (matrix[i][j] == FLOOR)
+				matrix[i][j] = 0;
+			else if (matrix[i][j] == GOAL) {
+				matrix[i][j] = 0;
+			}
+		}
+	}
+
+			for (int m = 0; m < 3; m++)
+			{
+				for (int n = 0; n < 3; n++)
+				{
+					if (matrix[n][m] == 0) cout << " ";
+					else cout << (char)matrix[n][m];
+				}
+				cout << endl;
+			}
+
+
+	
+	cout << endl;
+	cout << "boxes_on_goal: " << boxes_on_goal << endl;
+	cout << "find_boxlock()" << find_boxlock(matrix) << endl;
+	board->set(new_position, oldbox);
+	if (boxes_on_goal)
+		return true;
+	else
+		return !find_boxlock(matrix); // om vi är i ett boxlock, returnerar find_boxlock true, då är det fail, då returnar vi false
+}
+
 bool Rules::jens_into_box(){
 	// Jens can not walk into a box.
 	if(board->get(new_position) == BOX || board->get(new_position) == BOX_ONGOAL) {
@@ -378,9 +483,9 @@ int Rules::enforce(int dir, Node * parent){
 	}
 	//Is JENS walking into a box?
 	if(jens_into_box()){
-
 		//see if we can push this box.
-		if( ! (box_into_wall() && box_into_box() && box_into_deadlock())){
+		// true är fail
+		if( ! (box_into_wall() && box_into_box() && box_into_deadlock() && box_into_boxlock())){
 				removeBoxes();
 //					cout << "EN VÄGG!!" << endl;
 				return FAIL;
@@ -422,6 +527,7 @@ int Rules::enforce(int dir, Node * parent){
 
 int Rules::heuristics(int dir, Node * parent, int enforce_return){
 	int cost = 0;
+	//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									cout << "HEURISTICS" << endl;
 	//cost += length_from_jens_to_box(dir, parent);
 	cost += jens_box_goal_distance(dir,parent);
 

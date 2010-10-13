@@ -170,9 +170,10 @@ int main(int argc, char ** argv)
 			rules->printBoard(&stack.front());
 			exit(0);
 		}
+		//rules->printBoard(&stack.front());
 		iterations++;
 	}
-	
+	cout << "Iterations:\t" << iterations << endl;
 	if(stack.empty())
 	{
 		cerr << "FAIL: Stack turned out to be empty. Not good."<< endl;
@@ -187,7 +188,6 @@ int main(int argc, char ** argv)
 	}
 
 	cout << "Solution:\t" << solution << endl;
-	cout << "Iterations:\t" << iterations << endl;
 
 	if (server)
 	{
