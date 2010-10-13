@@ -12,8 +12,8 @@
 
 using namespace std;
 
-Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker)
-{
+Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker) {
+
 	this->len = len;
 	boxes_positions = new Position[len];
 	// Copy boxes.
@@ -41,12 +41,13 @@ Node::Node(Position jens, Node * parent, Position *boxes, int len, Position dir,
 }
 
 /**
-* Hash and hash related stuff. DO NOT TOUCH!
-*/
+ * Hash and hash related stuff. DO NOT TOUCH!
+ */
 bool Node::operator==(const Node & other) const
 {
 	if (this->jens != other.jens)
 		return false;
+	
 	for (int i = 0; i < len; i++)
 	{
 		if (this->boxes_positions[i] != other.boxes_positions[i])
@@ -54,7 +55,8 @@ bool Node::operator==(const Node & other) const
 	}
 	return true;
 }
-size_t hash_value(Node const & p)
+
+std::size_t hash_value(Node const& p)
 {
 	std::size_t hash = 0;
 	hash += 499973*p.jens.x + 849731*p.jens.y;
@@ -63,33 +65,4 @@ size_t hash_value(Node const & p)
 		hash += (612301*p.boxes_positions[i].x) & (1182463*p.boxes_positions[i].y);
 	}
 	return hash;
-}
-
-Position * Node::getBoxes()
-{
-	return boxes_positions;
-}
-int Node::getPathCost()
-{
-	return path_cost;
-}
-void Node::move_box(int i, Position p)
-{
-	boxes_positions[i] = p;
-}
-Position Node::getCurrent_position()
-{
-	return jens;
-}
-void Node::setCurrent_position(Position jens)
-{
-	this->jens = jens;
-}
-Node * Node::getParent()
-{
-	return parent;
-}
-int Node::getLen()
-{
-	return len;
 }

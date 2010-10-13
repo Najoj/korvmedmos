@@ -422,7 +422,6 @@ int Rules::enforce(int dir, Node * parent){
 
 int Rules::heuristics(int dir, Node * parent, int enforce_return){
 	int cost = 0;
-	//																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									cout << "HEURISTICS" << endl;
 	//cost += length_from_jens_to_box(dir, parent);
 	cost += jens_box_goal_distance(dir,parent);
 
