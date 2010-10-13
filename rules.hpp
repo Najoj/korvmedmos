@@ -14,6 +14,7 @@ class Rules: protected Heuristics{
 private:
 	bool box_into_wall();
 	bool box_into_box();
+	bool box_into_boxlock();
 	bool jens_into_box();
 	bool jens_into_wall();
 	bool box_into_deadlock();
@@ -43,7 +44,6 @@ public:
 		visited_nodes = NodeSet(3000000);
 	}
 	int enforce(int dir, Node * parent);
-
 
 	int heuristics(int dir, Node * parent, int enforce_return);
 
