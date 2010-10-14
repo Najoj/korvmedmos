@@ -9,14 +9,14 @@
 //Custom includes
 #include "client.hpp"
 #include "node.hpp"
-#include "rules.hpp"
+//#include "rules.hpp"
+#include "heuristics.hpp"
 #include "common.hpp"
 
 using namespace std;
 
-Rules *rules;
-deque<Node*> stack;
-int limit;
+Heuristics *rules;
+deque<Node> stack;
 
 Position getXYDir(int dir, Position ret = Position(0,0) ){
 	if(dir == UP)
@@ -44,15 +44,15 @@ bool process(Node *n)
 	int best_dirs[] = {-1,-1,-1,-1};								   // RANDOM WALK
 	int mod = 0;
 	rules->set_node(n);
+
+	rules->addBoxes();
+
 	// Go through all the four possible directions.
 	for(unsigned int i = 0; i < 4; i++) {
 		int enforce_return = rules->enforce(i);
-		if (stack.size() > limit)
-		{
-			enforce_return = LIMIT_EXCEEDED;
-		}
-		if( enforce_return == OK) {
+		if( enforce_return != FAIL) {
 //			cout << "Fann en bra väg! " << moves_real[i] << endl;
+
 
 			// Recives a way to walk.
 			way_to_walk = rules->heuristics(i);
@@ -62,7 +62,7 @@ bool process(Node *n)
 //					best_dir = i;
 					best_dirs[mod] = i;
 					mod++;
-			//	  cout << "Updatera bestidr " << moves_real[best_dir] << endl;
+
 			} else if (way_to_walk < best_cost) {
 					best_cost = way_to_walk;
 					best_dirs[0] = i;
@@ -71,31 +71,18 @@ bool process(Node *n)
 		}
 	}
 
+	rules->removeBoxes();
+
+	//Chose what direction to walk
 	if(mod > 0)
 	{
 //		srand(time(0));
 //		best_dir = best_dirs[rand() % mod];
 		best_dir = best_dirs[0];
 	}
-	else
-	{
-		// Poped.
-//		cout << "POPPADE DIG :D" << endl;
-
-		if (n->moved_box != -1)
-		{
-			Position p = n->getBoxes()[n->moved_box];
-			if (rules->board->get(p) == BOX_ONGOAL)
-				rules->board->set(p, GOAL);
-			else
-				rules->board->set(p, FLOOR);
-			p = n->getCurrent_position();
-			if (rules->board->get(p) == GOAL)
-				rules->board->set(p, BOX_ONGOAL);
-			else
-				rules->board->set(p, BOX);
-		}
-		//cout << "popping" << endl;
+	//We didnt find any good direction
+	else{
+		rules->removeBoxes();
 		stack.pop_front();
 		return false;
 	}
@@ -106,27 +93,20 @@ bool process(Node *n)
 
 	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 //	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
+
+	//Marks this node, or state as visited.
 	rules->markAsVisited(temp);
-	if (temp->moved_box != -1)
-	{
-		Position p = temp->getBoxes()[temp->moved_box];
-		if (rules->board->get(p) == GOAL)
-			rules->board->set(p, BOX_ONGOAL);
-		else
-			rules->board->set(p, BOX);
-		p = temp->getCurrent_position();
-		if (rules->board->get(p) == BOX_ONGOAL)
-			rules->board->set(p, GOAL);
-		else
-			rules->board->set(p, FLOOR);
-	}
-//		rules->printBoard(temp);
+
+
+
+
 
 	if(rules->solutionCheck(temp)){
 			cout << "DONE!" << endl;
 			return true;
 	}
-	stack.push_front( temp );
+
+	stack.push_front( *temp );
 	return false;
 }
 /**
@@ -179,7 +159,7 @@ int main(int argc, char ** argv)
 	}
 	
 	cout << board_str << endl; // Print board as read
-	rules = new Rules(board_str); // Create the rules and parse indata
+	rules = new Heuristics(board_str); // Create the rules and parse indata
 
 	// Make the root node, this will be pushed onto stack later on!
 	Node rootNode = rules->getRootNode();
@@ -187,67 +167,46 @@ int main(int argc, char ** argv)
 	rules->addBoxes();
 	rules->printBoard(&rootNode);
 	rules->markAsVisited(&rootNode);
-	stack.push_front(&rootNode);
+	stack.push_front(rootNode);
 
 	int iterations = 0;	
 	srand(time(0)); // Seed for the random.
 
-	limit = 100;
-	bool solved = false;
-	Node * latest = NULL;
-	while (!solved && iterations <= 20000000)
+	while(!stack.empty())
 	{
-		while(!stack.empty())
-		{
-			latest = stack.front();
-			if (process(latest))
-			{
-				solved = true;
-				break;
-			}
-	//		cout << "Iteration " << iterations << endl;
-			//rules->printBoard(&stack.front());
-			iterations++;
+		if (process(&stack.front()))
+			break;
+//		cout << "Iteration " << iterations << endl;
+		if(iterations > 20000000){
+			cerr << "FAIL: Too many iterations, exiting..." << endl;
+			rules->printBoard(&stack.front());
+			exit(0);
 		}
-		if(stack.empty())
-		{
-			rules->clear_hash();
-			rules->markAsVisited(&rootNode);
-			stack.push_front(&rootNode);
-			rules->set_node(&rootNode);
-			rules->board->remove_boxes(latest->getBoxes(), latest->getLen());
-			rules->addBoxes();
-			limit *= limit;
-			cout << "New limit: " << limit << endl;
-		}
+		//rules->printBoard(&stack.front());
+		iterations++;
 	}
-	
 	cout << "Iterations:\t" << iterations << endl;
-	
-	if (solved)
+	if(stack.empty())
 	{
-		string solution;
-		while(!stack.empty())
-		{
-			solution += moves_real[stack.back()->LAST_DIR] + " ";
-			stack.pop_back();
-		}
-
-		cout << "Solution:\t" << solution << endl;
-		cout << "Solution length:\t" << solution.size()/2 << endl;
-		if (server)
-		{
-			// Send a solution and prints
-			cout << "Server answer:\t";
-			send(*socket, solution);
-		}
-		return 0;
+		cerr << "FAIL: Stack turned out to be empty. Not good."<< endl;
+		exit(1);
 	}
-	if(iterations >= 20000000){
-		cerr << "FAIL: Too many iterations, exiting..." << endl;
-		rules->printBoard(stack.front());
-	}	
-	else
-		cerr << "FAIL: Stack turned out to be empty. Not good." << endl;
+	
+	string solution;
+	while(!stack.empty())
+	{
+		solution += moves_real[stack.back().LAST_DIR] + " ";
+		stack.pop_back();
+	}
+
+	cout << "Solution:\t" << solution << endl;
+
+	if (server)
+	{
+		// Send a solution and prints
+		cout << "Server answer:\t";
+		send(*socket, solution);
+	}
+	
 	return 0;
 }

@@ -1,14 +1,16 @@
 /*
- * rules.cpp
+ * back_rules.cpp
  *
- *  Created on: 2 okt 2010
+ *  Created on: 14 okt 2010
  *      Author: jacob
  */
 
-#include "rules.hpp"
-#include "boxlocks.hpp"
+#include "back_rules.hpp"
 
-bool Rules::been_in_node(Node * node)
+
+
+
+bool BackRules::been_in_node(Node * node)
 {
 
 	NodeSet::iterator iterator = visited_nodes.find(*node);
@@ -17,9 +19,9 @@ bool Rules::been_in_node(Node * node)
 	else
 		return false;
 }
-bool Rules::box_into_wall(){
+bool BackRules::box_into_wall(){
 	// Gets the prospective postion of the box.
-	Position boxp = new_position.getDirection(w_dir);
+	Position boxp = op_new_position.getDirection(w_dir);
 //cout << "BOX_INTO WALL dir : " << moves_real[w_dir] << " POS: " << boxp.x << " " << boxp.y << endl;
 	// Can not push a box into a wall.
 	if(board->get(boxp) == WALL){
@@ -29,9 +31,9 @@ bool Rules::box_into_wall(){
 
 	return true;
 }
-bool Rules::box_into_deadlock(){
+bool BackRules::box_into_deadlock(){
 	// Gets the prospective postion of the box.
-	Position boxp = new_position.getDirection(w_dir);
+	Position boxp = op_new_position.getDirection(w_dir);
 
 	// Can not push a box into a forbidden place.
 	if(board->get(boxp) == BAD_POS){
@@ -41,9 +43,9 @@ bool Rules::box_into_deadlock(){
 
 	return true;
 }
-bool Rules::box_into_box(){
+bool BackRules::box_into_box(){
 	// Gets the prospective postion of the box.
-	Position boxp = new_position.getDirection(w_dir);
+	Position boxp = op_new_position.getDirection(w_dir);
 
 
 	// Can not push a box into a box.
@@ -53,7 +55,7 @@ bool Rules::box_into_box(){
 	}
 	return true;
 }
-
+/*
 void print_matrix(int matrix[3][3])
 {
 	for (int j = 0; j < 3; j++)
@@ -66,19 +68,19 @@ void print_matrix(int matrix[3][3])
 		cout << endl;
 	}
 	cout << endl;
-}
+}*/
 
 /*int matrix_hash(int matrix[3][3])
 {
 	int hash = 0;
 	for (int i = 0; i < 9; i++)
 	{
-		hash += (int*)matrix[i] 
+		hash += (int*)matrix[i]
 }*/
 
 /*
  * return true if boxlock was not found
- */
+ *//*
 bool find_boxlock(int matrix[3][3])
 {
 	bool equal = true;
@@ -101,16 +103,17 @@ bool find_boxlock(int matrix[3][3])
 	}
 	return false;
 }
-
-bool Rules::box_into_boxlock()
+*/
+/*
+bool BackRules::box_into_boxlock()
 {
 	int matrix[3][3];
-	
+
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
 	int oldbox = board->get(new_position);
 	board->set(new_position, FLOOR);
-	
+
 	matrix[0][0] = board->get(boxp.left().up());
 	matrix[1][0] = board->get(boxp.up());
 	matrix[2][0] = board->get(boxp.up().right());
@@ -120,7 +123,7 @@ bool Rules::box_into_boxlock()
 	matrix[0][2] = board->get(boxp.down().left());
 	matrix[1][2] = board->get(boxp.down());
 	matrix[2][2] = board->get(boxp.down().right());
-	
+
 	bool boxes_on_goal = true;
 	for (int i = 0; i < 3; i++)
 	{
@@ -145,16 +148,16 @@ bool Rules::box_into_boxlock()
 		return true;
 	else
 		return !find_boxlock(matrix); // om vi är i ett boxlock, returnerar find_boxlock true, då är det fail, då returnar vi false
-}
+}*/
 
-bool Rules::jens_into_box(){
+bool BackRules::jens_into_box(){
 	// Jens can not walk into a box.
 	if(board->get(new_position) == BOX || board->get(new_position) == BOX_ONGOAL) {
 		return true;
 	}
 	return false;
 }
-bool Rules::jens_into_wall(){
+bool BackRules::jens_into_wall(){
 	// Jens can not walk into a wall.
 	if(board->get(new_position) == WALL){
 		return true;
@@ -166,7 +169,7 @@ bool Rules::jens_into_wall(){
 * Reads the board into a int matrix called board (global var)
 * @param string The String representing the board.
 */
-bool Rules::readBoard(std::string boardIn)
+bool BackRules::readBoard(std::string boardIn)
 {
 	// Creates an iterator.
 	string::iterator iterator;
@@ -204,8 +207,8 @@ bool Rules::readBoard(std::string boardIn)
 			Position p(x,y);
 			switch (*iterator) {
 				case BOX:
-					board->boxes.push_back(p);
-					board->set(p, FLOOR);
+
+					board->add_goal(p);
 					break;
 				case JENS:
 					board->setJens(p);
@@ -220,7 +223,9 @@ bool Rules::readBoard(std::string boardIn)
 					board->add_goal(p);
 					break;
 				case GOAL:
-					board->add_goal(p);
+
+					board->boxes.push_back(p);
+					board->set(p, FLOOR);
 					break;
 				default:
 					board->set(p, *iterator);
@@ -233,7 +238,8 @@ bool Rules::readBoard(std::string boardIn)
 	return true;
 }
 
-Node Rules::getRootNode(){
+Node BackRules::getRootNode(){
+
 
 	/**
 	 * TODO: Make this nicer.
@@ -250,7 +256,8 @@ Node Rules::getRootNode(){
  * TODO: TEST! This is basically copy paste from original main.cpp file.
  * TODO: Comment this SoB.
  */
-void Rules::printBoard(Node * node){
+void BackRules::printBoard(Node * node){
+	bool found = false;
 //	cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
 	for(int j = 0; j < board->height; j++)
 	{
@@ -267,27 +274,17 @@ void Rules::printBoard(Node * node){
 	}
 }
 
-void Rules::addBoxes()
+void BackRules::addBoxes()
 {
 	board->insert_boxes(node_in_process->getBoxes(),node_in_process->getLen());
 }
-//TODO: LOL @ Rishise :D CLASSIC JAKE HAX!!
-void Rules::removeBoxes()
-{
-        board->remove_boxes(node_in_process->getBoxes(),node_in_process->getLen());
-       // node_in_process = NULL;
-}
-void Rules::removeBoxes()
-{
 
-}
-
-bool Rules::solutionCheck(Node *n)
+bool BackRules::solutionCheck(Node *n)
 {
 	// If every box is on the goal, then we hopefully have a valid solution.
-	for(unsigned int i = 0; i < n->getLen(); i++)
+	for(unsigned int i = 0; i < board->goals.size(); i++)
 	{
-		if(board->get( n->getBoxes()[i] ) != GOAL)
+		if(board->get( board->goals[i] ) != BOX_ONGOAL)
 		{
 			return false;
 		}
@@ -296,122 +293,191 @@ bool Rules::solutionCheck(Node *n)
 	return true;
 }
 
+int BackRules::length_from_jens_to_box(int dir, Node * parent)
+	{
+		int cost = 0;
 
+		Position new_jens = parent->getCurrent_position();
 
-/**
- * Return the cost to get the nearest box to goal
- */
-int Rules::box_goal_distance(Node * parent, Position &jens){
+		int min = BIG_VALUE;
+		int min_i = 0; // i-värdet för minsta boxen
+		int save;
+		if(dir == UP)
+		{
+			new_jens.y--;
+		}
+		else if(dir == RIGHT)
+		{
+			new_jens.x++;
+		}
+		else if(dir == DOWN)
+		{
+			new_jens.y++;
+		}
+		else // (dir == LEFT)
+		{
+			new_jens.x--;
+		}
 
+		for(int i = 0; i < parent->getLen(); i++)
+		{
+			save = Heuristics::length_to_box(new_jens, parent->getBoxes()[i]);
+			if(save < min)
+			{
+				min = save;
+				min_i = i;
+			}
+		}
+		cost += min;
+		if (board->get(parent->getBoxes()[min_i]) == GOAL) {
+			cost += 5;
+		}
 
-                int save = BIG_VALUE;
-                int min_jens_to_box = BIG_VALUE;
-                int min_box_to_goal = BIG_VALUE;
+		return cost;
+	}
 
-                Position nearest_box, nearest_goal;
-                Position temp;
+int BackRules::jens_box_goal_distance(int dir)
+	{
+		//bool debug = false;
+		//int debug_nr = 0;
+		int min = BIG_VALUE, save, push_box_dir = NO_DIR;
+		Position nearest_box, nearest_goal;
+		Position temp;
+		int jens_to_push_box_dir, box_to_goal_distance;
+		int cost = 0;
 
-                int cost = 0;
+		Position new_jens = getXYDir(dir, node_in_process->getCurrent_position());
 
-                Position new_jens = jens;
+		if(board->get(new_jens) == BOX_ONGOAL){
+			cost += COST_TO_MOVE_BOX_ON_GOAL;
+		}
 
-                //Finds out which box is closest to jens
-                for(int i = 0; i < parent->getLen(); i++)
-                {
+		// Find nearest box from Jens
+		for(int i = 0; i < node_in_process->getLen(); i++)
+		{
+			temp = node_in_process->getBoxes()[i];
+			save = Heuristics::length_to_box(new_jens, temp);
 
-                        temp = parent->getBoxes()[i];
-                        if(board->get(temp) == BOX){
-                                save = length_to_box(new_jens, temp);
-                                if(board->get(temp) != BOX_ONGOAL && save < min_jens_to_box)
-                                {
-                                        min_jens_to_box = save;
-                                        nearest_box = temp;
-                                }
-                        }else if(board->get(temp) == BOX_ONGOAL){
-                                //cout << (int)temp.x << "," << (int)temp.y << " has a box on a goal." << endl;
+			if(board->get(temp) != BOX_ONGOAL && save < min)
+			{
+				min = save;
+				nearest_box = temp;
+			}
+		}
 
-                        }
-                }
+//		cout << "Chosen box: " << (int) nearest_box.x << " " << (int) nearest_box.y << endl;
 
+		// Reset min
+		min = BIG_VALUE;
+		// Find nearest goal from nearest box
+		for(int i = 0; i < node_in_process->getLen(); i++)
+		{
+			temp = board->goals[i];
+			save = Heuristics::length_to_box(nearest_box, temp);
 
-                //Finds the shortest path for the selected box to goal
-                for(int i = 0; i < parent->getLen(); i++)
-                {
-                        temp = board->goals[i];
-                        if(board->get(temp) == GOAL){
-                                save = length_to_box(nearest_box, temp);
-                                if(board->get(temp) != BOX_ONGOAL && save < min_box_to_goal)
-                                {
-                                        min_box_to_goal = save;
-                                        nearest_goal = temp;
-                                        //cout << "len to goal" << min_box_to_goal << endl;
-                                }
-                        }else{
-                                //cout << (int)temp.x << "," << (int)temp.y << " has no goal." << endl;
+			if(board->get(temp) != BOX_ONGOAL && save < min)
+			{
+				min = save;
+				nearest_goal = temp;
+			}
+		}
+//		cout << "Chosen goal: " << (int) nearest_goal.x << " " << (int) nearest_goal.y << endl;
 
-                        }
-                }
+		box_to_goal_distance = min;
+		if( abs(nearest_goal.x - nearest_box.x) < abs(nearest_goal.y - nearest_box.y)
+			&& abs(nearest_goal.x - nearest_box.x) != 0 )
+		{
 
-                if(min_box_to_goal == 0 || min_box_to_goal == BIG_VALUE){
-                        return 0;
-                }
+			if( nearest_goal.x - nearest_box.x > 0 )
+				push_box_dir = RIGHT;
+			else // nearest_goal.x - nearest_box.x <= 0
+				push_box_dir = LEFT;
 
-                cost = min_box_to_goal + min_jens_to_box;
+		}
+		else if( abs(nearest_goal.x - nearest_box.x) >= abs(nearest_goal.y - nearest_box.y)
+				|| abs(nearest_goal.x - nearest_box.x) == 0 )
+		{
+			if( nearest_goal.y - nearest_box.y > 0 )
+				push_box_dir = DOWN;
+			else // nearest_goal.y - nearest_box.y <= 0
+				push_box_dir = UP;
+		}
+		else
+		{
+			cout << "WUT THE FUKK" << endl;
+		}
 
+		if(push_box_dir == RIGHT)
+			temp = nearest_box.getDirection(LEFT);
+		else if(push_box_dir == LEFT)
+			temp = nearest_box.getDirection(RIGHT);
+		else if(push_box_dir == UP)
+			temp = nearest_box.getDirection(DOWN);
+		else if(push_box_dir == DOWN)
+			temp = nearest_box.getDirection(UP);
 
+//		cout << "Direction: " << moves_real[push_box_dir] << endl;
+		if (node_in_process->getCurrent_position() == temp && push_box_dir == dir) {
+			cost = 0;
+		} else {
+			jens_to_push_box_dir = Heuristics::length_to_box(new_jens, temp);
+			cost += jens_to_push_box_dir;
+		}
 
-                //cout << "DDD" << (int) nearest_box.x << " " << (int)nearest_box.y << endl;
-                //cout << "DDD" << (int)nearest_goal.x << " " << (int)nearest_goal.y << endl;
+		cost += box_to_goal_distance;
 
-
-                //Removes the boxes and goal positions
-                board->set(nearest_box,WALL);
-                board->set(nearest_goal, WALL);
-
-                jens = nearest_goal;
-
-
-                return cost;
-        }
-int Rules::enforce(int dir){
+		return cost;
+	}
+int BackRules::enforce(int dir){
 	w_dir = dir;
 	//CLASSIC JAKE HAXX!
 	new_position = (node_in_process->getCurrent_position().getDirection(dir));
-
+	op_new_position =(node_in_process->getCurrent_position().getDirection(revereseDir(dir)));
 	//If jens is walking into a wall return fail.
 	if(jens_into_wall()){
 			return FAIL;
 	}
 
-	//Is JENS walking into a box?
+	//Jens cannot walk into a box
 	if(jens_into_box()){
+		return FAIL;
+	}
+	int moved = -1;
+
 		//see if we can push this box.
 		// true är fail
-		if( ! (box_into_wall() && box_into_box() && box_into_deadlock() && box_into_boxlock())){
+	if( ! (box_into_wall() && box_into_box() /*&& box_into_deadlock()*/ /*&& box_into_boxlock()*/)){
+		cout << "De va jag som faila " << endl;
 				return FAIL;
-		}
+	}
+		for(int i = 0; i < node_in_process->getLen(); i++)
+		{
+			// Update box.
+			if(node_in_process->getBoxes()[i] == op_new_position) {
+				node_in_process->move_box(i, op_new_position+Position(0,0).getDirection(w_dir));
+				moved = i;
+				break;
+			}
 
 	}
-    /**
-  * TODO: Improve this plx
-  */
-	Position p(new_position.x, new_position.y);
-	Node * n = new Node(p, node_in_process,node_in_process->getBoxes(),node_in_process->getLen(), Position(0,0).getDirection(w_dir), dir);
+		//Saves jens old position for some reason?
+	Position oldjens = node_in_process->getCurrent_position();
+	//Updates jens position but why?
+	node_in_process->setCurrent_position(new_position);
+	bool visited = been_in_node(node_in_process);
+	if (moved != -1)
+		node_in_process->move_box(moved, op_new_position);
+		node_in_process->setCurrent_position(oldjens);
 
-	if(been_in_node(n))
-	{
-			delete n;
-
-		 return FAIL;
-	}
-	delete n;
+	if(visited)
+		return FAIL;
 	return OK;
 }
 
+int BackRules::heuristics(int dir){
+	int cost = 0;
 
+	cost += jens_box_goal_distance(dir);
 
-int Rules::length_to_box(Position jens, Position box)
-		{
-			return abs(jens.x - box.x) + abs(jens.y - box.y);
-//			return sqrt((jens.x - box.x)*(jens.x - box.x) + (jens.y-box.y)*(jens.y-box.y));
-		}
+	return cost;
+}

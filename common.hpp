@@ -52,7 +52,7 @@
 /**
 * Common definitions
 */
-
+int revereseDir(int push_box_dir);
 struct Position
 {
 	unsigned char x;
