@@ -1,3 +1,6 @@
+#ifndef BOXLOCKS_HPP
+#define BOXLOCKS_HPP
+
 #include "common.hpp"
 
 #define lock1 {\
@@ -142,3 +145,5 @@ int boxlocks[NUMBER_OF_LOCKS][3][3] = {lock1, lock2, lock3, lock4, lock5, lock6,
 	lock7, lock8, lock9, lock10, lock11, lock12, lock13, lock14, lock15, lock16,
 	lock17, lock18, lock19, lock20, lock21, lock22, lock23, lock24, lock25,
 	lock26, lock27, lock28, lock29, lock30, lock31, lock32};
+
+#endif

@@ -113,6 +113,7 @@ struct Board
 		{
 			for(int i = 0; i < len; i++)
 			{
+
 				if(matrix[boxes[i].x][boxes[i].y] == GOAL)
 				{
 					matrix[boxes[i].x][boxes[i].y] = BOX_ONGOAL;
@@ -124,6 +125,26 @@ struct Board
 				//	cout << "BOX inserted (" << boxes[i].x << "," << boxes[i].y << endl;
 				}
 			}
+		}
+		/**
+		 * Denna gör en dum grejj med goals! Nån annan får fixa.
+		 */
+		void remove_boxes(Position* boxes,int len)
+		{
+				for(int i = 0; i < len; i++){
+						if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL)
+						{
+								matrix[boxes[i].x][boxes[i].y] = GOAL;
+						}
+						else
+						{
+								matrix[boxes[i].x][boxes[i].y] = FLOOR;
+						}
+				}
+
+				for(int i = 0; i<goals.size(); i++){
+					matrix[goals[i].x][goals[i].y] = GOAL;
+				}
 		}
 		
 		Position * getJens()
