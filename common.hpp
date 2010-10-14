@@ -42,6 +42,7 @@
 
 #define FAIL -1
 #define OK 1
+#define LIMIT_EXCEEDED 2
 
 #define JENS_IS_PUSHING_BOX_OK 4711
 #define BIG_VALUE 2147483647

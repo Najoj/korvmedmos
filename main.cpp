@@ -15,7 +15,8 @@
 using namespace std;
 
 Rules *rules;
-deque<Node> stack;
+deque<Node*> stack;
+int limit;
 
 Position getXYDir(int dir, Position ret = Position(0,0) ){
 	if(dir == UP)
@@ -46,7 +47,11 @@ bool process(Node *n)
 	// Go through all the four possible directions.
 	for(unsigned int i = 0; i < 4; i++) {
 		int enforce_return = rules->enforce(i);
-		if( enforce_return != FAIL) {
+		if (stack.size() > limit)
+		{
+			enforce_return = LIMIT_EXCEEDED;
+		}
+		if( enforce_return == OK) {
 //			cout << "Fann en bra väg! " << moves_real[i] << endl;
 
 			// Recives a way to walk.
@@ -90,6 +95,7 @@ bool process(Node *n)
 			else
 				rules->board->set(p, BOX);
 		}
+		//cout << "popping" << endl;
 		stack.pop_front();
 		return false;
 	}
@@ -120,7 +126,7 @@ bool process(Node *n)
 			cout << "DONE!" << endl;
 			return true;
 	}
-	stack.push_front( *temp );
+	stack.push_front( temp );
 	return false;
 }
 /**
@@ -181,46 +187,67 @@ int main(int argc, char ** argv)
 	rules->addBoxes();
 	rules->printBoard(&rootNode);
 	rules->markAsVisited(&rootNode);
-	stack.push_front(rootNode);
+	stack.push_front(&rootNode);
 
 	int iterations = 0;	
 	srand(time(0)); // Seed for the random.
 
-	while(!stack.empty())
+	limit = 100;
+	bool solved = false;
+	Node * latest = NULL;
+	while (!solved && iterations <= 20000000)
 	{
-		if (process(&stack.front()))
-			break;
-//		cout << "Iteration " << iterations << endl;
-		if(iterations > 20000000){
-			cerr << "FAIL: Too many iterations, exiting..." << endl;
-			rules->printBoard(&stack.front());
-			exit(0);
+		while(!stack.empty())
+		{
+			latest = stack.front();
+			if (process(latest))
+			{
+				solved = true;
+				break;
+			}
+	//		cout << "Iteration " << iterations << endl;
+			//rules->printBoard(&stack.front());
+			iterations++;
 		}
-		//rules->printBoard(&stack.front());
-		iterations++;
+		if(stack.empty())
+		{
+			rules->clear_hash();
+			rules->markAsVisited(&rootNode);
+			stack.push_front(&rootNode);
+			rules->set_node(&rootNode);
+			rules->board->remove_boxes(latest->getBoxes(), latest->getLen());
+			rules->addBoxes();
+			limit *= limit;
+			cout << "New limit: " << limit << endl;
+		}
 	}
+	
 	cout << "Iterations:\t" << iterations << endl;
-	if(stack.empty())
-	{
-		cerr << "FAIL: Stack turned out to be empty. Not good."<< endl;
-		exit(1);
-	}
 	
-	string solution;
-	while(!stack.empty())
+	if (solved)
 	{
-		solution += moves_real[stack.back().LAST_DIR] + " ";
-		stack.pop_back();
-	}
+		string solution;
+		while(!stack.empty())
+		{
+			solution += moves_real[stack.back()->LAST_DIR] + " ";
+			stack.pop_back();
+		}
 
-	cout << "Solution:\t" << solution << endl;
-
-	if (server)
-	{
-		// Send a solution and prints
-		cout << "Server answer:\t";
-		send(*socket, solution);
+		cout << "Solution:\t" << solution << endl;
+		cout << "Solution length:\t" << solution.size()/2 << endl;
+		if (server)
+		{
+			// Send a solution and prints
+			cout << "Server answer:\t";
+			send(*socket, solution);
+		}
+		return 0;
 	}
-	
+	if(iterations >= 20000000){
+		cerr << "FAIL: Too many iterations, exiting..." << endl;
+		rules->printBoard(stack.front());
+	}	
+	else
+		cerr << "FAIL: Stack turned out to be empty. Not good." << endl;
 	return 0;
 }

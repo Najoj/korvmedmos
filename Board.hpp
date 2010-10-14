@@ -92,7 +92,23 @@ struct Board
 		{
 			matrix[p.x][p.y] = value;
 		}
-		
+		/**
+		 * TODO:
+		 * Denna gör en dum grejj med goals! Nån annan får fixa.
+		 */
+		void remove_boxes(Position* boxes,int len)
+		{
+				for(int i = 0; i < len; i++){
+						if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL)
+						{
+								matrix[boxes[i].x][boxes[i].y] = GOAL;
+						}
+						else
+						{
+								matrix[boxes[i].x][boxes[i].y] = FLOOR;
+						}
+				}
+		}
 		void insert_boxes(Position* boxes,int len)
 		{
 			for(int i = 0; i < len; i++)

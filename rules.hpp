@@ -38,6 +38,10 @@ public:
 		improve_board(this->board);
 		visited_nodes = NodeSet(10000000);
 	}
+	void clear_hash()
+	{
+		visited_nodes.clear();
+	}
 	Board * board;
 	void addBoxes();
 	void removeBoxes();
