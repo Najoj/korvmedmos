@@ -205,11 +205,11 @@ bool Rules::readBoard(std::string boardIn)
 			switch (*iterator) {
 				case BOX:
 					board->boxes.push_back(p);
-					board->set_floor(p);
+					board->set(p, FLOOR);
 					break;
 				case JENS:
 					board->setJens(p);
-					board->set_floor(p);
+					board->set(p, FLOOR);
 					break;
 				case BOX_ONGOAL:
 					board->boxes.push_back(p);
@@ -271,10 +271,6 @@ void Rules::printBoard(Node * node){
 void Rules::addBoxes()
 {
 	board->insert_boxes(node_in_process->getBoxes(),node_in_process->getLen());
-}
-void Rules::removeBoxes()
-{
-	board->remove_boxes(node_in_process->getBoxes(),node_in_process->getLen());
 }
 
 bool Rules::solutionCheck(Node *n)
@@ -350,6 +346,7 @@ int Rules::jens_box_goal_distance(int dir)
 			cost += COST_TO_MOVE_BOX_ON_GOAL;
 		}
 
+		// Find nearest box from Jens
 		for(int i = 0; i < node_in_process->getLen(); i++)
 		{
 			temp = node_in_process->getBoxes()[i];
@@ -366,6 +363,7 @@ int Rules::jens_box_goal_distance(int dir)
 
 		// Reset min
 		min = BIG_VALUE;
+		// Find nearest goal from nearest box
 		for(int i = 0; i < node_in_process->getLen(); i++)
 		{
 			temp = board->goals[i];
@@ -380,8 +378,8 @@ int Rules::jens_box_goal_distance(int dir)
 //		cout << "Chosen goal: " << (int) nearest_goal.x << " " << (int) nearest_goal.y << endl;
 
 		box_to_goal_distance = min;
-		if( abs((float) nearest_goal.x - nearest_box.x) < abs((float) nearest_goal.y - nearest_box.y)
-			&& abs((float) nearest_goal.x - nearest_box.x) != 0 )
+		if( abs(nearest_goal.x - nearest_box.x) < abs(nearest_goal.y - nearest_box.y)
+			&& abs(nearest_goal.x - nearest_box.x) != 0 )
 		{
 
 			if( nearest_goal.x - nearest_box.x > 0 )
@@ -390,8 +388,8 @@ int Rules::jens_box_goal_distance(int dir)
 				push_box_dir = LEFT;
 
 		}
-		else if( abs((float) nearest_goal.x - nearest_box.x) >= abs((float) nearest_goal.y - nearest_box.y)
-				|| abs((float) nearest_goal.x - nearest_box.x) == 0 )
+		else if( abs(nearest_goal.x - nearest_box.x) >= abs(nearest_goal.y - nearest_box.y)
+				|| abs(nearest_goal.x - nearest_box.x) == 0 )
 		{
 			if( nearest_goal.y - nearest_box.y > 0 )
 				push_box_dir = DOWN;
