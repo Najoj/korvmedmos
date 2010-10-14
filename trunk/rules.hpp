@@ -36,7 +36,7 @@ public:
 	Rules(std::string board){
 		readBoard(board);
 		improve_board(this->board);
-		visited_nodes = NodeSet(3000000);
+		visited_nodes = NodeSet(10000000);
 	}
 	Board * board;
 	void addBoxes();

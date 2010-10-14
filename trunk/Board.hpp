@@ -71,10 +71,6 @@ struct Board
 			goals.push_back(p);
 			matrix[p.x][p.y] = GOAL;
 		}
-		void set_floor(Position p)
-		{
-			matrix[p.x][p.y] = FLOOR;
-		}
 		int get(int x, int y)
 		{
 			// If we are outside to board.
@@ -110,23 +106,6 @@ struct Board
 				{
 					matrix[boxes[i].x][boxes[i].y] = BOX;
 				//	cout << "BOX inserted (" << boxes[i].x << "," << boxes[i].y << endl;
-				}
-			}
-		}
-		
-		/**
-		 * Denna gör en dum grejj med goals! Nån annan får fixa.
-		 */
-		void remove_boxes(Position* boxes,int len)
-		{
-			for(int i = 0; i < len; i++){
-				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL)
-				{
-					matrix[boxes[i].x][boxes[i].y] = GOAL;
-				}
-				else
-				{
-					matrix[boxes[i].x][boxes[i].y] = FLOOR;
 				}
 			}
 		}

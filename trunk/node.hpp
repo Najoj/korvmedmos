@@ -111,7 +111,6 @@ class Node{
 		{
 			if (this->jens != other.jens)
 				return false;
-			
 			for (int i = 0; i < len; i++)
 			{
 				if (this->boxes_positions[i] != other.boxes_positions[i])
@@ -126,7 +125,7 @@ class Node{
 			hash += 499973*p.jens.x + 849731*p.jens.y;
 			for(int i = 0; i < p.len; i++)
 			{
-				hash += (612301*p.boxes_positions[i].x) & (1182463*p.boxes_positions[i].y);
+				hash += (612301*(p.boxes_positions[i].x<<i)) ^ (1182463*p.boxes_positions[i].y);
 			}
 			return hash;
 		}
