@@ -273,6 +273,11 @@ void Rules::addBoxes()
 	board->insert_boxes(node_in_process->getBoxes(),node_in_process->getLen());
 }
 
+void Rules::removeBoxes()
+{
+
+}
+
 bool Rules::solutionCheck(Node *n)
 {
 	// If every box is on the goal, then we hopefully have a valid solution.
