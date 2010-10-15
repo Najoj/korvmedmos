@@ -277,10 +277,7 @@ void Rules::removeBoxes()
         board->remove_boxes(node_in_process->getBoxes(),node_in_process->getLen());
        // node_in_process = NULL;
 }
-void Rules::removeBoxes()
-{
 
-}
 
 bool Rules::solutionCheck(Node *n)
 {

@@ -13,7 +13,7 @@ sleep 2
 for i in $(seq 1 136); do
     echo -ne "=== $i ===\n"
 #    time ./main $i
-    time ./server.bash $i | ./main
+    time ./server.bash $i | Release/SokobanAgent
     echo -e "\n"
     sleep 2
 done
