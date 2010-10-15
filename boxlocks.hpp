@@ -25,7 +25,7 @@
 	{0, BOX, WALL},\
 	{WALL, BOX, 0}}
 #define lock6 {\
-	{BOX, WALL, 0},\
+	{0, BOX, WALL},\
 	{WALL, BOX, 0},\
 	{0, 0, 0}}
 #define lock7 {\
@@ -33,7 +33,7 @@
 	{WALL, BOX, 0},\
 	{0, BOX, WALL}}
 #define lock8 {\
-	{0, WALL, BOX},\
+	{WALL, BOX, 0},\
 	{0, BOX, WALL},\
 	{0, 0, 0}}
 	

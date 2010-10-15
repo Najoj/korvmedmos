@@ -12,13 +12,19 @@
 #include "node.hpp"
 //#include "rules.hpp"
 #include "heuristics.hpp"
+#include "back/back_heuristics.hpp"
 #include "common.hpp"
 
 using namespace std;
 
-Heuristics *rules;
+BackHeuristics *rules;
 
-priority_queue<Node> stack;
+BackHeuristics *back_rules;
+
+/**
+ * Varför blev allt bättre när jag bytte till Nod*?
+ */
+priority_queue<Node*> stack;
 
 Node * last_node;
 Position getXYDir(int dir, Position ret = Position(0,0) ){
@@ -33,7 +39,16 @@ Position getXYDir(int dir, Position ret = Position(0,0) ){
 
 	return ret;
 }
-
+int revereseDir(int push_box_dir){
+if(push_box_dir == RIGHT)
+	return LEFT;
+else if(push_box_dir == LEFT)
+	return RIGHT;
+else if(push_box_dir == UP)
+	return DOWN;
+else if(push_box_dir == DOWN)
+	return UP;
+}
 void debug_print(std::string text)
 {
 	if (DEBUG) std::cout << text << std::endl;
@@ -57,7 +72,7 @@ bool process(Node *n)
 	for(unsigned int i = 0; i < 4; i++) {
 		int enforce_return = rules->enforce(i);
 		if( enforce_return != FAIL) {
-//			cout << "Fann en bra väg! " << moves_real[i] << endl;
+		cout << "Fann en bra väg! " << moves_real[i] << endl;
 
 
 			// Recives a way to walk.
@@ -90,37 +105,37 @@ bool process(Node *n)
 	}
 	//We didnt find any good direction
 	else{
+		cout << "Pooop" << endl;
 		stack.pop();
 		return false;
 	}
 
-
 	Position p = n->getCurrent_position();
 
 	p.addPosition(getXYDir(best_dir));
+	cout <<"kommer ga: " << moves_real[best_dir] << "dvs till " << (int) p.x << "," << (int)p.y << endl;
 
-	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 
-	//cout << "Skapa barn med parent: " << n << " jp " <<(int) n->getCurrent_position().x << ","<< (int)n->getCurrent_position().y<< endl;
-	//cout << "(tmp): " << temp<< " jp " << (int)temp->getCurrent_position().x << ","<<(int)temp->getCurrent_position().y<< endl;
-//	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
 
-	// Heruistics for A*
 
-	//cout << "====================================="<<endl;
-	//cout << "JENS POS "<<(int)temp->getCurrent_position().x << " y: " << (int)temp->getCurrent_position().y << endl;
+
+
+	//THIS USES BACK CONSTRUCTOR RIGHT NOW!!
+	Node *temp = new Node(p, n->getCurrent_position(),n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
+
+
 	rules->set_node(temp);
-	rules->addBoxes();
-	//cout << "Board" << endl;
+	//rules->addBoxes();
+
 	//rules->printBoard(temp);
-	temp->setGoalCost(rules->total_goal_distance(temp));
-	//cout << "Uber haxx " << temp->getGoalCost() << endl;
+//	temp->setGoalCost(rules->total_goal_distance(temp));
+	temp->setGoalCost(1);
 	//Marks this node, or state as visited.
 	rules->markAsVisited(temp);
 
 	//Clears the board from boxes
-	rules->removeBoxes();
-	//cout << "====================================="<<endl<<endl;
+	//rules->removeBoxes();
+
 
 
 
@@ -132,7 +147,7 @@ bool process(Node *n)
 			return true;
 	}
 
-	stack.push( *temp );
+	stack.push( temp );
 	return false;
 }
 /**
@@ -185,7 +200,17 @@ int main(int argc, char ** argv)
 	}
 	
 	cout << board_str << endl; // Print board as read
-	rules = new Heuristics(board_str); // Create the rules and parse indata
+	rules = new BackHeuristics(board_str); // Create the rules and parse indata
+/*
+	back_rules = new BackHeuristics(board_str);	//Creates backwards rules
+
+	Node bRootNode = back_rules->getRootNode();
+
+	back_rules->set_node(&bRootNode);
+	back_rules->addBoxes();
+	back_rules->printBoard(&bRootNode);
+	back_rules->markAsVisited(&bRootNode);
+	//exit(0);*/
 
 	// Make the root node, this will be pushed onto stack later on!
 	Node rootNode = rules->getRootNode();
@@ -193,7 +218,8 @@ int main(int argc, char ** argv)
 	rules->addBoxes();
 	rules->printBoard(&rootNode);
 	rules->markAsVisited(&rootNode);
-	stack.push(rootNode);
+	stack.push(&rootNode);
+
 
 
 	int iterations = 0;	
@@ -202,18 +228,27 @@ int main(int argc, char ** argv)
 	while(!stack.empty())
 	{
 
-		Node * node = new Node(stack.top());
+		Node * node = stack.top();
 		//FEWL HACKZZ
 		if (process( node ) ){
 				break;
 		}
 //		cout << "Iteration " << iterations << endl;
 		if(iterations > 20000000){
+
 			cerr << "FAIL: Too many iterations, exiting..." << endl;
-			rules->printBoard(const_cast<Node*>( &stack.top() ));
+			rules->printBoard(const_cast<Node*>( stack.top() ));
 			exit(0);
 		}
-		//rules->printBoard(&stack.front());
+		if(iterations >= 9){
+
+		exit(0);
+		}
+		cout << "========== N STATE=========" << endl;
+		rules->set_node(stack.top());
+		rules->addBoxes();
+		rules->printBoard(stack.top());
+		rules->removeBoxes();
 		iterations++;
 	}
 	cout << "Iterations:\t" << iterations << endl;
@@ -224,7 +259,7 @@ int main(int argc, char ** argv)
 	}
 	
 	string solution;
-	bool done = false;
+
 	//FEWL HACKZ
 	//Node * temp = const_cast<Node*>( &stack.top() );
 	Node * tmp = last_node;
