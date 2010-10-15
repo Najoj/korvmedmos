@@ -79,72 +79,75 @@ void print_matrix(int matrix[3][3])
 /*
  * return true if boxlock was not found
  */
+/*
+ * return true if boxlock was not found
+ */
 bool find_boxlock(int matrix[3][3])
 {
-	bool equal = true;
-	for (int i = 0; i < NUMBER_OF_LOCKS; i++)
-	{
-		equal = true;
-		for (int j = 0; j < 3; j++)
-		{
-			for (int k = 0; k < 3; k++)
-			{
-				if (boxlocks[i][j][k] == 0)
-					continue;
-				if (matrix[j][k] != boxlocks[i][j][k])
-					equal = false;
-			}
-		}
-		if (equal) {
-			return true;
-		}
-	}
-	return false;
+        bool equal = true;
+        for (int i = 0; i < NUMBER_OF_LOCKS; i++)
+        {
+                equal = true;
+                for (int j = 0; j < 3; j++)
+                {
+                        for (int k = 0; k < 3; k++)
+                        {
+                                if (boxlocks[i][j][k] == 0)
+                                        continue;
+                                if (matrix[j][k] != boxlocks[i][j][k])
+                                        equal = false;
+                        }
+                }
+                if (equal) {
+                        return true;
+                }
+        }
+        return false;
 }
 
 bool Rules::box_into_boxlock()
 {
-	int matrix[3][3];
-	
-	// Gets the prospective postion of the box.
-	Position boxp = new_position.getDirection(w_dir);
-	int oldbox = board->get(new_position);
-	board->set(new_position, FLOOR);
-	
-	matrix[0][0] = board->get(boxp.left().up());
-	matrix[1][0] = board->get(boxp.up());
-	matrix[2][0] = board->get(boxp.up().right());
-	matrix[0][1] = board->get(boxp.left());
-	matrix[1][1] = (board->get(boxp) == GOAL) ? BOX_ONGOAL : BOX;
-	matrix[2][1] = board->get(boxp.right());
-	matrix[0][2] = board->get(boxp.down().left());
-	matrix[1][2] = board->get(boxp.down());
-	matrix[2][2] = board->get(boxp.down().right());
-	
-	bool boxes_on_goal = true;
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			if (matrix[i][j] == BOX)
-				boxes_on_goal = false;
-			if (matrix[i][j] == BOX_ONGOAL)
-				matrix[i][j] = BOX;
-			else if (matrix[i][j] == BAD_POS)
-				matrix[i][j] = 0;
-			else if (matrix[i][j] == FLOOR)
-				matrix[i][j] = 0;
-			else if (matrix[i][j] == GOAL) {
-				matrix[i][j] = 0;
-			}
-		}
-	}
-	board->set(new_position, oldbox); // reset box position
+        int matrix[3][3];
 
-	if (boxes_on_goal)
-		return true;
-	else
-		return !find_boxlock(matrix); // om vi är i ett boxlock, returnerar find_boxlock true, då är det fail, då returnar vi false
+        // Gets the prospective postion of the box.
+        Position boxp = new_position.getDirection(w_dir);
+        int oldbox = board->get(new_position);
+        board->set(new_position, FLOOR);
+
+        matrix[0][0] = board->get(boxp.left().up());
+        matrix[1][0] = board->get(boxp.up());
+        matrix[2][0] = board->get(boxp.up().right());
+        matrix[0][1] = board->get(boxp.left());
+        matrix[1][1] = (board->get(boxp) == GOAL) ? BOX_ONGOAL : BOX;
+        matrix[2][1] = board->get(boxp.right());
+        matrix[0][2] = board->get(boxp.down().left());
+        matrix[1][2] = board->get(boxp.down());
+        matrix[2][2] = board->get(boxp.down().right());
+
+        bool boxes_on_goal = true;
+        for (int i = 0; i < 3; i++)
+        {
+                for (int j = 0; j < 3; j++)
+                {
+                        if (matrix[i][j] == BOX)
+                                boxes_on_goal = false;
+                        if (matrix[i][j] == BOX_ONGOAL)
+                                matrix[i][j] = BOX;
+                        else if (matrix[i][j] == BAD_POS)
+                                matrix[i][j] = 0;
+                        else if (matrix[i][j] == FLOOR)
+                                matrix[i][j] = 0;
+                        else if (matrix[i][j] == GOAL) {
+                                matrix[i][j] = 0;
+                        }
+                }
+        }
+        board->set(new_position, oldbox); // reset box position
+
+        if (boxes_on_goal)
+                return true;
+        else
+                return !find_boxlock(matrix); // om vi är i ett boxlock, returnerar find_boxlock true, då är det fail, då returnar vi false
 }
 
 bool Rules::jens_into_box(){
