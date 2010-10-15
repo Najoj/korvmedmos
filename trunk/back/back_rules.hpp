@@ -1,16 +1,24 @@
-#ifndef RULES_HPP
-#define RULES_HPP
+/*
+ * back_heuristics.hpp
+ *
+ *  Created on: 15 okt 2010
+ *      Author: jacob
+ *  Desc: Used for reverese lookup rules enforcment.
+ */
+
+#ifndef BACK_RULES_HPP
+#define BACK_RULES_HPP
 
 #include <boost/unordered_set.hpp>
 #include <vector>
 #include <cmath>
 
-#include "Board.hpp"
-//#include "heuristics.hpp"
-#include "node.hpp"
-#include "common.hpp"
+#include "../Board.hpp"
 
-class Rules {
+#include "../node.hpp"
+#include "../common.hpp"
+
+class BackRules{
 
 private:
 	//Functions used to enforce the basic rules.
@@ -24,7 +32,7 @@ private:
 
 protected:
 
-	bool box_into_boxlock();
+
 	bool box_into_deadlock();
 
 
@@ -38,16 +46,15 @@ protected:
 	Position  new_position;
 
 	int w_dir;
-	
 
 
-	//int jens_box_goal_distance(int dir);
-		
-public:
-
+	Position new_position_box;
 	Board * board;
 
-	Rules(std::string board){
+	//int jens_box_goal_distance(int dir);
+
+public:
+	BackRules(std::string board){
 		readBoard(board);
 
 		visited_nodes = NodeSet(10000000);
@@ -79,7 +86,6 @@ public:
 	//friend class Heuristics;
 
 };
-
 
 #endif
 
