@@ -35,6 +35,9 @@ class Node{
 		// Path cost
 		int path_cost;
 		
+		// Goal cost
+		int goal_cost;
+
 		// Parent of the node
 		Node * parent;
 		
@@ -65,12 +68,17 @@ class Node{
 
 			// Saves Jens' posistion.
 			this->jens = jens;
+
+			// Set goal cost.
+			this->goal_cost = 0;
+
 			// Sets parent node
 			this->parent = parent;
 
-			path_cost = 0;
+			this->path_cost = 0;
 			if (parent != NULL) {
 				parent->LAST_DIR = walker;
+				this->path_cost = parent->getPathCost()+1;
 			}
 		}
 		/**
@@ -84,6 +92,15 @@ class Node{
 		int getPathCost() {
 			return path_cost;
 		}
+	    int getPathCost() const{
+			return path_cost;
+		}
+	    int getGoalCost(){
+	    	return goal_cost;
+	    }
+	    int getGoalCost() const{
+	    	return goal_cost;
+	    }
 		void move_box(int i, Position p)
 		{
 		    boxes_positions[i] = p;
@@ -99,6 +116,10 @@ class Node{
 			this->jens = jens;
 		}
 		
+		void setGoalCost(int g){
+			this->goal_cost = g;
+		}
+
 
 		Node * getParent() {
 			return parent;
@@ -132,6 +153,11 @@ class Node{
 		
 		int getLen() {
 			return len;
+		}
+		 bool operator<( const Node & other) const
+		{
+			 // > like BFS
+				return this->getPathCost()+this->getGoalCost() > other.getPathCost()+other.getGoalCost();
 		}
 };
 #endif

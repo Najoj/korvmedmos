@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <boost/unordered_set.hpp>
 #include <cstdlib>	// Used for random.
 #include <ctime>	// Used for seed.
@@ -16,7 +17,8 @@
 using namespace std;
 
 Heuristics *rules;
-deque<Node> stack;
+
+priority_queue<Node> stack;
 
 Position getXYDir(int dir, Position ret = Position(0,0) ){
 	if(dir == UP)
@@ -43,8 +45,11 @@ bool process(Node *n)
 	int best_dir;
 	int best_dirs[] = {-1,-1,-1,-1};								   // RANDOM WALK
 	int mod = 0;
+
+	//Set node in process
 	rules->set_node(n);
 
+	//Add the boxes to the board (from node in process)
 	rules->addBoxes();
 
 	// Go through all the four possible directions.
@@ -56,6 +61,8 @@ bool process(Node *n)
 
 			// Recives a way to walk.
 			way_to_walk = rules->heuristics(i);
+
+
 //				cout << "cost for " << moves_real[i] << ": " << way_to_walk << endl;
 			// Checks if the best
 			if(way_to_walk == best_cost){
@@ -82,8 +89,7 @@ bool process(Node *n)
 	}
 	//We didnt find any good direction
 	else{
-		rules->removeBoxes();
-		stack.pop_front();
+		stack.pop();
 		return false;
 	}
 
@@ -94,9 +100,22 @@ bool process(Node *n)
 	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 //	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
 
+	// Heruistics for A*
+
+	//cout << "====================================="<<endl;
+	//cout << "JENS POS "<<(int)temp->getCurrent_position().x << " y: " << (int)temp->getCurrent_position().y << endl;
+	rules->set_node(temp);
+	rules->addBoxes();
+	//cout << "Board" << endl;
+	//rules->printBoard(temp);
+	temp->setGoalCost(rules->total_goal_distance(temp));
+	//cout << "Uber haxx " << temp->getGoalCost() << endl;
 	//Marks this node, or state as visited.
 	rules->markAsVisited(temp);
 
+	//Clears the board from boxes
+	rules->removeBoxes();
+	//cout << "====================================="<<endl<<endl;
 
 
 
@@ -106,7 +125,7 @@ bool process(Node *n)
 			return true;
 	}
 
-	stack.push_front( *temp );
+	stack.push( *temp );
 	return false;
 }
 /**
@@ -167,19 +186,23 @@ int main(int argc, char ** argv)
 	rules->addBoxes();
 	rules->printBoard(&rootNode);
 	rules->markAsVisited(&rootNode);
-	stack.push_front(rootNode);
+	stack.push(rootNode);
+
 
 	int iterations = 0;	
 	srand(time(0)); // Seed for the random.
 
 	while(!stack.empty())
 	{
-		if (process(&stack.front()))
-			break;
+
+		//FEWL HACKZZ
+		if (process( const_cast<Node*>( &stack.top() ) ) ){
+				break;
+		}
 //		cout << "Iteration " << iterations << endl;
 		if(iterations > 20000000){
 			cerr << "FAIL: Too many iterations, exiting..." << endl;
-			rules->printBoard(&stack.front());
+			rules->printBoard(const_cast<Node*>( &stack.top() ));
 			exit(0);
 		}
 		//rules->printBoard(&stack.front());
@@ -193,11 +216,12 @@ int main(int argc, char ** argv)
 	}
 	
 	string solution;
-	while(!stack.empty())
+	/*while(!stack.empty())
 	{
+
 		solution += moves_real[stack.back().LAST_DIR] + " ";
 		stack.pop_back();
-	}
+	}*/
 
 	cout << "Solution:\t" << solution << endl;
 
