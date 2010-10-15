@@ -20,6 +20,7 @@ Heuristics *rules;
 
 priority_queue<Node> stack;
 
+Node * last_node;
 Position getXYDir(int dir, Position ret = Position(0,0) ){
 	if(dir == UP)
 		ret.y += -1;
@@ -93,11 +94,15 @@ bool process(Node *n)
 		return false;
 	}
 
+
 	Position p = n->getCurrent_position();
 
 	p.addPosition(getXYDir(best_dir));
 
 	Node *temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
+
+	//cout << "Skapa barn med parent: " << n << " jp " <<(int) n->getCurrent_position().x << ","<< (int)n->getCurrent_position().y<< endl;
+	//cout << "(tmp): " << temp<< " jp " << (int)temp->getCurrent_position().x << ","<<(int)temp->getCurrent_position().y<< endl;
 //	  cout <<  "gjort en barn med dir: " << moves_real[best_dir] << endl;
 
 	// Heruistics for A*
@@ -121,6 +126,8 @@ bool process(Node *n)
 
 
 	if(rules->solutionCheck(temp)){
+
+			last_node = temp;
 			cout << "DONE!" << endl;
 			return true;
 	}
@@ -195,8 +202,9 @@ int main(int argc, char ** argv)
 	while(!stack.empty())
 	{
 
+		Node * node = new Node(stack.top());
 		//FEWL HACKZZ
-		if (process( const_cast<Node*>( &stack.top() ) ) ){
+		if (process( node ) ){
 				break;
 		}
 //		cout << "Iteration " << iterations << endl;
@@ -216,20 +224,35 @@ int main(int argc, char ** argv)
 	}
 	
 	string solution;
-	/*while(!stack.empty())
-	{
+	bool done = false;
+	//FEWL HACKZ
+	//Node * temp = const_cast<Node*>( &stack.top() );
+	Node * tmp = last_node;
+	do{
 
-		solution += moves_real[stack.back().LAST_DIR] + " ";
-		stack.pop_back();
-	}*/
+		solution += moves_real[tmp->LAST_DIR] +  " ";
+		tmp = tmp->getParent();
 
-	cout << "Solution:\t" << solution << endl;
+
+	}
+	while(!(*tmp == rootNode));
+
+    // Reverse the string into correct ordet.
+    string::iterator pos;
+    string rev_solution;
+    for (pos = solution.end(); pos != solution.begin()-1; pos--) {
+        rev_solution += *pos;
+    }
+	cout << "Solution:\t" << rev_solution << endl;
+
 
 	if (server)
 	{
 		// Send a solution and prints
 		cout << "Server answer:\t";
-		send(*socket, solution);
+
+		//Substring, thanks Javier!
+		send(*socket, rev_solution.substr(1,rev_solution.length()));
 	}
 	
 	return 0;

@@ -44,7 +44,8 @@ class Node{
 		Node * getChildDirection(int dir);
 		
 		bool deadlock(Position pos, Position parent);
-		
+
+
 	public:
 		unsigned char LAST_DIR;
 		int moved_box;
@@ -76,10 +77,28 @@ class Node{
 			this->parent = parent;
 
 			this->path_cost = 0;
-			if (parent != NULL) {
-				parent->LAST_DIR = walker;
+
+
+			this->LAST_DIR = walker;
+			if(parent != NULL){
 				this->path_cost = parent->getPathCost()+1;
 			}
+		}
+
+		Node(const Node& n){
+			this->jens = n.jens;
+			this->goal_cost = n.goal_cost;
+			this->path_cost = n.path_cost;
+
+			this->parent = n.parent;
+			this->len = n.len;
+
+			this->boxes_positions = new Position[this->len];
+			for(int i = 0; i < len; i++){
+				this->boxes_positions[i] = n.boxes_positions[i];
+			}
+
+			this->LAST_DIR = n.LAST_DIR;
 		}
 		/**
 		 * Auto genereated getter and setter methods.
@@ -110,7 +129,9 @@ class Node{
 			return jens;
 		}
 		
-		
+		void setParent(Node * n ){
+			this->parent = n;
+		}
 		void setCurrent_position(Position jens)
 		{
 			this->jens = jens;
@@ -150,7 +171,7 @@ class Node{
 			}
 			return hash;
 		}
-		
+
 		int getLen() {
 			return len;
 		}
