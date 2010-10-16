@@ -9,7 +9,7 @@
 //#include "heuristics.hpp"
 #include "node.hpp"
 #include "common.hpp"
-
+using namespace boost;
 class Rules {
 
 private:
@@ -31,7 +31,7 @@ protected:
 	bool been_in_node(Node * node);
 	int box_goal_distance(Node * parent, Position &jens);
 
-	typedef boost::unordered_set<Node> NodeSet;
+	typedef unordered_set<Node> NodeSet;
 	NodeSet visited_nodes;
 
 	Node * node_in_process;
@@ -45,6 +45,7 @@ protected:
 		
 public:
 
+	Node * youHasMe(Node * node);
 	Board * board;
 
 	Rules(std::string board){
@@ -56,6 +57,7 @@ public:
 	{
 		visited_nodes.clear();
 	}
+
 
 	void addBoxes();
 	void removeBoxes();
@@ -70,7 +72,7 @@ public:
 	void set_node(Node * node) {
 		node_in_process = node;
 	};
-	Node getRootNode();
+	Node * getRootNode();
 	void printBoard(Node * node);
 
 	bool solutionCheck(Node * n);

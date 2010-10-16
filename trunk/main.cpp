@@ -15,19 +15,25 @@
 #include "back/back_heuristics.hpp"
 #include "common.hpp"
 
+#include "back_search.hpp"
+#include "forward_search.hpp"
+
 using namespace std;
 
-BackHeuristics *rules;
+Heuristics *rules;
 
-BackHeuristics *back_rules;
+//BackHeuristics *back_rules;
 
+bool back_search = false;
+string board_str;
 /**
  * Varför blev allt bättre när jag bytte till Nod*?
  */
 priority_queue<Node*> stack;
 
 Node * last_node;
-Position getXYDir(int dir, Position ret = Position(0,0) ){
+Position getXYDir(int dir){
+	Position ret;
 	if(dir == UP)
 		ret.y += -1;
 	else if(dir == RIGHT)
@@ -48,12 +54,20 @@ else if(push_box_dir == UP)
 	return DOWN;
 else if(push_box_dir == DOWN)
 	return UP;
+return NO_DIR;
 }
 void debug_print(std::string text)
 {
 	if (DEBUG) std::cout << text << std::endl;
 }
+void printBoard(Node * n ){
 
+	rules->set_node(n);
+		rules->addBoxes();
+		rules->printBoard(n);
+		rules->removeBoxes();
+
+}
 bool process(Node *n)
 {
 	unsigned int best_cost = -1;		// BIG value.
@@ -117,39 +131,38 @@ bool process(Node *n)
 
 
 
+	Node *temp;
 
 
-
-	//THIS USES BACK CONSTRUCTOR RIGHT NOW!!
-	Node *temp = new Node(p, n->getCurrent_position(),n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
-
-
-	rules->set_node(temp);
-	//rules->addBoxes();
-
-	//rules->printBoard(temp);
-//	temp->setGoalCost(rules->total_goal_distance(temp));
-	temp->setGoalCost(1);
-	//Marks this node, or state as visited.
-	rules->markAsVisited(temp);
-
-	//Clears the board from boxes
-	//rules->removeBoxes();
+		cout << "Forward searching "<<endl;
+		temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 
 
+			rules->set_node(temp);
+			//rules->addBoxes();
 
+			//rules->printBoard(temp);
+		//	temp->setGoalCost(rules->total_goal_distance(temp));
+			temp->setGoalCost(0);
+			//Marks this node, or state as visited.
+			rules->markAsVisited(temp);
 
+			//Clears the board from boxes
+			//rules->removeBoxes();
 
-	if(rules->solutionCheck(temp)){
+			if(rules->solutionCheck(temp)){
 
-			last_node = temp;
-			cout << "DONE!" << endl;
-			return true;
-	}
+					last_node = temp;
+					cout << "DONE!" << endl;
+					return true;
+			}
+
 
 	stack.push( temp );
 	return false;
 }
+
+
 /**
  * Main
  */
@@ -158,7 +171,7 @@ int main(int argc, char ** argv)
 	// Command-line argument handling
 	string host, port, board_nr;
 	boost::asio::ip::tcp::socket * socket = NULL;
-	string board_str;
+
 	bool server = false;
 
 	if (argc > 1) // Use server
@@ -200,7 +213,20 @@ int main(int argc, char ** argv)
 	}
 	
 	cout << board_str << endl; // Print board as read
-	rules = new BackHeuristics(board_str); // Create the rules and parse indata
+
+    cout << "Starting forward search..." << endl;
+    ForwardSearch fs(board_str);
+
+    //fs.go();
+
+//    BackSearch fs(board_str,Position(5,2));
+
+
+   //bs.go();
+   // boost::thread thrd(bs);
+   // thrd.join();
+
+	//rules = new Heuristics(board_str); // Create the rules and parse indata
 /*
 	back_rules = new BackHeuristics(board_str);	//Creates backwards rules
 
@@ -213,7 +239,9 @@ int main(int argc, char ** argv)
 	//exit(0);*/
 
 	// Make the root node, this will be pushed onto stack later on!
-	Node rootNode = rules->getRootNode();
+/*	Node rootNode = rules->getRootNode();
+
+	//rootNode.setCurrent_position(Position(5,2));
 	rules->set_node(&rootNode);
 	rules->addBoxes();
 	rules->printBoard(&rootNode);
@@ -224,53 +252,79 @@ int main(int argc, char ** argv)
 
 	int iterations = 0;	
 	srand(time(0)); // Seed for the random.
+*/
 
-	while(!stack.empty())
-	{
+    //Do ONLY forward search
+ /*   while(true){
+    	if(fs.startBack()){
+    		fs.stop();
+    		break;
+    	}
+    }*/
+   // BackSearch bs(board_str,fs.jens_s_back);
+   // bs.setForwardRules(fs.getRules());
 
-		Node * node = stack.top();
+    BackSearch bs(board_str,Position(5,2));
+    bs.go();
+    fs.go();
+    cout << "Frid och fröjd! :D "<< endl;
+
+
+    //start back search
+	while(!fs.getFound() && !bs.getFound()){
+
+		//cout << "Nu borde vi sitta i andar loopen" << endl;
+		//Node * node = stack.top();
 		//FEWL HACKZZ
-		if (process( node ) ){
-				break;
-		}
-//		cout << "Iteration " << iterations << endl;
-		if(iterations > 20000000){
+		//if (process( node ) ){
 
-			cerr << "FAIL: Too many iterations, exiting..." << endl;
-			rules->printBoard(const_cast<Node*>( stack.top() ));
-			exit(0);
-		}
-		if(iterations >= 9){
-
-		exit(0);
-		}
-		cout << "========== N STATE=========" << endl;
-		rules->set_node(stack.top());
-		rules->addBoxes();
-		rules->printBoard(stack.top());
-		rules->removeBoxes();
-		iterations++;
+		//}
 	}
-	cout << "Iterations:\t" << iterations << endl;
-	if(stack.empty())
+
+	exit(0);
+	cout << "klara" << endl;
+//		cout << "Iteration " << iterations << endl;
+	//	if(iterations > 20000000){
+
+			//cerr << "FAIL: Too many iterations, exiting..." << endl;
+			//rules->printBoard(const_cast<Node*>( stack.top() ));
+			//exit(0);
+		//}
+	//	if(iterations >= 9){
+
+	//	exit(0);
+	//	}
+	//	cout << "========== N STATE=========" << endl;
+	//	printBoard(stack.top());
+//
+	//	iterations++;
+
+//	cout << "Iterations:\t" << iterations << endl;
+	last_node =fs.getLast();
+	if(last_node == NULL)
 	{
-		cerr << "FAIL: Stack turned out to be empty. Not good."<< endl;
+		cerr << "FAIL: We found nothing."<< endl;
 		exit(1);
 	}
-	
+
 	string solution;
 
 	//FEWL HACKZ
 	//Node * temp = const_cast<Node*>( &stack.top() );
-	Node * tmp = last_node;
+	/*Node * tmp = last_node;*/
+	cout << "NU JÄVLAR LÖSER VI DEN HÄR SKITENNN!!!! "<<endl<<endl;
+
+	Node rootNode = fs.gotRoot();
 	do{
 
-		solution += moves_real[tmp->LAST_DIR] +  " ";
-		tmp = tmp->getParent();
+
+		solution += moves_real[last_node->LAST_DIR] +  " ";
+		//printBoard(last_node);
+		last_node = last_node->getParent();
 
 
 	}
-	while(!(*tmp == rootNode));
+	while(!(*last_node == rootNode));
 
     // Reverse the string into correct ordet.
     string::iterator pos;
@@ -278,9 +332,11 @@ int main(int argc, char ** argv)
     for (pos = solution.end(); pos != solution.begin()-1; pos--) {
         rev_solution += *pos;
     }
+
+
 	cout << "Solution:\t" << rev_solution << endl;
-
-
+	cout <<  "No rev solution: \t" << solution << endl;
+	//SOLUTION KAN ANVÄNDS FÖR BACKTRACKING.
 	if (server)
 	{
 		// Send a solution and prints
@@ -288,6 +344,7 @@ int main(int argc, char ** argv)
 
 		//Substring, thanks Javier!
 		send(*socket, rev_solution.substr(1,rev_solution.length()));
+		//send(*socket, solution);
 	}
 	
 	return 0;

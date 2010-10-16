@@ -17,6 +17,15 @@ bool BackRules::been_in_node(Node * node)
 	else
 		return false;
 }
+Node * BackRules::youHasMe(Node * node)
+{
+
+	NodeSet::iterator iterator = visited_nodes.find(*node);
+	if (iterator != visited_nodes.end())
+		return new Node(*iterator);
+	else
+		return NULL;
+}
 bool BackRules::box_into_wall(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position_box.getDirection(w_dir);
@@ -145,7 +154,7 @@ while(iterator != boardIn.end())
 
         return true;
 }
-Node BackRules::getRootNode(){
+Node * BackRules::getRootNode(){
 
 	/**
 	 * TODO: Make this nicer.
@@ -155,7 +164,7 @@ Node BackRules::getRootNode(){
 	for(unsigned short i = 0; i< board->boxes.size(); i++){
 		temp_boxes[i] = board->boxes[i];
 	}
-	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1), 0);
+	return new Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1), 0);
 }
 /**
  * Prints the board with a give Node
@@ -217,18 +226,19 @@ int BackRules::enforce(int dir){
 			return FAIL;
 	}
 
+
 	//Reverse the dir and checks if there is a box there, basically pull instead of push.
 	new_position_box = (node_in_process->getCurrent_position().getDirection(revereseDir(dir)));
 	//Is JENS walking into a box?
 	if(jens_into_box()){
-		cout << "JENS INTO BOX! aer en box pa: "  <<  (int)new_position.x << ","<< (int)new_position.y<<endl;
+	//	cout << "JENS INTO BOX! aer en box pa: "  <<  (int)new_position.x << ","<< (int)new_position.y<<endl;
 		return FAIL;
 	}else{
 
 		//see if we can push this box.
 		// true är fail
 		if( ! (box_into_wall() && box_into_box() /*&& box_into_deadlock()*/ /*&& box_into_boxlock()*/)){
-			cout << "BOX INTO WALL ERL B INTO B FAIL" << endl;
+		//	cout << "BOX INTO WALL ERL B INTO B FAIL" << endl;
 			return FAIL;
 		}
 
@@ -239,7 +249,7 @@ int BackRules::enforce(int dir){
 
 
 	Position p(new_position.x, new_position.y);
-	Node * n = new Node(p, new_position_box,node_in_process, node_in_process->getBoxes(),node_in_process->getLen(), Position(0,0).getDirection(w_dir), dir);
+	Node * n = new Node(p, node_in_process->getCurrent_position(),node_in_process, node_in_process->getBoxes(),node_in_process->getLen(), Position(0,0).getDirection(w_dir), dir);
 
 	if(been_in_node(n))
 	{

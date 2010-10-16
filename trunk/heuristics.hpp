@@ -193,8 +193,11 @@ int jens_box_goal_distance(int dir)
 		int jens_to_push_box_dir, box_to_goal_distance;
 		int cost = 0;
 
-		Position new_jens = getXYDir(dir, node_in_process->getCurrent_position());
+	//	Position new_jens = getXYDir(dir, node_in_process->getCurrent_position());
+		//Raden ovan funkar om den kompilerar, hoppas den undre gör de osså
 
+		Position new_jens = node_in_process->getCurrent_position();
+		new_jens.addPosition(getXYDir(dir));
 
 		if(board->get(new_jens) == BOX_ONGOAL){
 			cost += COST_TO_MOVE_BOX_ON_GOAL;
@@ -373,6 +376,29 @@ int jens_box_goal_distance(int dir)
 	//cout << "TOTAL KOSTNAD: " << cost << endl;
 	return cost;
 
+	}
+
+	/**
+	 * Checks if jens is adjacent to a goal position
+	 */
+	bool jens_next_to_goal(Node * n){
+		//Check left
+		if(board->get(n->getCurrent_position().left()) == GOAL){
+			return true;
+		}
+		//Check right
+		if(board->get(n->getCurrent_position().right()) == GOAL){
+			return true;
+		}
+		//Check up
+		if(board->get(n->getCurrent_position().up()) == GOAL){
+			return true;
+		}
+		//Check down
+		if(board->get(n->getCurrent_position().down()) == GOAL){
+			return true;
+		}
+		return false;
 	}
 };
 #endif
