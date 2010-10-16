@@ -374,7 +374,7 @@ int jens_box_goal_distance(int dir)
 
 
 	//cout << "TOTAL KOSTNAD: " << cost << endl;
-	return cost;
+	return 10*cost;
 
 	}
 

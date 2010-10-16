@@ -15,23 +15,38 @@
 #include "back/back_heuristics.hpp"
 #include "common.hpp"
 
-#include "back_search.hpp"
-#include "forward_search.hpp"
+
 
 using namespace std;
 
-Heuristics *rules;
+Heuristics * forward_rules;
 
-//BackHeuristics *back_rules;
+BackHeuristics *back_rules;
 
-bool back_search = false;
+Node * f_rootNode;
+Node * b_rootNode;
+bool search_back = false;
+
+Position jens_start_back;
 string board_str;
+
+Node * back_last_node = NULL;
+Node * forward_last_node = NULL;
 /**
  * Varför blev allt bättre när jag bytte till Nod*?
  */
-priority_queue<Node*> stack;
 
-Node * last_node;
+struct compare_node
+{
+	bool operator()(Node * node1, Node * node2)
+	{
+		return node1->getPathCost()+node1->getGoalCost() < node2->getPathCost()+node2->getGoalCost();
+	}
+};
+priority_queue<Node*, vector<Node*>, compare_node> forward_stack;
+priority_queue<Node*, vector<Node*>, compare_node> back_stack;
+
+
 Position getXYDir(int dir){
 	Position ret;
 	if(dir == UP)
@@ -62,13 +77,13 @@ void debug_print(std::string text)
 }
 void printBoard(Node * n ){
 
-	rules->set_node(n);
-		rules->addBoxes();
-		rules->printBoard(n);
-		rules->removeBoxes();
+	forward_rules->set_node(n);
+	forward_rules->addBoxes();
+	forward_rules->printBoard(n);
+	forward_rules->removeBoxes();
 
 }
-bool process(Node *n)
+int forward_process(Node *n)
 {
 	unsigned int best_cost = -1;		// BIG value.
 	unsigned int way_to_walk;
@@ -77,20 +92,20 @@ bool process(Node *n)
 	int mod = 0;
 
 	//Set node in process
-	rules->set_node(n);
+	forward_rules->set_node(n);
 
 	//Add the boxes to the board (from node in process)
-	rules->addBoxes();
+	forward_rules->addBoxes();
 
 	// Go through all the four possible directions.
 	for(unsigned int i = 0; i < 4; i++) {
-		int enforce_return = rules->enforce(i);
+		int enforce_return = forward_rules->enforce(i);
 		if( enforce_return != FAIL) {
-		cout << "Fann en bra väg! " << moves_real[i] << endl;
+		//cout << "Fann en bra väg! " << moves_real[i] << endl;
 
 
 			// Recives a way to walk.
-			way_to_walk = rules->heuristics(i);
+			way_to_walk = forward_rules->heuristics(i);
 
 
 //				cout << "cost for " << moves_real[i] << ": " << way_to_walk << endl;
@@ -108,7 +123,7 @@ bool process(Node *n)
 		}
 	}
 
-	rules->removeBoxes();
+	forward_rules->removeBoxes();
 
 	//Chose what direction to walk
 	if(mod > 0)
@@ -119,47 +134,164 @@ bool process(Node *n)
 	}
 	//We didnt find any good direction
 	else{
-		cout << "Pooop" << endl;
-		stack.pop();
-		return false;
+		cout << "Main Pooop FORWARD" << endl;
+		forward_stack.pop();
+		return OK;
 	}
 
 	Position p = n->getCurrent_position();
 
 	p.addPosition(getXYDir(best_dir));
-	cout <<"kommer ga: " << moves_real[best_dir] << "dvs till " << (int) p.x << "," << (int)p.y << endl;
+	//cout <<"kommer ga: " << moves_real[best_dir] << "dvs till " << (int) p.x << "," << (int)p.y << endl;
 
 
 
-	Node *temp;
+		Node * temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
 
 
-		cout << "Forward searching "<<endl;
-		temp = new Node(p, n,n->getBoxes(),n->getLen(), getXYDir(best_dir), best_dir);
-
-
-			rules->set_node(temp);
-			//rules->addBoxes();
+			forward_rules->set_node(temp);
+			forward_rules->addBoxes();
 
 			//rules->printBoard(temp);
-		//	temp->setGoalCost(rules->total_goal_distance(temp));
-			temp->setGoalCost(0);
+			temp->setGoalCost(forward_rules->total_goal_distance(temp));
+		//	temp->setGoalCost(0);
 			//Marks this node, or state as visited.
-			rules->markAsVisited(temp);
+			forward_rules->markAsVisited(temp);
 
 			//Clears the board from boxes
-			//rules->removeBoxes();
+			forward_rules->removeBoxes();
 
-			if(rules->solutionCheck(temp)){
+			//Check if we want to start back search
+			if(!search_back && forward_rules->jens_next_to_goal(temp)){
+							cout << "NU SKA VI STARTA BAÅKT" << endl;
+			 				//Starts back searh
+							search_back = true;
 
-					last_node = temp;
+							jens_start_back = temp->getCurrent_position();
+							forward_stack.push( temp );
+							return START_BACK;
+
+			}
+			//Check if we are in the solution
+			if(forward_rules->solutionCheck(temp)){
+
+					forward_last_node = temp;
 					cout << "DONE!" << endl;
-					return true;
+
+					//printBoard(temp);
+					return SOLUTION_FOUND;
+			}
+
+			if(search_back){
+			//Check with back search
+			Node * back_node = back_rules->youHasMe(temp);
+			if(back_node != NULL){
+				back_last_node = back_node;
+				forward_last_node = temp;
+				cout << "Match" << endl;
+				return SOLUTION_FOUND;
+			}
 			}
 
 
-	stack.push( temp );
-	return false;
+
+	forward_stack.push( temp );
+	return OK;
+}
+int back_process(Node *n)
+{
+	unsigned int best_cost = -1;		// BIG value.
+	unsigned int way_to_walk;
+	int best_dir;
+	int best_dirs[] = {-1,-1,-1,-1};								   // RANDOM WALK
+	int mod = 0;
+
+	//Set node in process
+	back_rules->set_node(n);
+
+	//Add the boxes to the board (from node in process)
+	back_rules->addBoxes();
+
+	// Go through all the four possible directions.
+	for(unsigned int i = 0; i < 4; i++) {
+		int enforce_return = back_rules->enforce(i);
+		if( enforce_return != FAIL) {
+		//cout << "Fann en bra väg! " << moves_real[i] << endl;
+
+
+			// Recives a way to walk.
+			way_to_walk = back_rules->heuristics(i);
+
+
+//				cout << "cost for " << moves_real[i] << ": " << way_to_walk << endl;
+			// Checks if the best
+			if(way_to_walk == best_cost){
+//					best_dir = i;
+					best_dirs[mod] = i;
+					mod++;
+
+			} else if (way_to_walk < best_cost) {
+					best_cost = way_to_walk;
+					best_dirs[0] = i;
+					mod = 1;
+			}
+		}
+	}
+
+	back_rules->removeBoxes();
+
+	//Chose what direction to walk
+	if(mod > 0)
+	{
+//		srand(time(0));
+//		best_dir = best_dirs[rand() % mod];
+		best_dir = best_dirs[0];
+	}
+	//We didnt find any good direction
+	else{
+		cout << "Back Pooop BACK" << endl;
+		back_stack.pop();
+		return OK;
+	}
+
+	Position p = n->getCurrent_position();
+
+	p.addPosition(getXYDir(best_dir));
+	//cout <<"kommer ga: " << moves_real[best_dir] << "dvs till " << (int) p.x << "," << (int)p.y << endl;
+
+
+		cout << "Back searching "<<endl;
+		Node * temp = new Node(p, n->getCurrent_position(),n,n->getBoxes(),n->getLen(), getXYDir(best_dir), revereseDir(best_dir));
+
+
+		back_rules->set_node(temp);
+
+			temp->setGoalCost(0);
+			//Marks this node, or state as visited.
+			back_rules->markAsVisited(temp);
+
+
+
+
+			if(back_rules->solutionCheck(temp)){
+
+					back_last_node = temp;
+					cout << "DONE!" << endl;
+
+					//printBoard(temp);
+					return SOLUTION_FOUND;
+			}
+			//Check with forward search
+			Node * forward_node = forward_rules->youHasMe(temp);
+			if(forward_node != NULL){
+				back_last_node = temp;
+				forward_last_node = forward_node;
+				cout << "Match inne i bakc!" << endl;
+				return SOLUTION_FOUND;
+			}
+
+	back_stack.push( temp );
+	return OK;
 }
 
 
@@ -214,94 +346,72 @@ int main(int argc, char ** argv)
 	
 	cout << board_str << endl; // Print board as read
 
-    cout << "Starting forward search..." << endl;
-    ForwardSearch fs(board_str);
-
-    //fs.go();
-
-//    BackSearch fs(board_str,Position(5,2));
+	//Makes forward rules.
+	forward_rules = new Heuristics(board_str);
 
 
-   //bs.go();
-   // boost::thread thrd(bs);
-   // thrd.join();
+	//Make root node.
+	f_rootNode = forward_rules->getRootNode();
 
-	//rules = new Heuristics(board_str); // Create the rules and parse indata
-/*
-	back_rules = new BackHeuristics(board_str);	//Creates backwards rules
+	//Appends root node to the stack.
+	forward_stack.push(f_rootNode);
 
-	Node bRootNode = back_rules->getRootNode();
+	int res = 0;
+	//true = do forward.
+	bool direction = true;
+	int iterations = 0;
+	while(!forward_stack.empty()){
+		iterations++;
+		if(direction){
+			if(search_back){
+			direction = false;
+			}
+		//printBoard(forward_stack.top());
+		res = forward_process(forward_stack.top());
+		if(res == FAIL || res == SOLUTION_FOUND){
+			if(res == SOLUTION_FOUND){
+				res = FORWARD_SOLUTION;
+				cout << "forward found solution" << endl;
+			}
+			break;
+		}
+		//Start back search
+		if(res == START_BACK){
 
-	back_rules->set_node(&bRootNode);
-	back_rules->addBoxes();
-	back_rules->printBoard(&bRootNode);
-	back_rules->markAsVisited(&bRootNode);
-	//exit(0);*/
+			//Initiates back search
+			back_rules = new BackHeuristics(board_str);
+			b_rootNode = back_rules -> getRootNode();
 
-	// Make the root node, this will be pushed onto stack later on!
-/*	Node rootNode = rules->getRootNode();
+			//This is really important!!
+			b_rootNode ->setCurrent_position(jens_start_back);
 
-	//rootNode.setCurrent_position(Position(5,2));
-	rules->set_node(&rootNode);
-	rules->addBoxes();
-	rules->printBoard(&rootNode);
-	rules->markAsVisited(&rootNode);
-	stack.push(&rootNode);
-
-
-
-	int iterations = 0;	
-	srand(time(0)); // Seed for the random.
-*/
-
-    //Do ONLY forward search
- /*   while(true){
-    	if(fs.startBack()){
-    		fs.stop();
-    		break;
-    	}
-    }*/
-   // BackSearch bs(board_str,fs.jens_s_back);
-   // bs.setForwardRules(fs.getRules());
-
-    BackSearch bs(board_str,Position(5,2));
-    bs.go();
-    fs.go();
-    cout << "Frid och fröjd! :D "<< endl;
-
-
-    //start back search
-	while(!fs.getFound() && !bs.getFound()){
-
-		//cout << "Nu borde vi sitta i andar loopen" << endl;
-		//Node * node = stack.top();
-		//FEWL HACKZZ
-		//if (process( node ) ){
-
-		//}
+			//Add the back root node
+			back_stack.push(b_rootNode);
+		}
+		}
+		//Back search
+		else{
+			direction = true;
+			res = back_process(back_stack.top());
+			if(res == FAIL || res == SOLUTION_FOUND){
+				if(res == SOLUTION_FOUND){
+					cout << "back found solution" << endl;
+								res = BACK_SOLUTION;
+								if(back_last_node == NULL){
+									cout << "FAAAAAN HOORA" << endl;
+									exit(0);
+								}
+							}
+					break;
+				}
+		}
 	}
 
-	exit(0);
+	cout << "Iterations: " << iterations << endl;
+	//res now knows which direction is the bomb
 	cout << "klara" << endl;
-//		cout << "Iteration " << iterations << endl;
-	//	if(iterations > 20000000){
 
-			//cerr << "FAIL: Too many iterations, exiting..." << endl;
-			//rules->printBoard(const_cast<Node*>( stack.top() ));
-			//exit(0);
-		//}
-	//	if(iterations >= 9){
-
-	//	exit(0);
-	//	}
-	//	cout << "========== N STATE=========" << endl;
-	//	printBoard(stack.top());
-//
-	//	iterations++;
-
-//	cout << "Iterations:\t" << iterations << endl;
-	last_node =fs.getLast();
-	if(last_node == NULL)
+	if(back_last_node == NULL && forward_last_node == NULL)
 	{
 		cerr << "FAIL: We found nothing."<< endl;
 		exit(1);
@@ -309,23 +419,113 @@ int main(int argc, char ** argv)
 
 	string solution;
 
-	//FEWL HACKZ
-	//Node * temp = const_cast<Node*>( &stack.top() );
-	/*Node * tmp = last_node;*/
 	cout << "NU JÄVLAR LÖSER VI DEN HÄR SKITENNN!!!! "<<endl<<endl;
 
-	Node rootNode = fs.gotRoot();
-	do{
+
+	//BACK found solution by it sefl
+	if(res == BACK_SOLUTION && forward_last_node == NULL){
+		cout << "only back " << endl;
+		do{
+					if(back_last_node == NULL)
+					{
+						cout << "FAIL" << endl;
+						break;
+					}
+					cout << "A " << back_last_node->LAST_DIR << endl;
+					solution += moves_real[back_last_node->LAST_DIR] +  " ";
+					cout << "AB" << endl;
+					//printBoard(last_node);
+					back_last_node = back_last_node->getParent();
+					cout << "B" << endl << endl;
 
 
-		solution += moves_real[last_node->LAST_DIR] +  " ";
-		//printBoard(last_node);
-		last_node = last_node->getParent();
+				}while(back_last_node != b_rootNode);
+	}
+	//Back search found a link with back
+	else if(res == BACK_SOLUTION){
+		cout << "fack me back to front" << endl;
+
+		//"forward" nodes
+		do{
+			cout << "loopish"<<endl;
+				//Reverse the solution
+				solution = moves_real[forward_last_node->LAST_DIR] +  " " + solution;
+				//printBoard(last_node);
+				forward_last_node = forward_last_node->getParent();
+
+
+			}while(forward_last_node != f_rootNode);
+		cout << "hej" << solution << endl;
+		//"backwards" nodes
+		do{
+			if(back_last_node == NULL)
+			{
+				cout << "FAIL" << endl;
+				break;
+			}
+			cout << "A " << back_last_node->LAST_DIR << endl;
+			solution += moves_real[back_last_node->LAST_DIR] +  " ";
+			cout << "AB" << endl;
+			//printBoard(last_node);
+			back_last_node = back_last_node->getParent();
+			cout << "B" << endl << endl;
+
+
+		}while(back_last_node != b_rootNode);
+
+		cout << "npolllan broot" << moves_real[b_rootNode->LAST_DIR]<< endl;
+
+		cout << "En sol:" << solution << endl;
+	}
+	//Only forward
+	else if(res == FORWARD_SOLUTION && back_last_node == NULL){
+		cout << "ONLY FORWARD " << endl;
+		//"forward" nodes
+		do{
+			cout << "loopish"<<endl;
+				//Reverse the solution
+				solution = moves_real[forward_last_node->LAST_DIR] +  " " + solution;
+				//printBoard(last_node);
+				forward_last_node = forward_last_node->getParent();
+
+
+			}while(forward_last_node != f_rootNode);
+	}
+	//forward + back
+	else{
+		cout << "F och back!" << endl;
+		//"forward" nodes
+		do{
+			cout << "loopish"<<endl;
+				//Reverse the solution
+				solution = moves_real[forward_last_node->LAST_DIR] +  " " + solution;
+				//printBoard(last_node);
+				forward_last_node = forward_last_node->getParent();
+
+
+			}while(forward_last_node != f_rootNode);
+		cout << "hej" << solution << endl;
+		//"backwards" nodes
+		do{
+			if(back_last_node == NULL)
+			{
+				cout << "FAIL" << endl;
+				break;
+			}
+			cout << "A " << back_last_node->LAST_DIR << endl;
+			solution += moves_real[back_last_node->LAST_DIR] +  " ";
+			cout << "AB" << endl;
+			//printBoard(last_node);
+			back_last_node = back_last_node->getParent();
+			cout << "B" << endl << endl;
+
+
+		}while(back_last_node != b_rootNode);
+
 
 
 	}
-	while(!(*last_node == rootNode));
-
+/*
     // Reverse the string into correct ordet.
     string::iterator pos;
     string rev_solution;
@@ -346,6 +546,6 @@ int main(int argc, char ** argv)
 		send(*socket, rev_solution.substr(1,rev_solution.length()));
 		//send(*socket, solution);
 	}
-	
+	*/
 	return 0;
 }

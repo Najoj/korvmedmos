@@ -7,11 +7,8 @@
 
 #ifndef BACK_SEARCH_HPP_
 #define BACK_SEARCH_HPP_
-#include <boost/bind.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/shared_ptr.hpp>
-#include <vector>
+
+
 #include <string>
 #include <queue>
 
@@ -25,7 +22,7 @@ using namespace boost;
 
 class BackSearch{
 public:
-    BackSearch(string board_str, Position jens): m_stoprequested(false){
+    BackSearch(string board_str, Position jens){
 
     	rules = new BackHeuristics(board_str);
 
@@ -56,22 +53,6 @@ public:
     	forward = r;
     }
 
-    // Create the thread and start work
-    void go()
-    {
-        assert(!m_thread);
-        m_thread = boost::shared_ptr<boost::thread>(new boost::thread(boost::bind(&BackSearch::search, this)));
-
-    }
-
-    void stop() // Note 1
-    {
-        assert(m_thread);
-        m_stoprequested = true;
-        m_thread->join();
-    }
-
-
 
     bool getFound(){
     	return solution_found;
@@ -89,6 +70,26 @@ public:
 
     BackHeuristics * getRules(){
     	return rules;
+    }
+
+    int search(){
+
+
+    	process(stack.top());
+
+    	cout << "BACK SEARCH: "<< stack.size() << endl;
+    	rules->set_node(stack.top());
+    	rules->addBoxes();
+    	rules->printBoard(stack.top());
+    	rules->removeBoxes();
+
+    	if(stack.empty()){
+    		return FAIL;
+    	}
+    	return OK;
+
+
+        //Prints solution
     }
 private:
 
@@ -108,18 +109,6 @@ private:
 
     bool solution_found;
 
-    // This is the static class function that serves as a C style function pointer
-    // for the pthread_create call
-    static void start_thread(void *obj)
-    {
-        //All we do here is call the do_work() function
-        reinterpret_cast<BackSearch *>(obj)->search();
-    }
-    volatile bool m_stoprequested;
-    boost::shared_ptr<boost::thread> m_thread;
-    boost::mutex m_mutex;
-
-    std::vector<int> m_fibonacci_values;
 
 
 /*''
@@ -223,41 +212,5 @@ private:
        }
 
 
-    // Compute and save fibonacci numbers as fast as possible
-    int search()
-    {
-
-    	cout << "root nod "<< stack.size() << endl;
-    	    	rules->set_node(stack.top());
-    	    	rules->addBoxes();
-    	    	rules->printBoard(stack.top());
-    	    	rules->removeBoxes();
-
-    	        //Run as long as we should and stack not empty
-    	        while (!m_stoprequested || !stack.empty()){
-
-    	        	//Stops if found solution
-    	        	if(process(stack.top())){
-    	        		break;
-    	        	}
-    	        	cout << "BACK SEARCH: Iteration: " << iterations << endl;
-    	        	rules->set_node(stack.top());
-    	        	rules->addBoxes();
-    	        	rules->printBoard(stack.top());
-    	        	rules->removeBoxes();
-    	        	cout << endl << endl;
-    	        	iterations++;
-
-
-    	          /*  int value = fibonacci_number(iteration);
-    	            boost::mutex::scoped_lock l(m_mutex);
-    	            m_fibonacci_values.push_back(value);*/
-    	        }
-    	        cout << "BS thread stopped" << endl;
-    	        solution_found  = true;
-    	        return 1;
-
-        //Prints solution
-    }
 };
 #endif /* BACK_SEARCH_HPP_ */

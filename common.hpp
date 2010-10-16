@@ -43,6 +43,11 @@
 #define FAIL -1
 #define OK 1
 #define LIMIT_EXCEEDED 2
+#define SOLUTION_FOUND 3
+#define START_BACK 4
+
+#define FORWARD_SOLUTION 5
+#define BACK_SOLUTION 6
 
 #define JENS_IS_PUSHING_BOX_OK 4711
 #define BIG_VALUE 2147483647
@@ -55,9 +60,7 @@
 int revereseDir(int push_box_dir);
 
 
-struct HashMap{
 
-};
 
 struct Position
 {
