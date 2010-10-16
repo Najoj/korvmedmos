@@ -17,6 +17,15 @@ bool Rules::been_in_node(Node * node)
 	else
 		return false;
 }
+Node * Rules::youHasMe(Node * node)
+{
+
+	NodeSet::iterator iterator = visited_nodes.find(*node);
+	if (iterator != visited_nodes.end())
+		return new Node(*iterator);
+	else
+		return NULL;
+}
 bool Rules::box_into_wall(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
@@ -236,7 +245,7 @@ bool Rules::readBoard(std::string boardIn)
 	return true;
 }
 
-Node Rules::getRootNode(){
+Node * Rules::getRootNode(){
 
 	/**
 	 * TODO: Make this nicer.
@@ -246,7 +255,7 @@ Node Rules::getRootNode(){
 	for(unsigned short i = 0; i< board->boxes.size(); i++){
 		temp_boxes[i] = board->boxes[i];
 	}
-	return Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1), 0);
+	return new Node(*(board->getJens()),NULL,temp_boxes, board->boxes.size(),Position(-1,-1), 0);
 }
 /**
  * Prints the board with a give Node
@@ -382,9 +391,10 @@ int Rules::enforce(int dir){
 	if(jens_into_wall()){
 			return FAIL;
 	}
-
+	bool jens_next_box = false;
 	//Is JENS walking into a box?
 	if(jens_into_box()){
+		jens_next_box = true;
 		//see if we can push this box.
 		// true är fail
 		if( ! (box_into_wall() && box_into_box() && box_into_deadlock() && box_into_boxlock())){

@@ -3,7 +3,7 @@
  *
  *  Created on: 15 okt 2010
  *      Author: jacob
- *  Desc: Used for reverese lookup rules enforcment.
+ *  Desc: Used for reverse lookup rules enforcment.
  */
 
 #ifndef BACK_RULES_HPP
@@ -68,7 +68,7 @@ public:
 	void removeBoxes();
 	int enforce(int dir);
 
-
+	Node * youHasMe(Node * node);
 
 	void markAsVisited(Node * n){
 		visited_nodes.insert(*n);
@@ -77,7 +77,7 @@ public:
 	void set_node(Node * node) {
 		node_in_process = node;
 	};
-	Node getRootNode();
+	Node * getRootNode();
 	void printBoard(Node * node);
 
 	bool solutionCheck(Node * n);
