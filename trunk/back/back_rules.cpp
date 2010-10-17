@@ -203,13 +203,17 @@ void BackRules::removeBoxes()
 bool BackRules::solutionCheck(Node *n)
 {
 	// If every box is on the goal, then we hopefully have a valid solution.
-	for(unsigned int i = 0; i < n->getLen(); i++)
+	for(int i = 0; i < n->getLen(); i++)
 	{
 		if(board->get( n->getBoxes()[i] ) != GOAL)
 		{
 			return false;
 		}
 
+	}
+	//Checks so that jens is ON his original start position, (the pos from the board)
+	if(!(*board->getJens() == n->getCurrent_position())){
+		return false;
 	}
 	return true;
 }
@@ -259,8 +263,14 @@ int BackRules::enforce(int dir){
 	}
 	delete n;
 
-	cout << "return ok!" << endl;
+
 	return OK;
 }
+
+int BackRules::length_to_box(Position jens, Position box)
+		{
+			return abs(jens.x - box.x) + abs(jens.y - box.y);
+//			return sqrt((jens.x - box.x)*(jens.x - box.x) + (jens.y-box.y)*(jens.y-box.y));
+		}
 
 

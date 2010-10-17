@@ -213,8 +213,8 @@ class Node{
 		}
 		 bool operator<( const Node & other) const
 		{
-			 // > like BFS
-				return this->getPathCost()+this->getGoalCost() < other.getPathCost()+other.getGoalCost();
+			 // > like BFS = A star?
+				return this->getPathCost()+this->getGoalCost() > other.getPathCost()+other.getGoalCost();
 		}
 };
 #endif

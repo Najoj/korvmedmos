@@ -3,21 +3,21 @@
  * 
  * Here is where we have our own search improvemnts.
  */
-#ifndef HEURISTICS_HPP
-#define HEURISTICS_HPP
+#ifndef FORWARDHEURISTICS_HPP
+#define FORWARDHEURISTICS_HPP
 
 #include <cmath>
 #include <string>
 #include "common.hpp"
-#include "rules.hpp"
+#include "forward_rules.hpp"
 #include "Board.hpp"
-class Heuristics : public Rules
+class ForwardHeuristics : public ForwardRules
 {
 	private:
 		
 	public:
 	//See rules constructor for more intreseting stuff
-	Heuristics(string b) : Rules (b){
+	ForwardHeuristics(string b) : ForwardRules (b){
 		//Improve the board, yay
 		improve_board(this->board);
 	}
@@ -185,16 +185,14 @@ class Heuristics : public Rules
  */
 int jens_box_goal_distance(int dir)
 	{
-		//bool debug = false;
-		//int debug_nr = 0;
+
 		int min = BIG_VALUE, save, push_box_dir = NO_DIR;
 		Position nearest_box, nearest_goal;
 		Position temp;
 		int jens_to_push_box_dir, box_to_goal_distance;
 		int cost = 0;
 
-	//	Position new_jens = getXYDir(dir, node_in_process->getCurrent_position());
-		//Raden ovan funkar om den kompilerar, hoppas den undre gör de osså
+
 
 		Position new_jens = node_in_process->getCurrent_position();
 		new_jens.addPosition(getXYDir(dir));
@@ -207,7 +205,7 @@ int jens_box_goal_distance(int dir)
 		for(int i = 0; i < node_in_process->getLen(); i++)
 		{
 			temp = node_in_process->getBoxes()[i];
-			save = Heuristics::length_to_box(new_jens, temp);
+			save = length_to_box(new_jens, temp);
 
 			if(board->get(temp) != BOX_ONGOAL && save < min)
 			{
@@ -216,7 +214,6 @@ int jens_box_goal_distance(int dir)
 			}
 		}
 
-//		cout << "Chosen box: " << (int) nearest_box.x << " " << (int) nearest_box.y << endl;
 
 		// Reset min
 		min = BIG_VALUE;
@@ -224,7 +221,7 @@ int jens_box_goal_distance(int dir)
 		for(int i = 0; i < node_in_process->getLen(); i++)
 		{
 			temp = board->goals[i];
-			save = Heuristics::length_to_box(nearest_box, temp);
+			save = length_to_box(nearest_box, temp);
 
 			if(board->get(temp) != BOX_ONGOAL && save < min)
 			{
@@ -232,7 +229,7 @@ int jens_box_goal_distance(int dir)
 				nearest_goal = temp;
 			}
 		}
-//		cout << "Chosen goal: " << (int) nearest_goal.x << " " << (int) nearest_goal.y << endl;
+
 
 		box_to_goal_distance = min;
 		if( abs(nearest_goal.x - nearest_box.x) < abs(nearest_goal.y - nearest_box.y)
@@ -255,7 +252,7 @@ int jens_box_goal_distance(int dir)
 		}
 		else
 		{
-			cout << "WUT THE FUKK" << endl;
+			cout << "Uknown error in heuristics" << endl;
 		}
 
 		if(push_box_dir == RIGHT)
@@ -267,11 +264,11 @@ int jens_box_goal_distance(int dir)
 		else if(push_box_dir == DOWN)
 			temp = nearest_box.getDirection(UP);
 
-//		cout << "Direction: " << moves_real[push_box_dir] << endl;
+
 		if (node_in_process->getCurrent_position() == temp && push_box_dir == dir) {
 			cost = 0;
 		} else {
-			jens_to_push_box_dir = Heuristics::length_to_box(new_jens, temp);
+			jens_to_push_box_dir = length_to_box(new_jens, temp);
 			cost += jens_to_push_box_dir;
 		}
 
@@ -325,11 +322,8 @@ int jens_box_goal_distance(int dir)
 							{
 									min_box_to_goal = save;
 									nearest_goal = temp;
-									//cout << "len to goal" << min_box_to_goal << endl;
-							}
-					}else{
-							//cout << (int)temp.x << "," << (int)temp.y << " has no goal." << endl;
 
+							}
 					}
 			}
 
@@ -338,12 +332,6 @@ int jens_box_goal_distance(int dir)
 			}
 
 			cost = min_box_to_goal + min_jens_to_box;
-
-
-
-			//cout << "DDD" << (int) nearest_box.x << " " << (int)nearest_box.y << endl;
-			//cout << "DDD" << (int)nearest_goal.x << " " << (int)nearest_goal.y << endl;
-
 
 			//Removes the boxes and goal positions
 			board->set(nearest_box,WALL);
@@ -358,8 +346,7 @@ int jens_box_goal_distance(int dir)
 	* Tries to figure out the distance to the goal.
 	*/
 	int total_goal_distance(Node * parent){
-	//bool debug = false;
-	//int debug_nr = 0;
+
 	int cost = 0;
 
 
@@ -373,7 +360,7 @@ int jens_box_goal_distance(int dir)
 
 
 
-	//cout << "TOTAL KOSTNAD: " << cost << endl;
+	//Weight the value for improvements.
 	return 10*cost;
 
 	}

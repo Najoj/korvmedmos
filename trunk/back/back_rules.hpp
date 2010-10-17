@@ -48,10 +48,14 @@ protected:
 	int w_dir;
 
 
+	Position jens_start_real;
 	Position new_position_box;
 	Board * board;
 
+
 	//int jens_box_goal_distance(int dir);
+
+	int length_to_box(Position jens, Position box);
 
 public:
 	BackRules(std::string board){
@@ -82,7 +86,7 @@ public:
 
 	bool solutionCheck(Node * n);
 
-	int length_to_box(Position jens, Position box);
+
 	//friend class Heuristics;
 
 };

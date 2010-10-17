@@ -3,12 +3,15 @@
  *
  *  Created on: 2 okt 2010
  *      Author: jacob
+ *
+ *
+ *   Enforces rules for the forward search
  */
 
-#include "rules.hpp"
+#include "forward_rules.hpp"
 #include "boxlocks.hpp"
 
-bool Rules::been_in_node(Node * node)
+bool ForwardRules::been_in_node(Node * node)
 {
 
 	NodeSet::iterator iterator = visited_nodes.find(*node);
@@ -17,7 +20,10 @@ bool Rules::been_in_node(Node * node)
 	else
 		return false;
 }
-Node * Rules::youHasMe(Node * node)
+/**
+ * Checks if this hashet contains given node, returns the node or null
+ */
+Node * ForwardRules::youHasMe(Node * node)
 {
 
 	NodeSet::iterator iterator = visited_nodes.find(*node);
@@ -26,19 +32,24 @@ Node * Rules::youHasMe(Node * node)
 	else
 		return NULL;
 }
-bool Rules::box_into_wall(){
+/**
+ * Checks if we try to push box into a wall
+ */
+bool ForwardRules::box_into_wall(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
-//cout << "BOX_INTO WALL dir : " << moves_real[w_dir] << " POS: " << boxp.x << " " << boxp.y << endl;
+
 	// Can not push a box into a wall.
 	if(board->get(boxp) == WALL){
-		//cout << "TROR ATT DET REDAN SITTER EN vagg  PÅ: " << boxp.x << " " << boxp.y << " dir" << moves_real[w_dir]<< endl;
 		return false;
 	}
 
 	return true;
 }
-bool Rules::box_into_deadlock(){
+/**
+ * Avoids deadlocks ie. pushing a box onto a x
+ */
+bool ForwardRules::box_into_deadlock(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
 
@@ -50,45 +61,23 @@ bool Rules::box_into_deadlock(){
 
 	return true;
 }
-bool Rules::box_into_box(){
+bool ForwardRules::box_into_box(){
 	// Gets the prospective postion of the box.
 	Position boxp = new_position.getDirection(w_dir);
 
 
 	// Can not push a box into a box.
 	if(board->get(boxp) == BOX || board->get(boxp) == BOX_ONGOAL){
-//		cout << "TROR ATT DET REDAN SITTER EN BOX PÅ: " << boxp.x << " " << boxp.y << endl;
 		return false;
 	}
 	return true;
 }
 
-void print_matrix(int matrix[3][3])
-{
-	for (int j = 0; j < 3; j++)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			if (matrix[i][j] == 0) cout << " ";
-			else cout << (char)matrix[i][j];
-		}
-		cout << endl;
-	}
-	cout << endl;
-}
 
-/*int matrix_hash(int matrix[3][3])
-{
-	int hash = 0;
-	for (int i = 0; i < 9; i++)
-	{
-		hash += (int*)matrix[i] 
-}*/
+
 
 /*
- * return true if boxlock was not found
- */
-/*
+ * 	See boxlocks.hpp for the definitions of the boxlocks matrix
  * return true if boxlock was not found
  */
 bool find_boxlock(int matrix[3][3])
@@ -113,8 +102,10 @@ bool find_boxlock(int matrix[3][3])
         }
         return false;
 }
-
-bool Rules::box_into_boxlock()
+/**
+ * Stops box locks.
+ */
+bool ForwardRules::box_into_boxlock()
 {
         int matrix[3][3];
 
@@ -159,14 +150,14 @@ bool Rules::box_into_boxlock()
                 return !find_boxlock(matrix); // om vi är i ett boxlock, returnerar find_boxlock true, då är det fail, då returnar vi false
 }
 
-bool Rules::jens_into_box(){
+bool ForwardRules::jens_into_box(){
 	// Jens can not walk into a box.
 	if(board->get(new_position) == BOX || board->get(new_position) == BOX_ONGOAL) {
 		return true;
 	}
 	return false;
 }
-bool Rules::jens_into_wall(){
+bool ForwardRules::jens_into_wall(){
 	// Jens can not walk into a wall.
 	if(board->get(new_position) == WALL){
 		return true;
@@ -178,7 +169,7 @@ bool Rules::jens_into_wall(){
 * Reads the board into a int matrix called board (global var)
 * @param string The String representing the board.
 */
-bool Rules::readBoard(std::string boardIn)
+bool ForwardRules::readBoard(std::string boardIn)
 {
 	// Creates an iterator.
 	string::iterator iterator;
@@ -245,11 +236,12 @@ bool Rules::readBoard(std::string boardIn)
 	return true;
 }
 
-Node * Rules::getRootNode(){
+/**
+ * Returns the root node, the "starting state of the world"
+ */
+Node * ForwardRules::getRootNode(){
 
-	/**
-	 * TODO: Make this nicer.
-	 */
+
 	//Temporarily copies boxes into a vector rather than stack!
 	Position *temp_boxes = new Position[board->boxes.size()];
 	for(unsigned short i = 0; i< board->boxes.size(); i++){
@@ -259,11 +251,8 @@ Node * Rules::getRootNode(){
 }
 /**
  * Prints the board with a give Node
- * TODO: TEST! This is basically copy paste from original main.cpp file.
- * TODO: Comment this SoB.
  */
-void Rules::printBoard(Node * node){
-//	cout << endl << "JENS position: x" << (node->getCurrent_position().x) << " Y " << (node->getCurrent_position().y) << endl;
+void ForwardRules::printBoard(Node * node){
 	for(int j = 0; j < board->height; j++)
 	{
 		for(int i = 0; i < board->width; i++)
@@ -279,22 +268,22 @@ void Rules::printBoard(Node * node){
 	}
 }
 
-void Rules::addBoxes()
+void ForwardRules::addBoxes()
 {
 	board->insert_boxes(node_in_process->getBoxes(),node_in_process->getLen());
 }
-//TODO: LOL @ Rishise :D CLASSIC JAKE HAX!!
-void Rules::removeBoxes()
+//LOL @ Rishise :D CLASSIC JAKE HAX!!
+void ForwardRules::removeBoxes()
 {
         board->remove_boxes(node_in_process->getBoxes(),node_in_process->getLen());
        // node_in_process = NULL;
 }
 
 
-bool Rules::solutionCheck(Node *n)
+bool ForwardRules::solutionCheck(Node *n)
 {
 	// If every box is on the goal, then we hopefully have a valid solution.
-	for(unsigned int i = 0; i < n->getLen(); i++)
+	for(int i = 0; i < n->getLen(); i++)
 	{
 		if(board->get( n->getBoxes()[i] ) != GOAL)
 		{
@@ -310,7 +299,7 @@ bool Rules::solutionCheck(Node *n)
 /**
  * Return the cost to get the nearest box to goal
  */
-int Rules::box_goal_distance(Node * parent, Position &jens){
+int ForwardRules::box_goal_distance(Node * parent, Position &jens){
 
 
                 int save = BIG_VALUE;
@@ -368,11 +357,6 @@ int Rules::box_goal_distance(Node * parent, Position &jens){
                 cost = min_box_to_goal + min_jens_to_box;
 
 
-
-                //cout << "DDD" << (int) nearest_box.x << " " << (int)nearest_box.y << endl;
-                //cout << "DDD" << (int)nearest_goal.x << " " << (int)nearest_goal.y << endl;
-
-
                 //Removes the boxes and goal positions
                 board->set(nearest_box,WALL);
                 board->set(nearest_goal, WALL);
@@ -382,7 +366,12 @@ int Rules::box_goal_distance(Node * parent, Position &jens){
 
                 return cost;
         }
-int Rules::enforce(int dir){
+/*
+ * Enforces the basic rules of the game and also some deadlock prevention
+ * return FAIL if we cannto go in this direction, the node beeing tested is set by
+ * node_in_process.
+ */
+int ForwardRules::enforce(int dir){
 	w_dir = dir;
 	//CLASSIC JAKE HAXX!
 	new_position = (node_in_process->getCurrent_position().getDirection(dir));
@@ -405,6 +394,8 @@ int Rules::enforce(int dir){
     /**
   * TODO: Improve this plx
   */
+
+	//Checks the hashset if we have already visited this state
 	Position p(new_position.x, new_position.y);
 	Node * n = new Node(p, node_in_process,node_in_process->getBoxes(),node_in_process->getLen(), Position(0,0).getDirection(w_dir), dir);
 
@@ -419,8 +410,10 @@ int Rules::enforce(int dir){
 }
 
 
-
-int Rules::length_to_box(Position jens, Position box)
+/**
+ * Pythagoras distance calc between two positions in the board.
+ */
+int ForwardRules::length_to_box(Position jens, Position box)
 		{
 			return abs(jens.x - box.x) + abs(jens.y - box.y);
 //			return sqrt((jens.x - box.x)*(jens.x - box.x) + (jens.y-box.y)*(jens.y-box.y));
