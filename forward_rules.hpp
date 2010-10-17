@@ -10,7 +10,7 @@
 #include "node.hpp"
 #include "common.hpp"
 using namespace boost;
-class Rules {
+class ForwardRules {
 
 private:
 	//Functions used to enforce the basic rules.
@@ -48,7 +48,7 @@ public:
 	Node * youHasMe(Node * node);
 	Board * board;
 
-	Rules(std::string board){
+	ForwardRules(std::string board){
 		readBoard(board);
 
 		visited_nodes = NodeSet(10000000);

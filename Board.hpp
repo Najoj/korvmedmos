@@ -126,7 +126,7 @@ struct Board
 						}
 				}
 
-				for(int i = 0; i<goals.size(); i++){
+				for(unsigned int i = 0; i<goals.size(); i++){
 					matrix[goals[i].x][goals[i].y] = GOAL;
 				}
 		}
