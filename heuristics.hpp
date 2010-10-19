@@ -14,23 +14,23 @@
 class Heuristics : public Rules
 {
 	private:
-		
+		// Nothing 
 	public:
 	//See rules constructor for more intreseting stuff
-	Heuristics(string b) : Rules (b){
-		//Improve the board, yay
+	Heuristics(string b) : Rules (b)
+	{
+		//Improve the board. Yay!
 		improve_board(this->board);
 	}
 	/**
 	 * Used for local heuristics
 	 * returns a cost for this direction
 	 */
-	int heuristics(int dir){
-
+	int heuristics(int dir)
+	{
 		int cost = 0;
 		cost += jens_box_goal_distance(dir);
 		return cost;
-
 	}
 	/**
 	 * Returns the lenght from jens to the closes box
@@ -38,12 +38,14 @@ class Heuristics : public Rules
 	int length_from_jens_to_box(int dir, Node * parent)
 	{
 		int cost = 0;
-
+		
 		Position new_jens = parent->getCurrent_position();
-
+		
 		int min = BIG_VALUE;
 		int min_i = 0; // i-värdet för minsta boxen
 		int save;
+		
+		// How to adjust Jens' position.
 		if(dir == UP)
 		{
 			new_jens.y--;
@@ -60,7 +62,8 @@ class Heuristics : public Rules
 		{
 			new_jens.x--;
 		}
-
+		
+		// Checks which box is the best.
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			save = length_to_box(new_jens, parent->getBoxes()[i]);
@@ -70,31 +73,38 @@ class Heuristics : public Rules
 				min_i = i;
 			}
 		}
+		
 		cost += min;
-		if (board->get(parent->getBoxes()[min_i]) == GOAL) {
+		
+		// Punishment for moving something that is on goal.
+		if (board->get(parent->getBoxes()[min_i]) == GOAL)
 			cost += 5;
-		}
-
+		
 		return cost;
 	}
-
-
+	
 	/**
-	 * Removes deadlocks from the board
+	 * Removes deadlocks from the board. Replaced by 'x' on board.
 	 */
-	void improve_board_wall_deadlocks_y(Board * board, int x, int y, int side){
-		if(board->get(x,y-1) != WALL){
+	void improve_board_wall_deadlocks_y(Board * board, int x, int y, int side)
+	{
+		if(board->get(x,y-1) != WALL)
+		{
 			return;	//Spårat
 		}
 			//check Y-dir left wall
-		for(int k = y; k<board->height;k++){
-			if(board->get(x,k) == GOAL || board->get(x+side,k) != WALL){
+		for(int k = y; k<board->height;k++)
+		{
+			if(board->get(x,k) == GOAL || board->get(x+side,k) != WALL)
+			{
 				break;
 			}
-			if(board->get(x,k) == WALL){
+			if(board->get(x,k) == WALL)
+			{
 			//Mark all tested as X.
 				int l = y;
-				for(; l<k; l++){
+				for(; l<k; l++)
+				{
 					board->set(x,l, BAD_POS);
 				}
 				break;
@@ -104,27 +114,33 @@ class Heuristics : public Rules
 	/**
 	 * Remove deadlocks from the board
 	 */
-	void improve_board_wall_deadlocks_x(Board * board, int x, int y, int side){
-		if(board->get(x-1,y) != WALL){
-			return;	//Spårat
+	void improve_board_wall_deadlocks_x(Board * board, int x, int y, int side)
+	{
+		if(board->get(x-1,y) != WALL)
+		{
+			return;	// EPIC FAILURE
 		}
 		//check x-dir left wall
-	for(int k = x; k < board->width;k++){
-		if(board->get(k,y) == GOAL || board->get(k,y+side) != WALL){
-			break;
-		}
-		if(board->get(k,y) == WALL){
-		//Mark all tested as X.
-			for(int l = x; l<k; l++){
-				board->set(l,y, BAD_POS);
+		for(int k = x; k < board->width; k++)
+		{
+			if(board->get(k,y) == GOAL || board->get(k,y+side) != WALL)
+			{
+				break;
 			}
-			break;
-		}
-
+			if(board->get(k,y) == WALL)
+			{
+			//Mark all tested as X.
+				for(int l = x; l<k; l++)
+				{
+					board->set(l,y, BAD_POS);
+				}
+				break;
+			}
 		}
 	}
+	
 	/**
-	 * Removes corner dead locks
+	 * Removes corner dead locks. Puts 'x' in corners.
 	 */
 	void improve_board(Board * board)
 	{
@@ -133,17 +149,18 @@ class Heuristics : public Rules
 		{
 			for (int j = 0; j < board->height; j++)
 			{
-				if (board->get(i, j) == FLOOR || board->get(i, j) == BAD_POS) {
+				if (board->get(i, j) == FLOOR || board->get(i, j) == BAD_POS)
+				{
 					/**
 					 * Avoids corners
 					 */
 					//Remove wall deadlocks
 					improve_board_wall_deadlocks_y(board, i,j, 1);
 					improve_board_wall_deadlocks_y(board,i,j, -1);
-
+					
 					improve_board_wall_deadlocks_x(board, i,j, 1);
 					improve_board_wall_deadlocks_x(board, i,j, -1);
-
+					
 					// check up-right
 					if (board->get(i, j-1) == WALL && board->get(i+1, j) == WALL)
 					{
@@ -169,47 +186,45 @@ class Heuristics : public Rules
 						continue;
 					}
 				}
-				
-			}	
-		}
-		// hitta kant utan mål
+			}
+		} 
 	}
-
+	
 	/**
-	* Calculates the distance from jens to the closest box + from that box to finish
+	* Calculates the distance from jens to the closest box + from that box to finish.
 	*/
 	int jens_box_goal_distance(int dir)
 	{
-		//bool debug = false;
-		//int debug_nr = 0;
 		int min = BIG_VALUE, save, push_box_dir = NO_DIR;
+		
 		Position nearest_box, nearest_goal;
 		Position temp;
+		
 		int jens_to_push_box_dir, box_to_goal_distance;
 		int cost = 0;
-
+		
 		Position new_jens = getXYDir(dir, node_in_process->getCurrent_position());
-
-
-		if(board->get(new_jens) == BOX_ONGOAL){
+		
+		if(board->get(new_jens) == BOX_ONGOAL)
+		{
 			cost += COST_TO_MOVE_BOX_ON_GOAL;
 		}
-
+		
 		// Find nearest box from Jens
 		for(int i = 0; i < node_in_process->getLen(); i++)
 		{
 			temp = node_in_process->getBoxes()[i];
 			save = Heuristics::length_to_box(new_jens, temp);
-
+			
 			if(board->get(temp) != BOX_ONGOAL && save < min)
 			{
 				min = save;
 				nearest_box = temp;
 			}
 		}
-
-	//		cout << "Chosen box: " << (int) nearest_box.x << " " << (int) nearest_box.y << endl;
-
+		
+//		cout << "Chosen box: " << (int) nearest_box.x << " " << (int) nearest_box.y << endl;
+	
 		// Reset min
 		min = BIG_VALUE;
 		// Find nearest goal from nearest box
@@ -217,7 +232,7 @@ class Heuristics : public Rules
 		{
 			temp = board->goals[i];
 			save = Heuristics::length_to_box(nearest_box, temp);
-
+			
 			if(board->get(temp) != BOX_ONGOAL && save < min)
 			{
 				min = save;
@@ -225,17 +240,17 @@ class Heuristics : public Rules
 			}
 		}
 //		cout << "Chosen goal: " << (int) nearest_goal.x << " " << (int) nearest_goal.y << endl;
-
+		
 		box_to_goal_distance = min;
 		if( abs(nearest_goal.x - nearest_box.x) < abs(nearest_goal.y - nearest_box.y)
 			&& abs(nearest_goal.x - nearest_box.x) != 0 )
 		{
-
+		
 			if( nearest_goal.x - nearest_box.x > 0 )
 				push_box_dir = RIGHT;
 			else // nearest_goal.x - nearest_box.x <= 0
 				push_box_dir = LEFT;
-
+			
 		}
 		else if( abs(nearest_goal.x - nearest_box.x) >= abs(nearest_goal.y - nearest_box.y)
 				|| abs(nearest_goal.x - nearest_box.x) == 0 )
@@ -247,9 +262,9 @@ class Heuristics : public Rules
 		}
 		else
 		{
-			cout << "WUT THE FUKK" << endl;
+			cout << "What just happened?" << endl;
 		}
-
+		
 		if(push_box_dir == RIGHT)
 			temp = nearest_box.getDirection(LEFT);
 		else if(push_box_dir == LEFT)
@@ -258,44 +273,47 @@ class Heuristics : public Rules
 			temp = nearest_box.getDirection(DOWN);
 		else if(push_box_dir == DOWN)
 			temp = nearest_box.getDirection(UP);
-
-	//		cout << "Direction: " << moves_real[push_box_dir] << endl;
-		if (node_in_process->getCurrent_position() == temp && push_box_dir == dir) {
+		
+//			cout << "Direction: " << moves_real[push_box_dir] << endl;
+		if (node_in_process->getCurrent_position() == temp && push_box_dir == dir)
+		{
 			cost = 0;
 		} else {
 			jens_to_push_box_dir = Heuristics::length_to_box(new_jens, temp);
 			cost += jens_to_push_box_dir;
 		}
-
+		
 		cost += box_to_goal_distance;
-
+		
 		return cost;
 	}
 	/**
 	 * Return the cost to get the nearest box to goal
 	 */
-	int box_goal_distance(Node * parent, Position &jens){
+	int box_goal_distance(Node * parent, Position &jens)
+	{
 		int save = BIG_VALUE;
 		int min_jens_to_box = BIG_VALUE;
 		int min_box_to_goal = BIG_VALUE;
-
+		
 		Position nearest_box, nearest_goal;
 		Position temp;
-
+		
 		int cost = 0;
-
+		
 		Position new_jens = jens;
-
+		
 		//Finds out which box is closest to jens
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			temp = parent->getBoxes()[i];
-			if(board->get(temp) == BOX){
+			if(board->get(temp) == BOX)
+			{
 				save = length_to_box(new_jens, temp);
 				if(board->get(temp) != BOX_ONGOAL && save < min_jens_to_box)
 				{
-						min_jens_to_box = save;
-						nearest_box = temp;
+					min_jens_to_box = save;
+					nearest_box = temp;
 				}
 			}
 		}
@@ -303,44 +321,45 @@ class Heuristics : public Rules
 		for(int i = 0; i < parent->getLen(); i++)
 		{
 			temp = board->goals[i];
-			if(board->get(temp) == GOAL){
+			if(board->get(temp) == GOAL)
+			{
 				save = length_to_box(nearest_box, temp);
 				if(board->get(temp) != BOX_ONGOAL && save < min_box_to_goal)
 				{
-						min_box_to_goal = save;
-						nearest_goal = temp;
-						//cout << "len to goal" << min_box_to_goal << endl;
+					min_box_to_goal = save;
+					nearest_goal = temp;
+					//cout << "len to goal" << min_box_to_goal << endl;
 				}
-			}		
+			}
 		}
-
-		if(min_box_to_goal == 0 || min_box_to_goal == BIG_VALUE){
+		
+		if(min_box_to_goal == 0 || min_box_to_goal == BIG_VALUE)
 				return 0;
-		}
-
+			
 		cost = min_box_to_goal + min_jens_to_box;
-
+		
 		//Removes the boxes and goal positions
 		board->set(nearest_box,WALL);
 		board->set(nearest_goal, WALL);
-
+		
 		jens = nearest_goal;
-
+		
 		return cost;
 	}
 	/**
 	* Tries to figure out the distance to the goal.
 	*/
-	int total_goal_distance(Node * parent){
+	int total_goal_distance(Node * parent)
+	{
 		int cost = 0;
 		Position p = parent->getCurrent_position();
-		//Must add boxes first
-
-		for(short i = 0; i<parent->getLen(); i++){
+		
+		for(short i = 0; i<parent->getLen(); i++)
+		{
 			cost += box_goal_distance(parent,p);
 			//cout << "COST" << cost << endl;
 		}
-
+		
 		return 5*cost;
 	}
 };

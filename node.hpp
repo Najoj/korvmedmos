@@ -1,7 +1,5 @@
 /**
- * node.hpp
- *
- * 
+ * Representing a node.
  */
 
 #ifndef NODE_HPP
@@ -20,14 +18,14 @@ class Board;
 
 class Node{
 	private:
-		// Position of player, Jens.
+		// Position of player. Him name is Jens.
 		Position jens;
 		
 		// Used direction of, that is the nodes childrens directions.
-		//char used_directions[4];
+		char used_directions[4];
 		
 		// Length of the board matrix
-		char len;
+		unsigned char len;
 		
 		// Pointer to boxes positions.
 		Position * boxes_positions;
@@ -37,94 +35,64 @@ class Node{
 		
 		// Goal cost
 		int goal_cost;
-
+		
 		// Parent of the node
 		Node * parent;
 		
 		Node * getChildDirection(int dir);
 		
 		bool deadlock(Position pos, Position parent);
-
-
+		
 	public:
 		unsigned char LAST_DIR;
-
+		int moved_box;
+		
 		Node() {};
-		Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker) {
+		
+		// Deconstructor.
+		~Node()
+		{
+			delete[] boxes_positions;
+		}
+		
+		Node(Position jens, Node * parent, Position *boxes, int len, Position dir, int walker)
+		{
 			this->len = len;
-
+			moved_box = -1;
 			boxes_positions = new Position[len];
 			// Copy boxes.
 			for(int i = 0; i < len; i++)
 			{
 				// Update boxes if needed.
-				if(boxes[i] == jens) {
+				if(boxes[i] == jens)
+				{
+					moved_box = i;
 				//	cout << "Uppdaterar boxar!";
 					boxes_positions[i] = boxes[i] + dir;
 				} else {
 					boxes_positions[i] = boxes[i];
 				}
 			}
-
+			
+			
 			// Saves Jens' posistion.
 			this->jens = jens;
-
-			// Set goal cost.
+			
+			// Set path and goal cost.
 			this->goal_cost = 0;
-
+			this->path_cost = 0;
+			
 			// Sets parent node
 			this->parent = parent;
-
-			this->path_cost = 0;
-
-
+			
+			// Direction we walk.
 			this->LAST_DIR = walker;
+			
 			if(parent != NULL){
 				this->path_cost = parent->getPathCost()+1;
 			}
 		}
-		/**
-		 * This constructor is used for back search only
-		 */
-		Node(Position jens, Position m_box, Node * parent, Position *boxes, int len, Position dir, int walker) {
-			this->len = len;
-
-
-			boxes_positions = new Position[len];
-
-			Position tmp;
-			// Copy boxes.
-			for(int i = 0; i < len; i++)
-			{
-				//tmp = boxes[i] + dir;
-				// Update boxes if needed.
-				if(boxes[i] + dir == m_box) {
-				//	cout << "Uppdaterar boxar!";
-					boxes_positions[i] = boxes[i] + (dir);
-				} else {
-					boxes_positions[i] = boxes[i];
-				}
-			}
-
-			// Saves Jens' posistion.
-			this->jens = jens;
-
-			// Set goal cost.
-			this->goal_cost = 0;
-
-			// Sets parent node
-			this->parent = parent;
-
-			this->path_cost = 0;
-
-
-			this->LAST_DIR = walker;
-			if(parent != NULL){
-				this->path_cost = parent->getPathCost()+1;
-			}
-		}
-
-
+		
 		Node(const Node& n){
 			this->jens = n.jens;
 			this->goal_cost = n.goal_cost;
@@ -141,14 +109,15 @@ class Node{
 			this->LAST_DIR = n.LAST_DIR;
 		}
 		/**
-		 * Auto genereated getter and setter methods.
+		 * Various getter and setter methods. Some might not be used.
 		 */
 		Position * getBoxes()
 		{
 			return boxes_positions;
 		}
 		
-		int getPathCost() {
+		int getPathCost()
+		{
 			return path_cost;
 		}
 	    int getPathCost() const{
@@ -160,6 +129,10 @@ class Node{
 	    int getGoalCost() const{
 	    	return goal_cost;
 	    }
+		void move_box(int i, Position p)
+		{
+		    boxes_positions[i] = p;
+		}
 		Position getCurrent_position()
 		{
 			return jens;
@@ -176,9 +149,9 @@ class Node{
 		void setGoalCost(int g){
 			this->goal_cost = g;
 		}
-
-
-		Node * getParent() {
+		
+		Node * getParent()
+		{
 			return parent;
 		}
 		
@@ -207,14 +180,10 @@ class Node{
 			}
 			return hash;
 		}
-
-		int getLen() {
-			return len;
-		}
-		 bool operator<( const Node & other) const
+		
+		int getLen()
 		{
-			 // > like BFS = A star?
-				return this->getPathCost()+this->getGoalCost() > other.getPathCost()+other.getGoalCost();
+			return len;
 		}
 };
 #endif

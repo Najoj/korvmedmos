@@ -1,8 +1,8 @@
 /**
- * Board.hpp
- *
  * Representing the static parts of the Sokoban board. Which is the walls, the
  * floor and the goal positions.
+ *
+ * It is very likely that some methods that are not used exists here.
  */
 
 #ifndef BOARD_HPP
@@ -20,22 +20,17 @@ struct Board
 	private:
 		// Used for representing the entire board.
 		unsigned char ** matrix;
-		char ** cost_matrix;
 		
 	public:
-		//TODO: Remove this variable.
 		//This is the original position of the when the game starts
 		vector<Position> goals;
-		
-		/**
-		 * TODO: Does this need be public?
-		 */
 		// This is the original position of the boxes when the game starts
 		vector<Position> boxes;
 		
 		// Width and height of the board.
 		int width, height;
 		
+		// Constructors.
 		Board() {}
 		Board(int width, int height)
 		{
@@ -48,6 +43,8 @@ struct Board
 		//		cost_matrix[i] = new int[height];
 			//	cost_matrix[i] = 0;
 		}
+		
+/*		This is not used.
 		bool xline_has_goal(int x)
 		{
 			for (int i = 0; i < height; i++)
@@ -66,6 +63,9 @@ struct Board
 			}
 			return false;
 		}
+*/
+		
+		// Various getters and setters
 		void add_goal(Position p)
 		{
 			goals.push_back(p);
@@ -92,12 +92,21 @@ struct Board
 		{
 			matrix[p.x][p.y] = value;
 		}
-
+		Position * getJens()
+		{
+			return &jens;
+		}
+		
+		void setJens(Position p)
+		{
+			jens = p;
+		}
+		
+		// Insert boxes into the board.
 		void insert_boxes(Position* boxes,int len)
 		{
 			for(int i = 0; i < len; i++)
 			{
-
 				if(matrix[boxes[i].x][boxes[i].y] == GOAL)
 				{
 					matrix[boxes[i].x][boxes[i].y] = BOX_ONGOAL;
@@ -110,35 +119,24 @@ struct Board
 				}
 			}
 		}
-		/**
-		 * Denna gör en dum grejj med goals! Nån annan får fixa.
-		 */
+		
+		// Remove boxes from the board
 		void remove_boxes(Position* boxes,int len)
 		{
-				for(int i = 0; i < len; i++){
-						if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL)
-						{
-								matrix[boxes[i].x][boxes[i].y] = GOAL;
-						}
-						else
-						{
-								matrix[boxes[i].x][boxes[i].y] = FLOOR;
-						}
+			for(int i = 0; i < len; i++){
+				if(matrix[boxes[i].x][boxes[i].y] == BOX_ONGOAL)
+				{
+					matrix[boxes[i].x][boxes[i].y] = GOAL;
 				}
+				else
+				{
+					matrix[boxes[i].x][boxes[i].y] = FLOOR;
+				}
+			}
 
-				for(unsigned int i = 0; i<goals.size(); i++){
-					matrix[goals[i].x][goals[i].y] = GOAL;
-				}
-		}
-		
-		Position * getJens()
-		{
-			return &jens;
-		}
-		
-		void setJens(Position p)
-		{
-			jens = p;
+			for(unsigned int i = 0; i<goals.size(); i++){
+				matrix[goals[i].x][goals[i].y] = GOAL;
+			}
 		}
 };
 #endif

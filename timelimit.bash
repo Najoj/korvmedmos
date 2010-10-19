@@ -8,9 +8,9 @@ LIMIT="00:01:"
 echo "timelimit.bash: START"
 
 while true; do
-    if [ "$(ps -e | grep main | grep $LIMIT)" != "" ]; then
+    if [ "$(ps -e | grep sokoban | grep $LIMIT)" != "" ]; then
         echo -n "timelimit.bash: POW! "
-        killall -9 main
+        killall -9 sokoban
         echo "HEADSHOT!"
         sleep 1
     fi
