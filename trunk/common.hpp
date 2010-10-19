@@ -3,6 +3,7 @@
  *
  * Stores all kinds of common and utility functions and structures.
  */
+
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
@@ -19,11 +20,14 @@
 // Used for used node.
 #define USED  1337
 
-//#include <stdio.h>
+/* I do not think this is used
+
 #ifdef DEBUG
 	#define debug_print(text) cout<<text<<endl;
 #endif
-// Rishie gillar  barn.
+
+#define DEBUG 0
+*/
 
 /**
  * Defines board elements, see link:
@@ -40,39 +44,34 @@
 #define JENS_ONGOAL '+'
 #define BAD_POS 'x'
 
+// Some numbers we use here and there.
 #define FAIL -1
 #define OK 1
 #define LIMIT_EXCEEDED 2
-#define SOLUTION_FOUND 3
-#define START_BACK 4
-
-#define FORWARD_SOLUTION 5
-#define BACK_SOLUTION 6
-
 #define JENS_IS_PUSHING_BOX_OK 4711
 #define BIG_VALUE 2147483647
-#define DEBUG 0
 #define COST_TO_MOVE_BOX_ON_GOAL 15
 
 /**
 * Common definitions
 */
 int revereseDir(int push_box_dir);
-
-
-
-
 struct Position
 {
 	unsigned char x;
 	unsigned char y;
-	Position() {x=0;y=0;}
 	
+	Position()
+	{
+		x=0;
+		y=0;
+	}
 	Position(char x, char y)
 	{
 		set(x,y);
 	}
-
+	
+	// Various setters and getters
 	void set(char x, char y)
 	{
 		this->x = x;
@@ -107,13 +106,17 @@ struct Position
 		return Position(x-1, y);
 	}
 	
-	void addPosition(Position pos) {
+	void addPosition(Position pos)
+	{
 		x += pos.x;
 		y += pos.y;
 	}
-
-	Position getDirection(int dir){
-		switch(dir){
+	
+	// Get a direction
+	Position getDirection(int dir)
+	{
+		switch(dir)
+		{
 		case LEFT:
 			return left();
 			break;
@@ -132,7 +135,9 @@ struct Position
 	}
 };
 
+Position getXYDir(int, Position);
 
+// Used to translate number 0-3 to a human readable direction.
 const std::string moves_real[4] = {"U","R","D","L"};
-Position getXYDir(int);
+
 #endif

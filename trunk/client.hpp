@@ -1,6 +1,6 @@
 /**
- * client.hpp
- * 
+ * This is code we got from Javier.
+ *
  * Client to enable communication with server so we can get a board to solve,
  * and to send out solution to it.
  */

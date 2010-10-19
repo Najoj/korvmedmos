@@ -1,8 +1,20 @@
+/**
+ * Defining 3x3 board "boxlocks", position
+ * Sorry for the lack of comments here.
+ */
+
 #ifndef BOXLOCKS_HPP
 #define BOXLOCKS_HPP
 
 #include "common.hpp"
 
+/**
+ * This lock is
+ * _ _ #
+ * _ $ $
+ * _ # _
+ * Where _ is any character.
+ */
 #define lock1 {\
 	{0, 0, WALL},\
 	{0, BOX, BOX},\
@@ -19,13 +31,12 @@
 	{WALL, 0, 0},\
 	{BOX, BOX, 0},\
 	{0, WALL, 0}}
-	
 #define lock5 {\
 	{0, 0, 0},\
 	{0, BOX, WALL},\
 	{WALL, BOX, 0}}
 #define lock6 {\
-	{0, BOX, WALL},\
+	{BOX, WALL, 0},\
 	{WALL, BOX, 0},\
 	{0, 0, 0}}
 #define lock7 {\
@@ -33,10 +44,9 @@
 	{WALL, BOX, 0},\
 	{0, BOX, WALL}}
 #define lock8 {\
-	{WALL, BOX, 0},\
+	{0, WALL, BOX},\
 	{0, BOX, WALL},\
 	{0, 0, 0}}
-	
 #define lock9 {\
 	{0, WALL, WALL},\
 	{0, BOX, BOX},\
@@ -53,7 +63,6 @@
 	{0, 0, 0},\
 	{BOX, BOX, 0},\
 	{WALL, WALL, 0}}
-	
 #define lock13 {\
 	{0, 0, 0},\
 	{0, BOX, WALL},\
@@ -62,6 +71,13 @@
 	{0, BOX, WALL},\
 	{0, BOX, WALL},\
 	{0, 0, 0}}
+/**
+ * This lock is
+ * _ _ _
+ * # $ _
+ * # $ _
+ * Where _ is any character.
+ */
 #define lock15 {\
 	{0, 0, 0},\
 	{WALL, BOX, 0},\
@@ -70,7 +86,6 @@
 	{WALL, BOX, 0},\
 	{WALL, BOX, 0},\
 	{0, 0, 0}}
-
 #define lock17 {\
 	{0, 0, 0},\
 	{0, BOX, BOX},\
@@ -87,7 +102,6 @@
 	{0, 0, 0},\
 	{BOX, BOX, 0},\
 	{BOX, BOX, 0}}
-
 #define lock21 {\
 	{WALL, BOX, 0},\
 	{BOX, BOX, 0},\
@@ -100,7 +114,6 @@
 	{0, 0, 0},\
 	{WALL, BOX, 0},\
 	{BOX, BOX, 0}}
-
 #define lock24 {\
 	{BOX, WALL, 0},\
 	{BOX, BOX, 0},\
@@ -113,7 +126,6 @@
 	{0, 0, 0},\
 	{0, BOX, WALL},\
 	{0, BOX, BOX}}
-
 #define lock27 {\
 	{BOX, BOX, 0},\
 	{WALL, BOX, 0},\
@@ -126,7 +138,6 @@
 	{0, 0, 0},\
 	{0, BOX, BOX},\
 	{0, WALL, BOX}}
-
 #define lock30 {\
 	{BOX, BOX, 0},\
 	{BOX, WALL, 0},\
@@ -135,6 +146,13 @@
 	{0, 0, 0},\
 	{BOX, BOX, 0},\
 	{BOX, WALL, 0}}
+/**
+ * This lock is
+ * _ _ _
+ * _ $ $
+ * _ $ #
+ * Where _ is any character.
+ */
 #define lock32 {\
 	{0, 0, 0},\
 	{0, BOX, BOX},\
